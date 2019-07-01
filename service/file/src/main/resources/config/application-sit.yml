@@ -1,0 +1,51 @@
+spring:
+    profiles:
+        active: sit
+        include: swagger
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+          mongodb:
+              uri: mongodb://192.168.3.2:27017
+              database: pangolin_hangyin_sit
+    rabbitmq:
+          username: hangyin
+          password: hangyin
+          host: 192.168.3.2
+          virtual-host: hangyin_sit
+          port: 5672
+    jmx:
+        enabled: false
+
+eureka:
+  instance:
+    hostname: file-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+
+fdfs:
+  path: 192.168.3.10
+  localPath: 192.168.3.10
+  soTimeout: 1500
+  connectTimeout: 600
+  thumbImage:             #缩略图生成参数
+    width: 150
+    height: 150
+  trackerList:            #TrackerList参数,支持多个
+    - 192.168.3.10:22122
+
+gridfs:
+  path: 192.168.3.31:9000/file-service
+  localPath: 192.168.3.31:9000/file-service
+
+server:
+    port: 9004

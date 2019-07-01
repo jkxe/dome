@@ -1,0 +1,67 @@
+spring:
+    profiles:
+        active: prod
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://rm-bp1u8vdjwn65a0720.mysql.rds.aliyuncs.com:3306/urge?useUnicode=true&characterEncoding=utf8&useSSL=false
+        name:
+        username: prod_urge
+        password: aj8Pk2Y*#!1287Y
+        hikari:
+          data-source-properties:
+            rewriteBatchedStatements: true
+            cachePrepStmts: true
+            prepStmtCacheSize: 250
+            prepStmtCacheSqlLimit: 2048
+            useServerPrepStmts: true
+          connection-timeout: 36000
+          validation-timeout: 3000
+          maximum-pool-size: 50
+          max-lifetime: 600000
+          idle-timeout: 60000
+          minimum-idle: 10
+    devtools:
+        restart:
+            enabled: false
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+        mongodb:
+            uri: mongodb://admin:HYxf_Risk%402019!@10.20.5.139:27017,10.20.6.16:27017,10.20.5.140:27017
+            database: pangolin
+    jmx:
+      enabled: false
+    rabbitmq:
+        username: 51xf
+        password: 51xf@0219
+        host: 10.20.5.138
+        virtual-host: urge
+        port: 5672
+eureka:
+  instance:
+    hostname: dataimp-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://10.0.5.44:8761/eureka/,http://10.0.6.199:8761/eureka/
+
+server:
+    port: 9003
+
+# 高德地域查询restapi
+cuibei:
+    placeInquire:
+        webUrl: http://restapi.amap.com/v3/place/text?&output=json&extensions=all
+        ak: 803c595254626ef5a6edeb02944174e4
+
+threadPool:
+   corePoolSize: 80
+   maxPoolSize: 200
+   keepAliveSeconds: 60
+   queueCapacity: 500
+   allowCoreThreadTimeout: false
+   threadNamePrefix: pangolin-

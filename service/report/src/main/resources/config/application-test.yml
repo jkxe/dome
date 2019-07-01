@@ -1,0 +1,71 @@
+spring:
+    profiles:
+        active: test
+        include: swagger
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://192.192.0.49:3306/pangolin_uat?useUnicode=true&characterEncoding=utf8&useSSL=false
+        name:
+        username: root
+        password: root
+        hikari:
+          data-source-properties:
+            rewriteBatchedStatements: true
+            cachePrepStmts: true
+            prepStmtCacheSize: 250
+            prepStmtCacheSqlLimit: 2048
+            useServerPrepStmts: true
+          connection-timeout: 36000
+          validation-timeout: 3000
+          maximum-pool-size: 20
+          max-lifetime: 600000
+          idle-timeout: 60000
+          minimum-idle: 10
+    rabbitmq:
+        username: admin
+        password: admin
+        host: 192.192.0.49
+        virtual-host: admin
+        port: 5672
+
+    cache:
+        jcache:
+            config: ehcache.xml
+    redis:
+        database: 4
+        host: 192.192.0.49
+        port: 6379
+        expireTime: 3600
+        password: redis123456
+eureka:
+  instance:
+    hostname: report-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+
+server:
+    port: 9006
+
+cuibei:
+  baiduMap:
+    webUrl: http://api.map.baidu.com/cloudgc/v1?city=全国&ak=
+    webAk: lHaYCXlRADlhW0fnv8tpIhCfqD85pTSr
+threadPool:
+   corePoolSize: 10
+   maxPoolSize: 200
+   keepAliveSeconds: 60
+   keepAliveTime: 20
+   queueCapacity: 500
+   allowCoreThreadTimeout: false
+   threadNamePrefix: pangolin-

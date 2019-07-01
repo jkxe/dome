@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.CaseSearchMapper">
+
+    <select id="caseSearch" parameterType="cn.fintecher.pangolin.report.model.CaseSearchRequest"
+            resultType="cn.fintecher.pangolin.report.model.CaseSearchResponse">
+        SELECT a.*,
+        b.`name` AS personalName,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS certificatesNumber,
+        b.id AS personalId,
+        d.real_name AS collectorName,
+        e.`name` AS deptName,
+        l.product_name AS productName,
+        m.series_name AS seriesName
+        from (
+        SELECT
+        f.id AS id,
+        f.loan_invoice_number AS loanInvoiceNumber,
+        f.case_number As caseNumber,
+        f.batch_number AS batchNumber,
+        f.collection_type AS collectionType,
+        sum(f.overdue_amount) AS overdueAmount,
+        max(f.pay_status) AS payStatus,
+        max(f.overdue_days) AS overdueDays,
+        max(f.overdue_periods) AS overduePeriods,
+        f.collection_status AS collectionStatus,
+        f.followup_time AS followupTime,
+        f.case_follow_in_time AS caseFollowInTime,
+        f.followup_back AS followupBack,
+        f.over_due_date AS overDueDate,
+        f.source_channel AS sourceChannel,
+        f.collection_method AS collectionMethod,
+        f.promise_amt AS promiseAmt,
+        f.promise_time AS promiseTime,
+        sum(f.account_balance) AS accountBalance,
+        max(f.overdue_count) AS overdueCount,
+        f.settle_date AS settleDate,
+        f.merchant_name AS merchantName,
+        f.repay_date AS repayDate,
+        f.depart_id,
+        f.personal_id,
+        f.current_collector,
+        f.product_id
+        FROM case_info f group by f.case_number having 1=1)as a
+        LEFT JOIN personal b ON a.personal_id = b.id
+        LEFT JOIN `user` d ON a.current_collector = d.id
+        LEFT JOIN department e ON a.depart_id = e.id
+        LEFT JOIN product l ON a.product_id = l.id
+        LEFT JOIN product_series m ON m.id = l.series_id
+        where 1= 1
+       <if test="caseNumber != null and caseNumber != ''">
+             AND a.caseNumber = #{caseNumber}
+        </if>
+        <if test="personalName != null and personalName != ''">
+            AND b.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="sourceChannel != null and sourceChannel != ''">
+            AND a.sourceChannel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null and collectionMethod != ''">
+            AND a.collectionMethod = #{collectionMethod}
+        </if>
+        <if test="currentCollectorName != null and currentCollectorName != ''">
+            AND d.real_name LIKE concat('%',#{currentCollectorName},'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND a.merchantName = concat('%', #{merchantName}, '%')
+        </if>
+        <if test="overdueDateMin != null">
+            AND <![CDATA[DATE_FORMAT(a.repayDate,'%Y-%m-%d') >= DATE_FORMAT(#{overdueDateMin},'%Y-%m-%d')]]>
+        </if>
+        <if test="overdueDateMax != null">
+            AND <![CDATA[DATE_FORMAT(a.repayDate,'%Y-%m-%d') <= DATE_FORMAT(#{overdueDateMax},'%Y-%m-%d')]]>
+        </if>
+        <if test="settleDateMin != null">
+            AND <![CDATA[DATE_FORMAT(a.settleDate,'%Y-%m-%d') >= DATE_FORMAT(#{settleDateMin},'%Y-%m-%d')]]>
+        </if>
+        <if test="settleDateMax != null">
+            AND <![CDATA[DATE_FORMAT(a.settleDate,'%Y-%m-%d') <= DATE_FORMAT(#{settleDateMax},'%Y-%m-%d')]]>
+        </if>
+        <if test="overdueAmountMin != null">
+            AND a.overdueAmount <![CDATA[ >= ]]> #{overdueAmountMin}
+        </if>
+        <if test="overdueAmoutnMax != null">
+            AND a.overdueAmount <![CDATA[ <= ]]> #{overdueAmoutnMax}
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND payStatus = #{payStatus}
+        </if>
+        <if test="overdueDaysMin != null">
+            AND <![CDATA[overdueDays >= #{overdueDaysMin}]]>
+        </if>
+        <if test="overdueDaysMax != null">
+            AND <![CDATA[overdueDays <= #{overdueDaysMax}]]>
+        </if>
+    </select>
+</mapper>

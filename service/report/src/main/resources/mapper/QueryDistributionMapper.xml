@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.QueryDistributionMapper">
+
+    <!-- 查询所有待分配的委外案件-->
+    <select id="findOutSourceDistritbution" parameterType="java.util.List" resultType="cn.fintecher.pangolin.report.model.distribution.OutSourceDistributionModel">
+        select caseInfo.id as caseId,person.`name` as personalName,person.id as personalId,
+          person.id_card as idCard,area.id as areaId,area.area_name as areaName,outs.id as outId,outs.outs_name as outName
+            FROM outsource_pool AS outCase
+            LEFT JOIN case_info AS caseInfo ON outCase.case_id = caseInfo.id
+            LEFT JOIN personal AS person ON caseInfo.personal_id = person.id
+            LEFT JOIN area_code AS area ON area.id = caseInfo.area_id
+			LEFT JOIN outsource AS outs on outCase.out_id=outs.id
+            where outCase.out_status=167
+            <if test="caseIdlist != null and caseIdlist.size() > 0 ">
+                and outCase.case_id in
+                <foreach collection="caseIdlist"  item="caseIdlist" open="(" separator="," close=")">
+                    #{caseIdlist}
+                </foreach>
+            </if>
+    </select>
+    <!--根据案件id查询出对应委外案件池中待分配信息 -->
+    <select id="selectOutsourcePoolByCaseId" parameterType="String" resultType="cn.fintecher.pangolin.report.entity.OutSourcePoolReport">
+      select id,case_id as caseId,out_id as outId,operate_time as operateTime,out_time as outTime,operator,out_status as outStatus,
+        out_batch as outBatch,commission_rate as commissionRate,commission,out_back_amt as outBackAmt,overdue_periods as overduePeriods,
+        contract_amt as contractAmt,outoperation_status  as outoperationStatus,company_code as companyCode,over_outsource_time as overOutsourceTime,
+        end_outsource_time as endOutsourceTime
+        from outsource_pool where out_status=167 and case_id=#{caseId}
+    </select>
+    <!-- 更新委外池的信息-->
+    <update id="updateOutSourcePool" parameterType="cn.fintecher.pangolin.report.entity.OutSourcePoolReport">
+        update outsource_pool set out_id=#{outId},out_status=#{outStatus},out_batch=#{outBatch},operator=#{operator},
+        operate_time=#{operateTime},over_outsource_time=#{overOutsourceTime},out_time=#{outTime} where id=#{id}
+    </update>
+    <!--根据客户身份证号查询正在委外催收的委外机构-->
+    <select id="findOutSourceDisByPersonalId" parameterType="String" resultType="cn.fintecher.pangolin.report.model.distribution.OutSourceDistributionModel">
+        select caseInfo.id as caseId,person.`name` as personalName,person.id as personalId,
+        person.id_card as idCard,area.id as areaId,area.area_name as areaName,outs.id as outId,outs.outs_name as outName
+        FROM outsource_pool AS outCase
+        LEFT JOIN case_info AS caseInfo ON outCase.case_id = caseInfo.id
+        LEFT JOIN personal AS person ON caseInfo.personal_id = person.id
+        LEFT JOIN area_code AS area ON area.id = caseInfo.area_id
+        LEFT JOIN outsource AS outs on outCase.out_id=outs.id
+        where outCase.out_status in (168,832) and person.id_card=#{idCard}  GROUP BY person.id
+    </select>
+    <!-- 将临时分配的案件插入临时分配表-->
+    <insert id="insertIntoOutSourceWhip" parameterType="cn.fintecher.pangolin.entity.OutSourceWhip">
+          insert into outSource_whip(id,case_id,out_id) VALUES(#{id},#{caseId},#{outId})
+    </insert>
+    <!--删除临时表数据 -->
+    <delete id="deleteOutSourceWhip" >
+        delete from outSource_whip where 1=1
+    </delete>
+    <!--根据案件id删除临时表数据 -->
+    <delete id="deleteOutSourceWhipByCaseId" parameterType="string">
+        delete from outSource_whip where case_id=#{caseId}
+    </delete>
+    <!--根据案件id查询临时表信息 -->
+    <select id="selectOutSourceWhipByCaseId" parameterType="String" resultType="cn.fintecher.pangolin.entity.OutSourceWhip">
+        select id,case_id as caseId,out_id as outId from outSource_whip where case_id=#{caseId}
+    </select>
+    <!-- 根据客户身份证号查询历史标-->
+    <select id="findHistoryOutSourceByidCard" parameterType="String" resultType="cn.fintecher.pangolin.entity.HistoryOutSourceDistribution">
+        select his.out_id as outId,his.personal_id as idCard from history_outsource_distribution as his
+        LEFT JOIN personal as per on his.personal_id=per.id
+        where per.id_card=#{idCard} ORDER BY his.opertor_time desc
+    </select>
+    <!-- 插入历史表 -->
+    <insert id="insertIntoHistoryOutSourceDistribution" parameterType="cn.fintecher.pangolin.entity.HistoryOutSourceDistribution">
+      INSERT INTO history_outsource_distribution(id,personal_id,out_id,opertor_time) VALUES (#{id},#{personalId},#{outId},#{opertorTime})
+    </insert>
+    <!--根据城市id查询符合该地区的委外方 -->
+    <select id="findOutSourceByAreaId" parameterType="java.lang.Integer" resultType="cn.fintecher.pangolin.entity.Outsource">
+        select a.id,a.outs_level as outsLevel,a.outs_name as outsName,a.area_id as areaId,a.outs_address as outsAddress,
+        a.outs_contacts as outsContacts,a.company_code as companyCode,a.outs_code as outsCode,
+        a.outs_phone as outsPhone,a.outs_mobile as outsMobile,a.outs_email as outsEmail,a.outs_remark as outsRemark,
+        a.operate_time as operateTime,a.outs_orgtype as outsOrgtype,a.flag as flag,
+        a.outs_rate as outsRate,a.contract_start_time as contractStartTime,a.contract_end_time as contractEndTime
+        from outsource a,outsource_area b
+        where a.id=b.outsource_id and a.flag=0 and
+        <![CDATA[DATE_FORMAT(now(),'%Y-%m-%d') >= DATE_FORMAT(a.contract_start_time,'%Y-%m-%d')]]>
+        and <![CDATA[DATE_FORMAT(now(),'%Y-%m-%d') <= DATE_FORMAT(a.contract_end_time,'%Y-%m-%d')]]>
+        and b.area_id=#{areaId} ORDER BY a.outs_level ASC
+    </select>
+    <!--展示预分配结果 -->
+    <select id="selectOutSourceWhipRate" parameterType="String" resultType="cn.fintecher.pangolin.report.model.OutSourceNumberModel">
+        SELECT
+	    c.id as outId ,c.outs_name as outName,COUNT(1) as outNumber
+        FROM
+	    outsource_whip a,case_info b,outsource c
+        WHERE a.case_id = b.id
+        and a.out_id = c.id
+        GROUP BY c.id,  c.outs_name
+    </select>
+
+    <select id="getOutSourceCaseInfoDetail" parameterType="String" resultType="cn.fintecher.pangolin.report.model.AreaCaseNumberModel">
+      SELECT c.id as areaId,c.area_name as areaName , COUNT(1) as number
+    FROM
+	outsource_whip a,case_info b,area_code c
+    WHERE a.case_id = b.id and b.area_id=c.id
+      and a.out_id=#{outId}
+    GROUP BY c.id,c.area_name
+    </select>
+    <select id="queryDistributionCaseInfo" parameterType="cn.fintecher.pangolin.report.model.distribution.DistributionCaseParam" resultType="cn.fintecher.pangolin.report.model.distribution.QueryDistributionCaseInfoModel">
+        SELECT  caseInfo.id as caseId,caseInfo.case_number as caseNumber,personal.`name` as personalName,personal.mobile_no as mobileNo,
+        personal.id_card as idCard,par.area_name as areaName,area.area_name as cityName,caseInfo.overdue_amount as overdueAmount,
+        caseInfo.overdue_periods as overduePeriods,caseInfo.overdue_days as overdueDays,series.series_name as seriesName,
+        caseInfo.pay_status AS payStatus,outs.outs_name as outName,caseInfo.account_balance AS accountBalance
+        FROM outsource_whip as whip
+        LEFT JOIN case_info as caseInfo on whip.case_id=caseInfo.id
+        LEFT JOIN personal as personal on caseInfo.personal_id=personal.id
+        LEFT JOIN area_code as area on caseInfo.area_id=area.id
+        LEFT JOIN area_code as par on area.parent_id=par.id
+        LEFT JOIN product as product on caseInfo.product_id=product.id
+        LEFT JOIN product_series as series on product.series_id=series.id
+        LEFT JOIN outsource as outs on whip.out_id=outs.id
+        WHERE 1=1
+        <if test="areaId != null">
+            and area.parent_id=#{areaId}
+        </if>
+        <if test="cityId != null">
+            and area.id=#{cityId}
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[caseInfo.overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[caseInfo.overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="payStatus != null">
+            AND caseInfo.pay_status = #{payStatus}
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[caseInfo.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[caseInfo.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="caseNumber != null">
+           and caseInfo.case_number=#{caseNumber}
+        </if>
+        <if test="personalName != null">
+            and personal.`name`= #{personalName}
+        </if>
+        <if test="mobileNo != null">
+            and personal.mobile_no= #{mobileNo}
+        </if>
+        <if test="seriesId != null">
+            and series.id=#{seriesId}
+        </if>
+        <if test="outId != null">
+           AND outs.id=#{outId}
+        </if>
+    </select>
+</mapper>

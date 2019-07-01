@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.CaseTurnRecordMapper">
+
+    <insert id="save" parameterType="cn.fintecher.pangolin.entity.CaseTurnRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into case_turn_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">
+                case_id,
+            </if>
+            <if test="caseNumber != null">
+                case_number,
+            </if>
+            <if test="collectionStatus != null">
+                collection_status,
+            </if>
+            <if test="realPayAmount != null">
+                real_pay_amount,
+            </if>
+            <if test="contractAmount != null">
+                contract_amount,
+            </if>
+            <if test="earlyRealsettleAmt != null">
+                early_realsettle_amt,
+            </if>
+            <if test="departId != null">
+                depart_id,
+            </if>
+            <if test="assistWay != null">
+                assist_way,
+            </if>
+            <if test="assistFlag != null">
+                assist_flag,
+            </if>
+            <if test="holdDays != null">
+                hold_days,
+            </if>
+            <if test="leftDays != null">
+                left_days,
+            </if>
+            <if test="caseType != null">
+                case_type,
+            </if>
+            <if test="receiveUserRealName != null">
+                receive_user_real_name,
+            </if>
+            <if test="followUpNum != null">
+                follow_up_num,
+            </if>
+            <if test="receiveDeptName != null">
+                receive_dept_name,
+            </if>
+            <if test="operatorUserName != null">
+                operator_user_name,
+            </if>
+            <if test="operatorTime != null">
+                operator_time,
+            </if>
+            <if test="companyCode != null">
+                company_code,
+            </if>
+            <if test="triggerAction!=null">
+                trigger_action,
+            </if>
+            <if test="circulationType!=null">
+                circulation_type,
+            </if>
+            <if test="receiveUserId!=null">
+                receive_user_id,
+            </if>
+            <if test="currentCollector!=null">
+                current_collector,
+            </if>
+            <if test="turnToPool!=null">
+                turn_to_pool,
+            </if>
+            <if test="turnFromPool!=null">
+                turn_from_pool,
+            </if>
+            <if test="turnDescribe!=null">
+                turn_describe,
+            </if>
+            <if test="turnApprovalStatus!=null">
+                turn_approval_status,
+            </if>
+            <if test="approvalOpinion!=null">
+                approval_opinion,
+            </if>
+            <if test="approvalId!=null">
+                approval_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">
+                #{caseId,jdbcType=INTEGER},
+            </if>
+            <if test="caseNumber != null">
+                #{caseNumber,jdbcType=INTEGER},
+            </if>
+            <if test="collectionStatus != null">
+                #{collectionStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="realPayAmount != null">
+                #{realPayAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="contractAmount != null">
+                #{contractAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="earlyRealsettleAmt != null">
+                #{earlyRealsettleAmt,jdbcType=VARCHAR},
+            </if>
+            <if test="departId != null">
+                #{departId,jdbcType=VARCHAR},
+            </if>
+            <if test="assistWay != null">
+                #{assistWay,jdbcType=VARCHAR},
+            </if>
+            <if test="assistFlag != null">
+                #{assistFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="holdDays != null">
+                #{holdDays,jdbcType=VARCHAR},
+            </if>
+            <if test="leftDays != null">
+                #{leftDays,jdbcType=VARCHAR},
+            </if>
+            <if test="caseType != null">
+                #{caseType,jdbcType=VARCHAR},
+            </if>
+            <if test="receiveUserRealName != null">
+                #{receiveUserRealName,jdbcType=VARCHAR},
+            </if>
+            <if test="followUpNum != null">
+                #{followUpNum,jdbcType=VARCHAR},
+            </if>
+            <if test="receiveDeptName != null">
+                #{receiveDeptName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorUserName != null">
+                #{operatorUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorTime != null">
+                #{operatorTime,jdbcType=VARCHAR},
+            </if>
+            <if test="companyCode != null">
+                #{companyCode,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerAction != null">
+                #{triggerAction,jdbcType=VARCHAR},
+            </if>
+            <if test="circulationType != null">
+                #{circulationType,jdbcType=VARCHAR},
+            </if>
+            <if test="receiveUserId != null">
+                #{receiveUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="currentCollector != null">
+                #{currentCollector,jdbcType=VARCHAR},
+            </if>
+            <if test="turnToPool != null">
+                #{turnToPool,jdbcType=VARCHAR},
+            </if>
+            <if test="turnFromPool != null">
+                #{turnFromPool,jdbcType=VARCHAR},
+            </if>
+            <if test="turnDescribe != null">
+                #{turnDescribe,jdbcType=VARCHAR},
+            </if>
+            <if test="turnApprovalStatus != null">
+                #{turnApprovalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="approvalOpinion != null">
+                #{approvalOpinion,jdbcType=VARCHAR},
+            </if>
+            <if test="approvalId != null">
+                #{approvalId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

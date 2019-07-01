@@ -1,0 +1,50 @@
+spring:
+    profiles:
+        active: demo
+    devtools:
+        restart:
+            enabled: false
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+        mongodb:
+            uri: mongodb://116.236.220.215:17017
+            database: pangolin_hy_demo
+    rabbitmq:
+        username: zwuser
+        password: Zhiwang.123
+        host: 116.236.220.215
+        virtual-host: admin
+        port: 18888
+    jmx:
+        enabled: false
+
+eureka:
+  instance:
+    hostname: file-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://127.0.0.1:8761/eureka/
+
+fdfs:
+  path: file.zzlgroup.com
+  localPath: 10.1.10.64:8000
+  soTimeout: 1500
+  connectTimeout: 600
+  thumbImage:             #缩略图生成参数
+    width: 150
+    height: 150
+  trackerList:            #TrackerList参数,支持多个
+    - 10.1.10.64:22122
+
+gridfs:
+  path: 47.104.152.49:9000/file-service
+  localPath: 172.31.52.11:9000/file-service
+
+server:
+    port: 9004

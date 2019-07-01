@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.CollectPageMapper">
+
+    <!-- 催收员案件总数(包含已结案的)-->
+    <select id="getCaseInfoWeekAllCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_info
+        WHERE (current_collector = #{userId}
+        OR assist_collector = #{userId}) and recover_remark = 0
+    </select>
+
+    <!-- 催收员本周完成已结案案件总数-->
+    <select id="getCaseInfoWeekClosedCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM (
+        SELECT case_info.id FROM case_info
+        WHERE  (current_collector = #{userId}
+        OR assist_collector = #{userId}) AND
+        collection_status = 24 and recover_remark = 0  and YEARWEEK(date_format(operator_time,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        ) AS m
+    </select>
+
+    <!-- 催收员本月完成已结案案件总数-->
+    <select id="getCaseInfoMonthClosedCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM (
+        SELECT case_info.id FROM case_info
+        WHERE (current_collector = #{userId}
+        OR assist_collector = #{userId}) AND
+        collection_status = 24 and recover_remark = 0  and MONTH(operator_time) = MONTH(NOW())
+        ) AS m
+    </select>
+
+    <!--催收员回款总金额(包含已结案的)-->
+    <select id="getWeekTotalBackCash" parameterType="string" resultType="java.math.BigDecimal">
+        SELECT sum(overdue_amount) FROM case_info
+        WHERE (current_collector = #{userId}
+        OR assist_collector = #{userId}) and recover_remark = 0
+    </select>
+
+    <!--本周已回款总金额-->
+    <select id="getWeekHadBackCash" parameterType="string" resultType="java.math.BigDecimal">
+        SELECT sum(apply_pay_amt) FROM case_info as caseInfo
+        LEFT JOIN case_pay_apply as apply ON apply.case_id = caseInfo.id
+        WHERE (approve_result = 62 OR approve_status = 58)
+        AND WEEK(approve_pay_datetime) = WEEK(curdate()) AND caseInfo.recover_remark = 0
+        AND (current_collector = #{userId}
+        OR assist_collector = #{userId})
+    </select>
+
+    <!--本月已回款总金额-->
+    <select id="getMonthHadBackCash" parameterType="string" resultType="java.math.BigDecimal">
+        SELECT sum(apply_pay_amt) FROM case_info as caseInfo
+        LEFT JOIN case_pay_apply as apply ON apply.case_id = caseInfo.id
+        WHERE (approve_result = 62 OR approve_status = 58)
+        AND MONTH(approve_pay_datetime) = MONTH(curdate()) AND caseInfo.recover_remark = 0
+        AND (current_collector = #{userId}
+        OR assist_collector = #{userId})
+    </select>
+
+    <!--今日外呼-->
+    <select id="getCalledDay" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way = 0
+        AND date_format(operator_time,'%Y-%m-%d') = date_format(CURDATE(),'%Y-%m-%d')
+        AND operator = #{userName}
+    </select>
+
+    <!--本周外呼-->
+    <select id="getCalledWeek" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way = 0
+        AND WEEK(operator_time) = WEEK(now())
+        AND operator = #{userName}
+    </select>
+
+    <!--本月外呼-->
+    <select id="getCalledMonth" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way = 0
+        AND date_format(operator_time,'%Y-%m') = date_format(CURDATE(),'%Y-%m')
+        AND operator = #{userName}
+    </select>
+
+
+    <!--今日催计数-->
+    <select id="getFollowDay" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way=1 AND date_format(operator_time,'%Y-%m-%d') = CURDATE()
+        AND operator = #{userName}
+    </select>
+
+    <!--本周催计数-->
+    <select id="getFollowWeek" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way=1 AND WEEK(operator_time) = WEEK(now())
+        AND operator = #{userName}
+    </select>
+
+    <!--本月催计数-->
+    <select id="getFollowMonth" parameterType="string" resultType="integer">
+        SELECT count(*) FROM case_followup_record
+        WHERE collection_way=1 AND date_format(operator_time,'%Y-%m') = date_format(CURDATE(),'%Y-%m')
+        AND operator = #{userName}
+    </select>
+
+    <!--用户在线时长-->
+    <select id="getUserOnlineTime" parameterType="string" resultType="double">
+        SELECT SUM(duration) FROM user_login_log where user_id= #{userId}
+        AND DATE_FORMAT(login_time,'%Y-%m-%d') = CURDATE()
+        GROUP BY user_id
+    </select>
+
+    <!--今日流入案件数-->
+    <select id="getFlowInCaseToday" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_turn_record
+        WHERE to_days(operator_time) = to_days(now())
+        AND receive_user_id = #{userId}
+    </select>
+
+    <!--今日结清案件数-->
+    <select id="getFinishCaseToday" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM (
+        SELECT case_info.id,operator_time FROM case_info
+        WHERE  (current_collector = #{userId}
+        OR assist_collector = #{userId}) AND
+        collection_status = 24 and recover_remark = 0  and to_days(operator_time) = to_days(now())
+        ) AS m
+    </select>
+
+    <!--今日流出案件数-->
+    <select id="getFlowOutCaseToday" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_turn_record
+        WHERE to_days(operator_time) = to_days(now())
+        AND current_collector = #{userId}
+    </select>
+
+    <!--未催收案件数-->
+    <select id="getCaseInfoToFollowCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_info
+        WHERE collection_status = 20  and recover_remark=0
+        AND (current_collector = #{userId}
+        OR assist_collector = #{userId})
+    </select>
+
+    <!--催收中案件数-->
+    <select id="getCaseInfoFollowingCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_info
+        WHERE collection_status IN (21,22,23,172)  and recover_remark=0
+        AND (current_collector = #{userId}
+        OR assist_collector = #{userId})
+    </select>
+
+    <!--承诺还款案件数-->
+    <select id="getCaseInfoPromisedCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_info a
+        LEFT JOIN case_followup_record b ON a.id = b.case_id
+        WHERE  (current_collector = #{userId}
+        OR assist_collector = #{userId}) AND
+        recover_remark = 0  AND collection_feedback = 90
+    </select>
+
+    <!--归C案件数-->
+    <select id="getCaseInfoReturnCount" parameterType="string" resultType="integer">
+        SELECT COUNT(*) FROM case_info
+        WHERE collection_status IN (800)  and recover_remark=0
+        AND (lately_collector = #{userId}
+        OR assist_collector = #{userId})
+    </select>
+
+    <!--回款金额排名-->
+    <select id="getCaseInfoBackRank" parameterType="cn.fintecher.pangolin.report.model.CollectorRankingParams" resultMap="backAmtModel">
+        SELECT
+        d.real_name, (a.apply_pay_back_amt) AS apply_pay_back_amt,
+        IfNULL((a.apply_pay_back_amt / d.pay_total_amt), 0.00) AS apply_pay_amt_rate, IfNULL(a.apply_pay_count,0) as apply_pay_count
+        FROM
+        (
+        SELECT
+        u.user_name, u.real_name, SUM(overdue_amount) AS pay_total_amt, count(info.id) AS total_count
+        FROM case_info info
+        LEFT JOIN user u ON info.current_collector = u.id
+        LEFT JOIN department d ON u.dept_id = d.id
+        WHERE u. STATUS = 0
+        AND d.`code` LIKE concat(#{deptCode},'%')
+        AND u.company_code = #{companyCode}
+        AND recover_remark = 0
+        GROUP BY u.user_name,u.real_name
+        ) AS d
+        LEFT JOIN (
+        SELECT
+        apply_user_name,IFNULL(SUM(apply_pay_amt), 0.00) AS apply_pay_back_amt, count(*) AS apply_pay_count
+        FROM case_pay_apply AS app
+        WHERE
+        (approve_result = 62 OR approve_status = 58)
+        <if test="timeType == 0">
+            AND YEAR(app.approve_pay_datetime) = YEAR(NOW())
+        </if>
+        <if test="timeType == 1">
+            AND MONTH(app.approve_pay_datetime) = MONTH(NOW())
+        </if>
+        <if test="timeType == 2">
+            AND WEEK(app.approve_pay_datetime) = WEEK(NOW())
+        </if>
+        GROUP BY
+        app.apply_user_name) AS a ON a.apply_user_name = d.user_name
+        ORDER BY apply_pay_back_amt DESC
+    </select>
+
+    <!--跟催量排名-->
+    <select id="getCaseInfoFollowRank" parameterType="cn.fintecher.pangolin.report.model.CollectorRankingParams"  resultMap="followCountModel">
+        SELECT d.real_name, IFNULL(b.call_count,0) as call_count, IFNULL(c.follow_count,0) as follow_count,
+        IFNULL(a.total_followed_count,0) as total_followed_count
+        FROM
+        (SELECT user_name,real_name FROM `user` where dept_id in (SELECT id FROM department where code like concat(#{deptCode},'%'))) as d
+        LEFT JOIN
+        (SELECT count(*) as total_followed_count, operator FROM
+        (SELECT b.case_id, b.operator FROM
+        (SELECT case_id,operator FROM case_followup_record
+        WHERE operator_dept_name in (SELECT name FROM department where code like concat(#{deptCode},'%'))
+        AND company_code = #{companyCode}
+        <if test="timeType == 0">
+            AND YEAR(operator_time) = YEAR(NOW())
+        </if>
+        <if test="timeType == 1">
+            AND MONTH(operator_time) = MONTH(NOW())
+        </if>
+        <if test="timeType == 2">
+            AND WEEK(operator_time) = WEEK(NOW())
+        </if>
+        GROUP BY case_id,operator) as b LEFT JOIN case_info aa on aa.id = b.case_id) as caseInfo
+        GROUP BY operator)as a ON a.operator=d.user_name
+        LEFT JOIN
+        (SELECT count(*) as call_count, operator FROM case_followup_record WHERE collection_way = 0
+        AND operator_dept_name in (SELECT name FROM department where code like concat(#{deptCode},'%'))
+        AND company_code = #{companyCode}
+        <if test="timeType == 0">
+            AND YEAR(operator_time) = YEAR(NOW())
+        </if>
+        <if test="timeType == 1">
+            AND MONTH(operator_time) = MONTH(NOW())
+        </if>
+        <if test="timeType == 2">
+            AND WEEK(operator_time) = WEEK(NOW())
+        </if>
+        GROUP BY operator) as b
+        ON a.operator=b.operator
+        LEFT JOIN
+        (SELECT IFNULL(count(*),0) as follow_count,operator FROM case_followup_record WHERE collection_way=1
+        AND operator_dept_name in (SELECT name FROM department where code like concat(#{deptCode},'%'))
+        AND company_code = #{companyCode}
+        <if test="timeType == 0">
+            AND YEAR(operator_time) = YEAR(NOW())
+        </if>
+        <if test="timeType == 1">
+            AND MONTH(operator_time) = MONTH(NOW())
+        </if>
+        <if test="timeType == 2">
+            AND WEEK(operator_time) = WEEK(NOW())
+        </if>
+        GROUP BY operator) as c
+        ON a.operator=c.operator
+        ORDER BY total_followed_count DESC
+    </select>
+
+    <resultMap id="backAmtModel" type="cn.fintecher.pangolin.report.model.BackAmtModel">
+        <result column="real_name" property="collectionName"/>
+        <result column="apply_pay_amt_rate" property="backRate"/>
+        <result column="apply_pay_back_amt" property="backMoney"/>
+        <result column="apply_pay_count" property="backCount"/>
+    </resultMap>
+
+    <resultMap id="followCountModel" type="cn.fintecher.pangolin.report.model.FollowCountModel">
+        <result column="real_name" property="collectionFollowName"/>
+        <result column="call_count" property="calledCount"/>
+        <result column="follow_count" property="followedCount"/>
+        <result column="total_followed_count" property="followedNumber"/>
+    </resultMap>
+</mapper>

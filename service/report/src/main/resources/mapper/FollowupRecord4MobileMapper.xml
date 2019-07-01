@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.FollowupRecord4MobileMapper">
+
+
+    <insert id="addFollowupRecord4Mobile" parameterType="cn.fintecher.pangolin.report.model.mobile.CaseFollowupRecordParam">
+        INSERT INTO case_followup_record(
+            id,
+            personal_id,
+            case_id,
+            target,
+            target_name,
+            content,
+            contact_state,
+            contact_phone,
+            collection_type,
+            collection_feedback,
+            operator,
+            operator_name,
+            operator_time,
+            follnext_date,
+            result_type,
+            addr_status,
+            addr_type,
+            detail,
+            case_number,
+            follow_time,
+            fellow_workers,
+            follow_person,
+            type
+        )VALUES(
+            #{id},
+            #{personalId},
+            #{caseId},
+            #{target},
+            #{targetName},
+            #{content},
+            #{contactState},
+            #{contactPhone},
+            #{collectionType},
+            #{collectionFeedback},
+            #{operator},
+            #{operatorName},
+            #{operatorTime},
+            #{follnextDate},
+            #{resultType},
+            #{addrStatus},
+            #{addrType},
+            #{detail},
+            #{caseNumber},
+            #{followTime},
+            #{fellowWorkers},
+            #{followPerson},
+            #{type}
+        )
+    </insert>
+
+
+    <insert id="addCaseFollowupAttachment4Mobile" parameterType="cn.fintecher.pangolin.report.entity.CaseFollowupAttachment">
+            INSERT INTO case_followup_attachment(
+                id,
+                attachment_name,
+                attachment_url,
+                type,
+                operator,
+                operator_time,
+                case_followup_record_id
+            )VALUES(
+                #{id},
+                #{attachmentName},
+                #{attachmentUrl},
+                #{type},
+                #{operator},
+                #{operatorTime},
+                #{caseFollowupRecordId}
+            )
+    </insert>
+
+    <insert id="repairPersonContactInfo" parameterType="cn.fintecher.pangolin.report.model.mobile.RepairPersonInfoParams">
+        INSERT INTO personal_contact
+            (id,
+            personal_id,
+            relation,
+            mail,
+            name,
+            phone,
+            phone_status,
+            source,
+            operator,
+            operator_time
+        )VALUES(
+            #{id},
+            #{personalId},
+            #{relation},
+            #{mail},
+            #{name},
+            #{mobileNo},
+            #{mobileStatus},
+            #{source},
+            #{operator},
+            #{operatorTime}
+        )
+    </insert>
+
+
+    <insert id="repairPersonAddressInfo" parameterType="cn.fintecher.pangolin.report.model.mobile.RepairPersonInfoParams">
+           insert into personal_address(
+                id,
+                personal_id,
+                relation,
+                name,
+                type,
+                status,
+                source,
+                longitude,
+                latitude,
+                detail,
+                operator,
+                operator_time
+            ) VALUES(
+                #{id},
+                #{personalId},
+                #{relation},
+                #{name},
+                #{type},
+                #{status},
+                #{source},
+                #{longitude},
+                #{latitude},
+                #{detail},
+                #{operator},
+                #{operatorTime}
+            )
+            </insert>
+
+    <!--
+    待外访案件数量
+    外访中案件数量
+    待协催案件数量
+    协催中案件数量
+    待催收金额
+    欠款总额
+    -->
+    <select id="getIndexResult4Mobile" parameterType="java.lang.String" resultType="java.lang.String">
+--
+--         SELECT COUNT(id) numbers FROM case_info_task_mobile_v WHERE collectionType='16' AND collectionStatus=20 AND currentCollector in(${personalId})
+--         UNION ALL
+--         SELECT COUNT(id) numbers FROM case_info_task_mobile_v WHERE collectionType='16' AND collectionStatus=21 AND currentCollector in(${personalId})
+--         UNION ALL
+--         SELECT COUNT(id) numbers FROM case_assist WHERE assist_status=118 AND assist_collector in(${personalId})
+--         UNION ALL
+--         SELECT COUNT(id) numbers FROM case_assist WHERE  assist_status=28 AND assist_collector in(${personalId})
+--         UNION ALL
+--         SELECT IFNULL(SUM(overdueAmount),0) numbers FROM case_info_task_mobile_v WHERE assistCollector in(${personalId}) or currentCollector in(${personalId})
+--         UNION ALL
+--         SELECT IFNULL(SUM(accountBalance),0) numbers FROM case_info_task_mobile_v WHERE assistCollector in(${personalId}) or currentCollector in(${personalId})
+--
+        select count(a.numbers) from (SELECT COUNT(caseNumber) numbers FROM case_info_task_mobile_v WHERE collectionType='16' AND collectionStatus=20 AND currentCollector in(${personalId})
+        GROUP BY caseNumber) a
+		UNION ALL
+		select count(b.numbers) from (SELECT COUNT(caseNumber) numbers FROM case_info_task_mobile_v WHERE collectionType='16' AND collectionStatus=21 AND currentCollector in(${personalId})
+        GROUP BY caseNumber) b
+        UNION ALL
+        select count(c.numbers) from ( SELECT COUNT(ci1.case_number) numbers FROM case_assist ca left join case_info ci1 on case_id=ci1.id WHERE ca.assist_status=118 AND ca.assist_collector in(${personalId})
+        GROUP BY ci1.case_number) c
+		UNION ALL
+		select count(d.numbers) from ( SELECT COUNT(ci1.case_number) numbers FROM case_assist ca left join case_info ci1 on case_id=ci1.id WHERE ca.assist_status=28 AND ca.assist_collector in(${personalId})
+        GROUP BY ci1.case_number) d
+        UNION ALL
+        SELECT IFNULL(SUM(overdueAmount),0) numbers FROM case_info_task_mobile_v WHERE assistCollector in(${personalId}) or currentCollector in(${personalId})
+        UNION ALL
+        SELECT IFNULL(SUM(accountBalance),0) numbers FROM case_info_task_mobile_v WHERE assistCollector in(${personalId}) or currentCollector in(${personalId})
+    </select>
+
+
+    <update id="updateAssistStatusIsCollecting" parameterType="java.lang.String">
+        update case_assist set assist_status = 28  WHERE case_id = #{caseId}
+    </update>
+
+
+    <update id="updateCollectionStatusIsCollecting" parameterType="java.util.Map">
+        update case_info set collection_status = 21,followup_time=now(),followup_back=#{followupBack}  WHERE id = #{caseId}
+    </update>
+
+
+    <select id="getCaseNumberByCaseId" parameterType="java.lang.String" resultType="java.lang.String">
+        select case_number caseNumber from case_info where id=#{caseId}
+    </select>
+    <!--获取部门下的所有用户-->
+    <select id="getAllUsersByDepartCode4Mobile" parameterType="java.lang.String" resultType="java.util.List">
+       SELECT id FROM `user` usr LEFT JOIN department depart ON depart.id = usr.dept_id WHERE  depart.code LIKE concat(#{departCode},'%')
+    </select>
+
+
+    <select id="getAttachmentByRecordId" parameterType="java.lang.String" resultType="cn.fintecher.pangolin.report.entity.CaseFollowupAttachment">
+        SELECT 	id,
+            attachment_name attachmentName,
+            attachment_url attachmentUrl,
+            case_followup_record_id caseFollowupRecordId,
+            operator,
+            operator_time operatorTime,
+            TYPE ,
+            (CASE TYPE WHEN 'photo' THEN '附件' WHEN 'audio' THEN '录音' ELSE '其他' END) AS typeName
+            FROM case_followup_attachment
+        where case_followup_record_id=#{recordId}
+    </select>
+
+
+
+    <!--    *******************************************************  -->
+
+    <select id="getVisitCaseInfo" parameterType="java.util.Map" resultType="cn.fintecher.pangolin.report.model.mobile.VisitModel4Mobile">
+        SELECT
+        caseId id,
+        caseId,
+        caseNumber,
+        personalId,
+        overdueAmount,
+        accountBalance,
+        overduePeriods,
+        overdueDays,
+        leaveCaseFlag,
+        leaveCaseFlagName,
+        productId,
+        currentCollector,
+        currentCollectorName,
+        latelyCollector,
+        latelyCollectorName,
+        seriesId,
+        seriesName,
+        collectionType,
+        collectionTypeName,
+        collectionStatus,
+        collectionStatusName,
+        departCode,
+        personalName,
+        pId,
+        age,
+        address,
+        sex,
+        sexName,
+        marital,
+        maritalName,
+        longitude,
+        latitude,
+        mobileNo,
+        operatorTime
+        FROM case_info_visit_mobile_v where 1=1
+        <if test="null != departCode  and  ''!= departCode">
+            and departCode=#{departCode}
+        </if>
+        <if test=" null != collectionStatus  and  '' != collectionStatus">
+            and collectionStatus=#{collectionStatus}
+        </if>
+        <if test=" null != currentCollector  and  '' != currentCollector">
+            and currentCollector in (${currentCollector})
+        </if>
+        <if test=" null != latelyCollector  and  '' != latelyCollector">
+            and latelyCollector in (${latelyCollector})
+        </if>
+        <if test=" null != personalName  and  '' != personalName">
+            and personalName LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test=" null != address  and  '' != address">
+            and address LIKE concat('%',#{address},'%')
+        </if>
+        order by operatorTime desc
+    </select>
+
+
+
+    <select id="getAssistCaseInfo" parameterType="java.util.Map" resultType="cn.fintecher.pangolin.report.model.mobile.AssistModel4Mobile">
+        SELECT
+        id,
+        caseId,
+        caseNumber,
+        assistWay,
+        assistWayName,
+        assistStatus,
+        assistStatusName,
+        assistCollector,
+        assistCollectorName,
+        holdDays,
+        leaveCaseFlag,
+        leaveCaseFlagName,
+        collectionType,
+        collectionTypeName,
+        leaveDate,
+        hasLeaveDays,
+        markId,
+        caseFlowinTime,
+        handupFlag,
+        handupFlagName,
+        operator,
+        operatorTime,
+        companyCode,
+        departId,
+        personalId,
+        personalName,
+        pId,
+        age,
+        address,
+        sex,
+        sexName,
+        marital,
+        maritalName,
+        longitude,
+        latitude,
+        mobileNo,
+        overdueAmount,
+        accountBalance,
+        departCode
+        FROM case_info_assist_mobile_v WHERE 1=1
+        <if test="null != departCode  and  ''!= departCode">
+            and departCode=#{departCode}
+        </if>
+        <if test=" null != assistStatus  and  '' != assistStatus">
+            and assistStatus=#{assistStatus}
+        </if>
+        <if test=" null != assistCollector  and  '' != assistCollector">
+            and assistCollector in (${assistCollector})
+        </if>
+        <if test=" null != personalName  and  '' != personalName">
+            and personalName LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test=" null != address  and  '' != address">
+            and address LIKE concat('%',#{address},'%')
+        </if>
+        order by operatorTime desc
+    </select>
+
+
+    <update id="updateLongitudeAndLatitude" parameterType="cn.fintecher.pangolin.report.model.mobile.LongitudeAndLatitudeModel">
+        UPDATE personal_address set
+            longitude = #{longitude},
+            latitude = #{latitude},
+            operator = #{operator},
+            operator_time = #{operatorTime}
+        WHERE id = #{pId}
+    </update>
+
+    <select id="getAllUserIdByDeptCode" parameterType="java.lang.String" resultType="java.lang.String">
+         SELECT id FROM USER WHERE dept_id IN (
+          SELECT id FROM  department WHERE code=#{departCode}
+           UNION ALL
+          SELECT id FROM department  WHERE pid IN( SELECT id FROM department  WHERE code=#{departCode})
+         )
+    </select>
+
+
+</mapper>

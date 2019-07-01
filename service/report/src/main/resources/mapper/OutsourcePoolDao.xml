@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.fintecher.pangolin.report.mapper.OutsourcePoolDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity" id="outsourcePoolMap">
+        <result property="id" column="id"/>
+        <result property="caseId" column="case_id"/>
+        <result property="caseNumber" column="case_number"/>
+        <result property="outId" column="out_id"/>
+        <result property="operateTime" column="operate_time"/>
+        <result property="outTime" column="out_time"/>
+        <result property="operator" column="operator"/>
+        <result property="outStatus" column="out_status"/>
+        <result property="outBatch" column="out_batch"/>
+        <result property="commissionRate" column="commission_rate"/>
+        <result property="commission" column="commission"/>
+        <result property="outBackAmt" column="out_back_amt"/>
+        <result property="overduePeriods" column="overdue_periods"/>
+        <result property="contractAmt" column="contract_amt"/>
+        <result property="outoperationStatus" column="outoperation_status"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="overOutsourceTime" column="over_outsource_time"/>
+        <result property="endOutsourceTime" column="end_outsource_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		`case_id`, 
+		`case_number`, 
+		`out_id`, 
+		`operate_time`, 
+		`out_time`, 
+		`operator`, 
+		`out_status`, 
+		`out_batch`, 
+		`commission_rate`, 
+		`commission`, 
+		`out_back_amt`, 
+		`overdue_periods`, 
+		`contract_amt`, 
+		`outoperation_status`, 
+		`company_code`, 
+		`over_outsource_time`, 
+		`end_outsource_time`
+	</sql>
+    <sql id="Base_Find_Where">
+        <where>
+			<if test="caseId != null">AND `case_id` = #{caseId}</if>
+			<if test="caseNumber != null">AND `case_number` = #{caseNumber}</if>
+			<if test="outId != null">AND `out_id` = #{outId}</if>
+			<if test="operateTime != null">AND `operate_time` = #{operateTime}</if>
+			<if test="outTime != null">AND `out_time` = #{outTime}</if>
+			<if test="operator != null">AND `operator` = #{operator}</if>
+			<if test="outStatus != null">AND `out_status` = #{outStatus}</if>
+			<if test="outBatch != null">AND `out_batch` = #{outBatch}</if>
+			<if test="commissionRate != null">AND `commission_rate` = #{commissionRate}</if>
+			<if test="commission != null">AND `commission` = #{commission}</if>
+			<if test="outBackAmt != null">AND `out_back_amt` = #{outBackAmt}</if>
+			<if test="overduePeriods != null">AND `overdue_periods` = #{overduePeriods}</if>
+			<if test="contractAmt != null">AND `contract_amt` = #{contractAmt}</if>
+			<if test="outoperationStatus != null">AND `outoperation_status` = #{outoperationStatus}</if>
+			<if test="companyCode != null">AND `company_code` = #{companyCode}</if>
+			<if test="overOutsourceTime != null">AND `over_outsource_time` = #{overOutsourceTime}</if>
+			<if test="endOutsourceTime != null">AND `end_outsource_time` = #{endOutsourceTime}</if>
+        </where>
+	</sql>
+
+	<select id="queryObject" resultType="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity">
+		select * from outsource_pool where id = #{value}
+	</select>
+
+	<select id="queryList" parameterType="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity" resultType="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity">
+		select * from outsource_pool
+        <include refid="Base_Find_Where" />
+	</select>
+    <select id="getOutSourceCaseByBatchnum" resultType="cn.fintecher.pangolin.model.OutsourcePoolBatchModel">
+		SELECT ci.id caseId,ci.case_number,ci.leave_case_flag,ci.followup_time,ci.hold_days,ci.left_days,ci.company_code,op.out_time delegationDate,
+		p.name personalName,p.id personalId,p.mobile_no,p.certificates_number idCard,max(ci.overdue_days) overdueDays,max(ci.overdue_periods) overduePeriods,
+		ci.collection_status,
+		ps.series_name,sum(ci.account_balance) accountBalance,ci.repay_date overDueDate,ci.product_name,ci.source_channel,ci.collection_method,
+		op.out_batch,op.over_outsource_time,sum(ci.overdue_amount) contractAmt,
+		u.real_name collectorName,
+		o.outs_name,op.out_id outsId
+		from outsource_pool op
+		left join outsource o on op.out_id = o.id
+		LEFT JOIN case_info ci on op.case_id = ci.id
+		LEFT JOIN personal p on p.id = ci.personal_id
+		left join `user` u on ci.current_collector = u.id
+		left join product_series ps on ps.id = ci.product_type
+		where op.out_status = 168 and ci.recover_remark = 0 and ci.case_pool_type = 227 and ci.collection_status = 21
+		<if test="outsId != null and outsId.trim()!=''">AND op.out_id = #{outsId}</if>
+		<if test="caseNumber != null and caseNumber.trim()!=''">AND op.case_number = #{caseNumber}</if>
+		<if test="personalName != null and personalName.trim()!=''">AND p.name like concat('%',#{personalName},'%') </if>
+		<if test="mobileNo != null and mobileNo.trim()!=''">AND p.mobile_no like concat('%',#{mobileNo},'%') </if>
+		<if test="sourceChannel != null">AND ci.source_channel &gt;= #{sourceChannel}  </if>
+		<if test="collectionMethod != null and collectionMethod.trim()!=''">AND ci.collection_method &gt;= #{collectionMethod}  </if>
+		<if test="companyCode != null and companyCode.trim()!=''">AND ci.company_code &gt;= #{companyCode}  </if>
+		<if test="batchNumber != null and batchNumber.trim()!=''">AND op.out_batch = #{batchNumber}  </if>
+        <if test="overDueDateStart != null">AND ci.repay_date &gt;= #{overDueDateStart}  </if>
+        <if test="overDueDateEnd != null">AND ci.repay_date &lt;= #{overDueDateEnd}  </if>
+		GROUP BY op.case_number
+		HAVING 1=1
+		<if test="overdueAmountStart != null">AND contractAmt &gt;= #{overdueAmountStart}  </if>
+		<if test="overdueAmountEnd != null">AND contractAmt &lt;= #{overdueAmountEnd}  </if>
+	</select>
+
+    <insert id="save" parameterType="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity">
+		insert into outsource_pool
+		(
+			`id`, 
+			`case_id`, 
+			`case_number`, 
+			`out_id`, 
+			`operate_time`, 
+			`out_time`, 
+			`operator`, 
+			`out_status`, 
+			`out_batch`, 
+			`commission_rate`, 
+			`commission`, 
+			`out_back_amt`, 
+			`overdue_periods`, 
+			`contract_amt`, 
+			`outoperation_status`, 
+			`company_code`, 
+			`over_outsource_time`, 
+			`end_outsource_time`
+		)
+		values
+		(
+			#{id}, 
+			#{caseId}, 
+			#{caseNumber}, 
+			#{outId}, 
+			#{operateTime}, 
+			#{outTime}, 
+			#{operator}, 
+			#{outStatus}, 
+			#{outBatch}, 
+			#{commissionRate}, 
+			#{commission}, 
+			#{outBackAmt}, 
+			#{overduePeriods}, 
+			#{contractAmt}, 
+			#{outoperationStatus}, 
+			#{companyCode}, 
+			#{overOutsourceTime}, 
+			#{endOutsourceTime}
+		)
+	</insert>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+		insert into outsource_pool
+		(
+			`id`, 
+			`case_id`, 
+			`case_number`, 
+			`out_id`, 
+			`operate_time`, 
+			`out_time`, 
+			`operator`, 
+			`out_status`, 
+			`out_batch`, 
+			`commission_rate`, 
+			`commission`, 
+			`out_back_amt`, 
+			`overdue_periods`, 
+			`contract_amt`, 
+			`outoperation_status`, 
+			`company_code`, 
+			`over_outsource_time`, 
+			`end_outsource_time`
+		)
+		values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+			#{item.id}, 
+			#{item.caseId}, 
+			#{item.caseNumber}, 
+			#{item.outId}, 
+			#{item.operateTime}, 
+			#{item.outTime}, 
+			#{item.operator}, 
+			#{item.outStatus}, 
+			#{item.outBatch}, 
+			#{item.commissionRate}, 
+			#{item.commission}, 
+			#{item.outBackAmt}, 
+			#{item.overduePeriods}, 
+			#{item.contractAmt}, 
+			#{item.outoperationStatus}, 
+			#{item.companyCode}, 
+			#{item.overOutsourceTime}, 
+			#{item.endOutsourceTime}
+		)
+        </foreach>
+	</insert>
+
+	<update id="update" parameterType="cn.fintecher.pangolin.report.entity.OutsourcePoolEntity">
+		update outsource_pool 
+		<set>
+			<if test="caseId != null and caseId.trim() != ''">`case_id` = #{caseId}, </if>
+			<if test="caseNumber != null and caseNumber.trim() != ''">`case_number` = #{caseNumber}, </if>
+			<if test="outId != null and outId.trim() != ''">`out_id` = #{outId}, </if>
+			<if test="operateTime != null">`operate_time` = #{operateTime}, </if>
+			<if test="outTime != null">`out_time` = #{outTime}, </if>
+			<if test="operator != null and operator.trim() != ''">`operator` = #{operator}, </if>
+			<if test="outStatus != null">`out_status` = #{outStatus}, </if>
+			<if test="outBatch != null and outBatch.trim() != ''">`out_batch` = #{outBatch}, </if>
+			<if test="commissionRate != null and commissionRate.trim() != ''">`commission_rate` = #{commissionRate}, </if>
+			<if test="commission != null">`commission` = #{commission}, </if>
+			<if test="outBackAmt != null">`out_back_amt` = #{outBackAmt}, </if>
+			<if test="overduePeriods != null and overduePeriods.trim() != ''">`overdue_periods` = #{overduePeriods}, </if>
+			<if test="contractAmt != null">`contract_amt` = #{contractAmt}, </if>
+			<if test="outoperationStatus != null">`outoperation_status` = #{outoperationStatus}, </if>
+			<if test="companyCode != null and companyCode.trim() != ''">`company_code` = #{companyCode}, </if>
+			<if test="overOutsourceTime != null">`over_outsource_time` = #{overOutsourceTime}, </if>
+			<if test="endOutsourceTime != null">`end_outsource_time` = #{endOutsourceTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from outsource_pool where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from outsource_pool where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

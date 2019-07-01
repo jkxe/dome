@@ -1,0 +1,87 @@
+spring:
+    profiles:
+        active: sit
+        include: swagger
+    devtools:
+      restart:
+        enabled: true
+      livereload:
+        enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+      serialization.indent_output: true
+    datasource:
+      type: com.zaxxer.hikari.HikariDataSource
+      url: jdbc:mysql://192.168.3.32:3306/pangolin_business_hangyin_sit?useUnicode=true&characterEncoding=utf8&useSSL=false
+      name:
+      username: root
+      password: Pangolin123!
+      #        url: jdbc:mysql://rm-bp16bz4773ez4e96y3o.mysql.rds.aliyuncs.com:3306/urge?useUnicode=true&characterEncoding=utf8&useSSL=false
+      #        name:
+      #        username: jwdstef
+      #        password: Jwd25463204
+      hikari:
+        data-source-properties:
+          rewriteBatchedStatements: true
+          cachePrepStmts: true
+          prepStmtCacheSize: 250
+          prepStmtCacheSqlLimit: 2048
+          useServerPrepStmts: true
+        connection-timeout: 36000
+        validation-timeout: 3000
+        maximum-pool-size: 250
+        max-lifetime: 1800000
+        idle-timeout: 60000
+        leak-detection-threshold: 240000
+        minimum-idle: 10
+    rabbitmq:
+      username: hangyin
+      password: hangyin
+      host: 192.168.3.2
+      virtual-host: hangyin_sit
+      port: 5672
+
+    cache:
+      jcache:
+        config: ehcache.xml
+    redis:
+      database: 15
+      host: 192.168.3.2
+      port: 4307
+      password: redis123456
+      expireTime: 3600
+
+eureka:
+  instance:
+    hostname: business-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+server:
+  port: 9001
+
+pangolin:
+  companyCode: 1001
+  tempFileDir: /usr/local/src/pangolin/temp
+  UDesk:
+    callerEmail: ceshi1007@51xf.cn
+    secret: f2eef2a0f660cdd1a3841af2b58f0dd5
+    callUrl: https://51xf.udesk.cn/
+
+cuibei:
+  baiduMap:
+    webUrl: http://api.map.baidu.com/cloudgc/v1?city=全国&ak=
+    webAk: lHaYCXlRADlhW0fnv8tpIhCfqD85pTSr
+
+threadPool:
+  corePoolSize: 400
+  maxPoolSize: 500
+  keepAliveSeconds : 60
+  queueCapacity: 500
+  allowCoreThreadTimeout : false
+  threadNamePrefix: pangolin-
+
+

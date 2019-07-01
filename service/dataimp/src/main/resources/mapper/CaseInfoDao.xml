@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.fintecher.pangolin.dataimp.mapper.CaseInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity" id="caseInfoMap">
+        <result property="id" column="id"/>
+        <result property="departId" column="depart_id"/>
+        <result property="personalId" column="personal_id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="batchNumber" column="batch_number"/>
+        <result property="caseNumber" column="case_number"/>
+        <result property="collectionType" column="collection_type"/>
+        <result property="productId" column="product_id"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="contractAmount" column="contract_amount"/>
+        <result property="overdueAmount" column="overdue_amount"/>
+        <result property="leftCapital" column="left_capital"/>
+        <result property="leftInterest" column="left_interest"/>
+        <result property="overdueCapital" column="overdue_capital"/>
+        <result property="overdueInterest" column="overdue_interest"/>
+        <result property="overdueFine" column="overdue_fine"/>
+        <result property="overdueDelayFine" column="overdue_delay_fine"/>
+        <result property="periods" column="periods"/>
+        <result property="perDueDate" column="per_due_date"/>
+        <result property="perPayAmount" column="per_pay_amount"/>
+        <result property="overduePeriods" column="overdue_periods"/>
+        <result property="overdueDays" column="overdue_days"/>
+        <result property="overDueDate" column="over_due_date"/>
+        <result property="hasPayAmount" column="has_pay_amount"/>
+        <result property="hasPayPeriods" column="has_pay_periods"/>
+        <result property="latelyPayDate" column="lately_pay_date"/>
+        <result property="latelyPayAmount" column="lately_pay_amount"/>
+        <result property="latelyCollector" column="lately_collector"/>
+        <result property="currentCollector" column="current_collector"/>
+        <result property="assistFlag" column="assist_flag"/>
+        <result property="assistCollector" column="assist_collector"/>
+        <result property="assistStatus" column="assist_status"/>
+        <result property="assistWay" column="assist_way"/>
+        <result property="holdDays" column="hold_days"/>
+        <result property="leftDays" column="left_days"/>
+        <result property="caseType" column="case_type"/>
+        <result property="leaveCaseFlag" column="leave_case_flag"/>
+        <result property="leaveDate" column="leave_date"/>
+        <result property="hasLeaveDays" column="has_leave_days"/>
+        <result property="caseMark" column="case_mark"/>
+        <result property="followUpNum" column="follow_up_num"/>
+        <result property="caseFollowInTime" column="case_follow_in_time"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="principalId" column="principal_id"/>
+        <result property="collectionStatus" column="collection_status"/>
+        <result property="orderId" column="order_id"/>
+        <result property="delegationDate" column="delegation_date"/>
+        <result property="closeDate" column="close_date"/>
+        <result property="commissionRate" column="commission_rate"/>
+        <result property="handNumber" column="hand_number"/>
+        <result property="loanDate" column="loan_date"/>
+        <result property="overdueManageFee" column="overdue_manage_fee"/>
+        <result property="handUpFlag" column="hand_up_flag"/>
+        <result property="derateAmt" column="derate_amt"/>
+        <result property="realPayAmount" column="real_pay_amount"/>
+        <result property="earlySettleAmt" column="early_settle_amt"/>
+        <result property="earlyRealSettleAmt" column="early_real_settle_amt"/>
+        <result property="earlyDerateAmt" column="early_derate_amt"/>
+        <result property="otherAmt" column="other_amt"/>
+        <result property="score" column="score"/>
+        <result property="operator" column="operator"/>
+        <result property="operatorTime" column="operator_time"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="endRemark" column="end_remark"/>
+        <result property="followupTime" column="followup_time"/>
+        <result property="followupBack" column="followup_back"/>
+        <result property="promiseAmt" column="promise_amt"/>
+        <result property="promiseTime" column="promise_time"/>
+        <result property="endType" column="end_type"/>
+        <result property="creditAmount" column="credit_amount"/>
+        <result property="circulationStatus" column="circulation_status"/>
+        <result property="memo" column="memo"/>
+        <result property="firstPayDate" column="first_pay_date"/>
+        <result property="accountAge" column="account_age"/>
+        <result property="recoverWay" column="recover_way"/>
+        <result property="recoverRemark" column="recover_remark"/>
+        <result property="casePoolType" column="case_pool_type"/>
+        <result property="turnFromPool" column="turn_from_pool"/>
+        <result property="productType" column="product_type"/>
+        <result property="productName" column="product_name"/>
+        <result property="executedPeriods" column="executed_periods"/>
+        <result property="maxOverdueDays" column="max_overdue_days"/>
+        <result property="latesDateReturn" column="lates_date_return"/>
+        <result property="leftPeriods" column="left_periods"/>
+        <result property="unpaidPrincipal" column="unpaid_principal"/>
+        <result property="accountBalance" column="account_balance"/>
+        <result property="unpaidInterest" column="unpaid_interest"/>
+        <result property="unpaidFine" column="unpaid_fine"/>
+        <result property="unpaidOtherInterest" column="unpaid_other_interest"/>
+        <result property="unpaidMthFee" column="unpaid_mth_fee"/>
+        <result property="unpaidOtherFee" column="unpaid_other_fee"/>
+        <result property="unpaidLpc" column="unpaid_lpc"/>
+        <result property="currPnltInterest" column="curr_pnlt_interest"/>
+        <result property="remainFee" column="remain_fee"/>
+        <result property="overdueAccountNumber" column="overdue_account_number"/>
+        <result property="inColcnt" column="in_colcnt"/>
+        <result property="outColcnt" column="out_colcnt"/>
+        <result property="settleAmount" column="settle_amount"/>
+        <result property="cleanDate" column="clean_date"/>
+        <result property="settleDate" column="settle_date"/>
+        <result property="pnltInterest" column="pnlt_interest"/>
+        <result property="pnltFine" column="pnlt_fine"/>
+        <result property="intoApplyId" column="into_apply_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="intoTime" column="into_time"/>
+        <result property="sourceChannel" column="source_channel"/>
+        <result property="collectionMethod" column="collection_method"/>
+        <result property="loanPayTime" column="loan_pay_time"/>
+        <result property="fiveLevel" column="five_level"/>
+        <result property="applyPeriod" column="apply_period"/>
+        <result property="creditPeriod" column="credit_period"/>
+        <result property="applyAmount" column="apply_amount"/>
+        <result property="loanPeriod" column="loan_period"/>
+        <result property="loanAmount" column="loan_amount"/>
+        <result property="overdueCapitalInterest" column="overdue_capital_interest"/>
+        <result property="overdueInterestBefore" column="overdue_interest_before"/>
+        <result property="overdueInterestCurrent" column="overdue_interest_current"/>
+        <result property="overdueDelayFineBefore" column="overdue_delay_fine_before"/>
+        <result property="overdueDelayFineCurrent" column="overdue_delay_fine_current"/>
+        <result property="currentDebtAmount" column="current_debt_amount"/>
+        <result property="loanPurpose" column="loan_purpose"/>
+        <result property="loanInvoiceNumber" column="loan_invoice_number"/>
+        <result property="preRepayPrincipal" column="pre_repay_principal"/>
+        <result property="advancesFlag" column="advances_flag"/>
+        <result property="overdueManageFeeBefore" column="overdue_manage_fee_before"/>
+        <result property="overdueManageFeeCurrent" column="overdue_manage_fee_current"/>
+        <result property="repayDate" column="repay_date"/>
+        <result property="movingBackFlag" column="moving_back_flag"/>
+        <result property="verficationStatus" column="verfication_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="stopTime" column="stop_time"/>
+        <result property="riskType" column="risk_type"/>
+        <result property="overdueCount" column="overdue_count"/>
+        <result property="busDate" column="bus_date"/>
+        <result property="queueId" column="queue_id"/>
+        <result property="queueName" column="queue_name"/>
+        <result property="exceptionFlag" column="exception_flag"/>
+        <result property="exceptionCheckTime" column="exception_check_time"/>
+        <result property="exceptionType" column="exception_type"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		`depart_id`, 
+		`personal_id`, 
+		`area_id`, 
+		`batch_number`, 
+		`case_number`, 
+		`collection_type`, 
+		`product_id`, 
+		`contract_number`, 
+		`contract_amount`, 
+		`overdue_amount`, 
+		`left_capital`, 
+		`left_interest`, 
+		`overdue_capital`, 
+		`overdue_interest`, 
+		`overdue_fine`, 
+		`overdue_delay_fine`, 
+		`periods`, 
+		`per_due_date`, 
+		`per_pay_amount`, 
+		`overdue_periods`, 
+		`overdue_days`, 
+		`over_due_date`, 
+		`has_pay_amount`, 
+		`has_pay_periods`, 
+		`lately_pay_date`, 
+		`lately_pay_amount`, 
+		`lately_collector`, 
+		`current_collector`, 
+		`assist_flag`, 
+		`assist_collector`, 
+		`assist_status`, 
+		`assist_way`, 
+		`hold_days`, 
+		`left_days`, 
+		`case_type`, 
+		`leave_case_flag`, 
+		`leave_date`, 
+		`has_leave_days`, 
+		`case_mark`, 
+		`follow_up_num`, 
+		`case_follow_in_time`, 
+		`pay_status`, 
+		`principal_id`, 
+		`collection_status`, 
+		`order_id`, 
+		`delegation_date`, 
+		`close_date`, 
+		`commission_rate`, 
+		`hand_number`, 
+		`loan_date`, 
+		`overdue_manage_fee`, 
+		`hand_up_flag`, 
+		`derate_amt`, 
+		`real_pay_amount`, 
+		`early_settle_amt`, 
+		`early_real_settle_amt`, 
+		`early_derate_amt`, 
+		`other_amt`, 
+		`score`, 
+		`operator`, 
+		`operator_time`, 
+		`company_code`, 
+		`end_remark`, 
+		`followup_time`, 
+		`followup_back`, 
+		`promise_amt`, 
+		`promise_time`, 
+		`end_type`, 
+		`credit_amount`, 
+		`circulation_status`, 
+		`memo`, 
+		`first_pay_date`, 
+		`account_age`, 
+		`recover_way`, 
+		`recover_remark`, 
+		`case_pool_type`, 
+		`turn_from_pool`, 
+		`product_type`, 
+		`product_name`, 
+		`executed_periods`, 
+		`max_overdue_days`, 
+		`lates_date_return`, 
+		`left_periods`, 
+		`unpaid_principal`, 
+		`account_balance`, 
+		`unpaid_interest`, 
+		`unpaid_fine`, 
+		`unpaid_other_interest`, 
+		`unpaid_mth_fee`, 
+		`unpaid_other_fee`, 
+		`unpaid_lpc`, 
+		`curr_pnlt_interest`, 
+		`remain_fee`, 
+		`overdue_account_number`, 
+		`in_colcnt`, 
+		`out_colcnt`, 
+		`settle_amount`, 
+		`clean_date`, 
+		`settle_date`, 
+		`pnlt_interest`, 
+		`pnlt_fine`, 
+		`into_apply_id`, 
+		`customer_id`, 
+		`into_time`, 
+		`source_channel`, 
+		`collection_method`, 
+		`loan_pay_time`, 
+		`five_level`, 
+		`apply_period`, 
+		`credit_period`, 
+		`apply_amount`, 
+		`loan_period`, 
+		`loan_amount`, 
+		`overdue_capital_interest`, 
+		`overdue_interest_before`, 
+		`overdue_interest_current`, 
+		`overdue_delay_fine_before`, 
+		`overdue_delay_fine_current`, 
+		`current_debt_amount`, 
+		`loan_purpose`, 
+		`loan_invoice_number`, 
+		`pre_repay_principal`, 
+		`advances_flag`, 
+		`overdue_manage_fee_before`, 
+		`overdue_manage_fee_current`, 
+		`repay_date`, 
+		`moving_back_flag`, 
+		`verfication_status`, 
+		`create_time`, 
+		`update_time`, 
+		`stop_time`, 
+		`risk_type`, 
+		`overdue_count`, 
+		`bus_date`, 
+		`queue_id`, 
+		`queue_name`, 
+		`exception_flag`, 
+		`exception_check_time`, 
+		`exception_type`
+	</sql>
+    <sql id="Base_Find_Where">
+        <where>
+			<if test="departId != null">AND `depart_id` = #{departId}</if>
+			<if test="personalId != null">AND `personal_id` = #{personalId}</if>
+			<if test="areaId != null">AND `area_id` = #{areaId}</if>
+			<if test="batchNumber != null">AND `batch_number` = #{batchNumber}</if>
+			<if test="caseNumber != null">AND `case_number` = #{caseNumber}</if>
+			<if test="collectionType != null">AND `collection_type` = #{collectionType}</if>
+			<if test="productId != null">AND `product_id` = #{productId}</if>
+			<if test="contractNumber != null">AND `contract_number` = #{contractNumber}</if>
+			<if test="contractAmount != null">AND `contract_amount` = #{contractAmount}</if>
+			<if test="overdueAmount != null">AND `overdue_amount` = #{overdueAmount}</if>
+			<if test="leftCapital != null">AND `left_capital` = #{leftCapital}</if>
+			<if test="leftInterest != null">AND `left_interest` = #{leftInterest}</if>
+			<if test="overdueCapital != null">AND `overdue_capital` = #{overdueCapital}</if>
+			<if test="overdueInterest != null">AND `overdue_interest` = #{overdueInterest}</if>
+			<if test="overdueFine != null">AND `overdue_fine` = #{overdueFine}</if>
+			<if test="overdueDelayFine != null">AND `overdue_delay_fine` = #{overdueDelayFine}</if>
+			<if test="periods != null">AND `periods` = #{periods}</if>
+			<if test="perDueDate != null">AND `per_due_date` = #{perDueDate}</if>
+			<if test="perPayAmount != null">AND `per_pay_amount` = #{perPayAmount}</if>
+			<if test="overduePeriods != null">AND `overdue_periods` = #{overduePeriods}</if>
+			<if test="overdueDays != null">AND `overdue_days` = #{overdueDays}</if>
+			<if test="overDueDate != null">AND `over_due_date` = #{overDueDate}</if>
+			<if test="hasPayAmount != null">AND `has_pay_amount` = #{hasPayAmount}</if>
+			<if test="hasPayPeriods != null">AND `has_pay_periods` = #{hasPayPeriods}</if>
+			<if test="latelyPayDate != null">AND `lately_pay_date` = #{latelyPayDate}</if>
+			<if test="latelyPayAmount != null">AND `lately_pay_amount` = #{latelyPayAmount}</if>
+			<if test="latelyCollector != null">AND `lately_collector` = #{latelyCollector}</if>
+			<if test="currentCollector != null">AND `current_collector` = #{currentCollector}</if>
+			<if test="assistFlag != null">AND `assist_flag` = #{assistFlag}</if>
+			<if test="assistCollector != null">AND `assist_collector` = #{assistCollector}</if>
+			<if test="assistStatus != null">AND `assist_status` = #{assistStatus}</if>
+			<if test="assistWay != null">AND `assist_way` = #{assistWay}</if>
+			<if test="holdDays != null">AND `hold_days` = #{holdDays}</if>
+			<if test="leftDays != null">AND `left_days` = #{leftDays}</if>
+			<if test="caseType != null">AND `case_type` = #{caseType}</if>
+			<if test="leaveCaseFlag != null">AND `leave_case_flag` = #{leaveCaseFlag}</if>
+			<if test="leaveDate != null">AND `leave_date` = #{leaveDate}</if>
+			<if test="hasLeaveDays != null">AND `has_leave_days` = #{hasLeaveDays}</if>
+			<if test="caseMark != null">AND `case_mark` = #{caseMark}</if>
+			<if test="followUpNum != null">AND `follow_up_num` = #{followUpNum}</if>
+			<if test="caseFollowInTime != null">AND `case_follow_in_time` = #{caseFollowInTime}</if>
+			<if test="payStatus != null">AND `pay_status` = #{payStatus}</if>
+			<if test="principalId != null">AND `principal_id` = #{principalId}</if>
+			<if test="collectionStatus != null">AND `collection_status` = #{collectionStatus}</if>
+			<if test="orderId != null">AND `order_id` = #{orderId}</if>
+			<if test="delegationDate != null">AND `delegation_date` = #{delegationDate}</if>
+			<if test="closeDate != null">AND `close_date` = #{closeDate}</if>
+			<if test="commissionRate != null">AND `commission_rate` = #{commissionRate}</if>
+			<if test="handNumber != null">AND `hand_number` = #{handNumber}</if>
+			<if test="loanDate != null">AND `loan_date` = #{loanDate}</if>
+			<if test="overdueManageFee != null">AND `overdue_manage_fee` = #{overdueManageFee}</if>
+			<if test="handUpFlag != null">AND `hand_up_flag` = #{handUpFlag}</if>
+			<if test="derateAmt != null">AND `derate_amt` = #{derateAmt}</if>
+			<if test="realPayAmount != null">AND `real_pay_amount` = #{realPayAmount}</if>
+			<if test="earlySettleAmt != null">AND `early_settle_amt` = #{earlySettleAmt}</if>
+			<if test="earlyRealSettleAmt != null">AND `early_real_settle_amt` = #{earlyRealSettleAmt}</if>
+			<if test="earlyDerateAmt != null">AND `early_derate_amt` = #{earlyDerateAmt}</if>
+			<if test="otherAmt != null">AND `other_amt` = #{otherAmt}</if>
+			<if test="score != null">AND `score` = #{score}</if>
+			<if test="operator != null">AND `operator` = #{operator}</if>
+			<if test="operatorTime != null">AND `operator_time` = #{operatorTime}</if>
+			<if test="companyCode != null">AND `company_code` = #{companyCode}</if>
+			<if test="endRemark != null">AND `end_remark` = #{endRemark}</if>
+			<if test="followupTime != null">AND `followup_time` = #{followupTime}</if>
+			<if test="followupBack != null">AND `followup_back` = #{followupBack}</if>
+			<if test="promiseAmt != null">AND `promise_amt` = #{promiseAmt}</if>
+			<if test="promiseTime != null">AND `promise_time` = #{promiseTime}</if>
+			<if test="endType != null">AND `end_type` = #{endType}</if>
+			<if test="creditAmount != null">AND `credit_amount` = #{creditAmount}</if>
+			<if test="circulationStatus != null">AND `circulation_status` = #{circulationStatus}</if>
+			<if test="memo != null">AND `memo` = #{memo}</if>
+			<if test="firstPayDate != null">AND `first_pay_date` = #{firstPayDate}</if>
+			<if test="accountAge != null">AND `account_age` = #{accountAge}</if>
+			<if test="recoverWay != null">AND `recover_way` = #{recoverWay}</if>
+			<if test="recoverRemark != null">AND `recover_remark` = #{recoverRemark}</if>
+			<if test="casePoolType != null">AND `case_pool_type` = #{casePoolType}</if>
+			<if test="turnFromPool != null">AND `turn_from_pool` = #{turnFromPool}</if>
+			<if test="productType != null">AND `product_type` = #{productType}</if>
+			<if test="productName != null">AND `product_name` = #{productName}</if>
+			<if test="executedPeriods != null">AND `executed_periods` = #{executedPeriods}</if>
+			<if test="maxOverdueDays != null">AND `max_overdue_days` = #{maxOverdueDays}</if>
+			<if test="latesDateReturn != null">AND `lates_date_return` = #{latesDateReturn}</if>
+			<if test="leftPeriods != null">AND `left_periods` = #{leftPeriods}</if>
+			<if test="unpaidPrincipal != null">AND `unpaid_principal` = #{unpaidPrincipal}</if>
+			<if test="accountBalance != null">AND `account_balance` = #{accountBalance}</if>
+			<if test="unpaidInterest != null">AND `unpaid_interest` = #{unpaidInterest}</if>
+			<if test="unpaidFine != null">AND `unpaid_fine` = #{unpaidFine}</if>
+			<if test="unpaidOtherInterest != null">AND `unpaid_other_interest` = #{unpaidOtherInterest}</if>
+			<if test="unpaidMthFee != null">AND `unpaid_mth_fee` = #{unpaidMthFee}</if>
+			<if test="unpaidOtherFee != null">AND `unpaid_other_fee` = #{unpaidOtherFee}</if>
+			<if test="unpaidLpc != null">AND `unpaid_lpc` = #{unpaidLpc}</if>
+			<if test="currPnltInterest != null">AND `curr_pnlt_interest` = #{currPnltInterest}</if>
+			<if test="remainFee != null">AND `remain_fee` = #{remainFee}</if>
+			<if test="overdueAccountNumber != null">AND `overdue_account_number` = #{overdueAccountNumber}</if>
+			<if test="inColcnt != null">AND `in_colcnt` = #{inColcnt}</if>
+			<if test="outColcnt != null">AND `out_colcnt` = #{outColcnt}</if>
+			<if test="settleAmount != null">AND `settle_amount` = #{settleAmount}</if>
+			<if test="cleanDate != null">AND `clean_date` = #{cleanDate}</if>
+			<if test="settleDate != null">AND `settle_date` = #{settleDate}</if>
+			<if test="pnltInterest != null">AND `pnlt_interest` = #{pnltInterest}</if>
+			<if test="pnltFine != null">AND `pnlt_fine` = #{pnltFine}</if>
+			<if test="intoApplyId != null">AND `into_apply_id` = #{intoApplyId}</if>
+			<if test="customerId != null">AND `customer_id` = #{customerId}</if>
+			<if test="intoTime != null">AND `into_time` = #{intoTime}</if>
+			<if test="sourceChannel != null">AND `source_channel` = #{sourceChannel}</if>
+			<if test="collectionMethod != null">AND `collection_method` = #{collectionMethod}</if>
+			<if test="loanPayTime != null">AND `loan_pay_time` = #{loanPayTime}</if>
+			<if test="fiveLevel != null">AND `five_level` = #{fiveLevel}</if>
+			<if test="applyPeriod != null">AND `apply_period` = #{applyPeriod}</if>
+			<if test="creditPeriod != null">AND `credit_period` = #{creditPeriod}</if>
+			<if test="applyAmount != null">AND `apply_amount` = #{applyAmount}</if>
+			<if test="loanPeriod != null">AND `loan_period` = #{loanPeriod}</if>
+			<if test="loanAmount != null">AND `loan_amount` = #{loanAmount}</if>
+			<if test="overdueCapitalInterest != null">AND `overdue_capital_interest` = #{overdueCapitalInterest}</if>
+			<if test="overdueInterestBefore != null">AND `overdue_interest_before` = #{overdueInterestBefore}</if>
+			<if test="overdueInterestCurrent != null">AND `overdue_interest_current` = #{overdueInterestCurrent}</if>
+			<if test="overdueDelayFineBefore != null">AND `overdue_delay_fine_before` = #{overdueDelayFineBefore}</if>
+			<if test="overdueDelayFineCurrent != null">AND `overdue_delay_fine_current` = #{overdueDelayFineCurrent}</if>
+			<if test="currentDebtAmount != null">AND `current_debt_amount` = #{currentDebtAmount}</if>
+			<if test="loanPurpose != null">AND `loan_purpose` = #{loanPurpose}</if>
+			<if test="loanInvoiceNumber != null">AND `loan_invoice_number` = #{loanInvoiceNumber}</if>
+			<if test="preRepayPrincipal != null">AND `pre_repay_principal` = #{preRepayPrincipal}</if>
+			<if test="advancesFlag != null">AND `advances_flag` = #{advancesFlag}</if>
+			<if test="overdueManageFeeBefore != null">AND `overdue_manage_fee_before` = #{overdueManageFeeBefore}</if>
+			<if test="overdueManageFeeCurrent != null">AND `overdue_manage_fee_current` = #{overdueManageFeeCurrent}</if>
+			<if test="repayDate != null">AND `repay_date` = #{repayDate}</if>
+			<if test="movingBackFlag != null">AND `moving_back_flag` = #{movingBackFlag}</if>
+			<if test="verficationStatus != null">AND `verfication_status` = #{verficationStatus}</if>
+			<if test="createTime != null">AND `create_time` = #{createTime}</if>
+			<if test="updateTime != null">AND `update_time` = #{updateTime}</if>
+			<if test="stopTime != null">AND `stop_time` = #{stopTime}</if>
+			<if test="riskType != null">AND `risk_type` = #{riskType}</if>
+			<if test="overdueCount != null">AND `overdue_count` = #{overdueCount}</if>
+			<if test="busDate != null">AND `bus_date` = #{busDate}</if>
+			<if test="queueId != null">AND `queue_id` = #{queueId}</if>
+			<if test="queueName != null">AND `queue_name` = #{queueName}</if>
+			<if test="exceptionFlag != null">AND `exception_flag` = #{exceptionFlag}</if>
+			<if test="exceptionCheckTime != null">AND `exception_check_time` = #{exceptionCheckTime}</if>
+			<if test="exceptionType != null">AND `exception_type` = #{exceptionType}</if>
+        </where>
+	</sql>
+
+	<select id="queryObject" resultType="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity">
+		select * from case_info where id = #{value}
+	</select>
+
+	<select id="queryList" parameterType="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity" resultType="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity">
+		select * from case_info
+        <include refid="Base_Find_Where" />
+	</select>
+
+	<insert id="save" parameterType="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity">
+		insert into case_info
+		(
+			`id`, 
+			`depart_id`, 
+			`personal_id`, 
+			`area_id`, 
+			`batch_number`, 
+			`case_number`, 
+			`collection_type`, 
+			`product_id`, 
+			`contract_number`, 
+			`contract_amount`, 
+			`overdue_amount`, 
+			`left_capital`, 
+			`left_interest`, 
+			`overdue_capital`, 
+			`overdue_interest`, 
+			`overdue_fine`, 
+			`overdue_delay_fine`, 
+			`periods`, 
+			`per_due_date`, 
+			`per_pay_amount`, 
+			`overdue_periods`, 
+			`overdue_days`, 
+			`over_due_date`, 
+			`has_pay_amount`, 
+			`has_pay_periods`, 
+			`lately_pay_date`, 
+			`lately_pay_amount`, 
+			`lately_collector`, 
+			`current_collector`, 
+			`assist_flag`, 
+			`assist_collector`, 
+			`assist_status`, 
+			`assist_way`, 
+			`hold_days`, 
+			`left_days`, 
+			`case_type`, 
+			`leave_case_flag`, 
+			`leave_date`, 
+			`has_leave_days`, 
+			`case_mark`, 
+			`follow_up_num`, 
+			`case_follow_in_time`, 
+			`pay_status`, 
+			`principal_id`, 
+			`collection_status`, 
+			`order_id`, 
+			`delegation_date`, 
+			`close_date`, 
+			`commission_rate`, 
+			`hand_number`, 
+			`loan_date`, 
+			`overdue_manage_fee`, 
+			`hand_up_flag`, 
+			`derate_amt`, 
+			`real_pay_amount`, 
+			`early_settle_amt`, 
+			`early_real_settle_amt`, 
+			`early_derate_amt`, 
+			`other_amt`, 
+			`score`, 
+			`operator`, 
+			`operator_time`, 
+			`company_code`, 
+			`end_remark`, 
+			`followup_time`, 
+			`followup_back`, 
+			`promise_amt`, 
+			`promise_time`, 
+			`end_type`, 
+			`credit_amount`, 
+			`circulation_status`, 
+			`memo`, 
+			`first_pay_date`, 
+			`account_age`, 
+			`recover_way`, 
+			`recover_remark`, 
+			`case_pool_type`, 
+			`turn_from_pool`, 
+			`product_type`, 
+			`product_name`, 
+			`executed_periods`, 
+			`max_overdue_days`, 
+			`lates_date_return`, 
+			`left_periods`, 
+			`unpaid_principal`, 
+			`account_balance`, 
+			`unpaid_interest`, 
+			`unpaid_fine`, 
+			`unpaid_other_interest`, 
+			`unpaid_mth_fee`, 
+			`unpaid_other_fee`, 
+			`unpaid_lpc`, 
+			`curr_pnlt_interest`, 
+			`remain_fee`, 
+			`overdue_account_number`, 
+			`in_colcnt`, 
+			`out_colcnt`, 
+			`settle_amount`, 
+			`clean_date`, 
+			`settle_date`, 
+			`pnlt_interest`, 
+			`pnlt_fine`, 
+			`into_apply_id`, 
+			`customer_id`, 
+			`into_time`, 
+			`source_channel`, 
+			`collection_method`, 
+			`loan_pay_time`, 
+			`five_level`, 
+			`apply_period`, 
+			`credit_period`, 
+			`apply_amount`, 
+			`loan_period`, 
+			`loan_amount`, 
+			`overdue_capital_interest`, 
+			`overdue_interest_before`, 
+			`overdue_interest_current`, 
+			`overdue_delay_fine_before`, 
+			`overdue_delay_fine_current`, 
+			`current_debt_amount`, 
+			`loan_purpose`, 
+			`loan_invoice_number`, 
+			`pre_repay_principal`, 
+			`advances_flag`, 
+			`overdue_manage_fee_before`, 
+			`overdue_manage_fee_current`, 
+			`repay_date`, 
+			`moving_back_flag`, 
+			`verfication_status`, 
+			`create_time`, 
+			`update_time`, 
+			`stop_time`, 
+			`risk_type`, 
+			`overdue_count`, 
+			`bus_date`, 
+			`queue_id`, 
+			`queue_name`, 
+			`exception_flag`, 
+			`exception_check_time`, 
+			`exception_type`
+		)
+		values
+		(
+			#{id}, 
+			#{departId}, 
+			#{personalId}, 
+			#{areaId}, 
+			#{batchNumber}, 
+			#{caseNumber}, 
+			#{collectionType}, 
+			#{productId}, 
+			#{contractNumber}, 
+			#{contractAmount}, 
+			#{overdueAmount}, 
+			#{leftCapital}, 
+			#{leftInterest}, 
+			#{overdueCapital}, 
+			#{overdueInterest}, 
+			#{overdueFine}, 
+			#{overdueDelayFine}, 
+			#{periods}, 
+			#{perDueDate}, 
+			#{perPayAmount}, 
+			#{overduePeriods}, 
+			#{overdueDays}, 
+			#{overDueDate}, 
+			#{hasPayAmount}, 
+			#{hasPayPeriods}, 
+			#{latelyPayDate}, 
+			#{latelyPayAmount}, 
+			#{latelyCollector}, 
+			#{currentCollector}, 
+			#{assistFlag}, 
+			#{assistCollector}, 
+			#{assistStatus}, 
+			#{assistWay}, 
+			#{holdDays}, 
+			#{leftDays}, 
+			#{caseType}, 
+			#{leaveCaseFlag}, 
+			#{leaveDate}, 
+			#{hasLeaveDays}, 
+			#{caseMark}, 
+			#{followUpNum}, 
+			#{caseFollowInTime}, 
+			#{payStatus}, 
+			#{principalId}, 
+			#{collectionStatus}, 
+			#{orderId}, 
+			#{delegationDate}, 
+			#{closeDate}, 
+			#{commissionRate}, 
+			#{handNumber}, 
+			#{loanDate}, 
+			#{overdueManageFee}, 
+			#{handUpFlag}, 
+			#{derateAmt}, 
+			#{realPayAmount}, 
+			#{earlySettleAmt}, 
+			#{earlyRealSettleAmt}, 
+			#{earlyDerateAmt}, 
+			#{otherAmt}, 
+			#{score}, 
+			#{operator}, 
+			#{operatorTime}, 
+			#{companyCode}, 
+			#{endRemark}, 
+			#{followupTime}, 
+			#{followupBack}, 
+			#{promiseAmt}, 
+			#{promiseTime}, 
+			#{endType}, 
+			#{creditAmount}, 
+			#{circulationStatus}, 
+			#{memo}, 
+			#{firstPayDate}, 
+			#{accountAge}, 
+			#{recoverWay}, 
+			#{recoverRemark}, 
+			#{casePoolType}, 
+			#{turnFromPool}, 
+			#{productType}, 
+			#{productName}, 
+			#{executedPeriods}, 
+			#{maxOverdueDays}, 
+			#{latesDateReturn}, 
+			#{leftPeriods}, 
+			#{unpaidPrincipal}, 
+			#{accountBalance}, 
+			#{unpaidInterest}, 
+			#{unpaidFine}, 
+			#{unpaidOtherInterest}, 
+			#{unpaidMthFee}, 
+			#{unpaidOtherFee}, 
+			#{unpaidLpc}, 
+			#{currPnltInterest}, 
+			#{remainFee}, 
+			#{overdueAccountNumber}, 
+			#{inColcnt}, 
+			#{outColcnt}, 
+			#{settleAmount}, 
+			#{cleanDate}, 
+			#{settleDate}, 
+			#{pnltInterest}, 
+			#{pnltFine}, 
+			#{intoApplyId}, 
+			#{customerId}, 
+			#{intoTime}, 
+			#{sourceChannel}, 
+			#{collectionMethod}, 
+			#{loanPayTime}, 
+			#{fiveLevel}, 
+			#{applyPeriod}, 
+			#{creditPeriod}, 
+			#{applyAmount}, 
+			#{loanPeriod}, 
+			#{loanAmount}, 
+			#{overdueCapitalInterest}, 
+			#{overdueInterestBefore}, 
+			#{overdueInterestCurrent}, 
+			#{overdueDelayFineBefore}, 
+			#{overdueDelayFineCurrent}, 
+			#{currentDebtAmount}, 
+			#{loanPurpose}, 
+			#{loanInvoiceNumber}, 
+			#{preRepayPrincipal}, 
+			#{advancesFlag}, 
+			#{overdueManageFeeBefore}, 
+			#{overdueManageFeeCurrent}, 
+			#{repayDate}, 
+			#{movingBackFlag}, 
+			#{verficationStatus}, 
+			#{createTime}, 
+			#{updateTime}, 
+			#{stopTime}, 
+			#{riskType}, 
+			#{overdueCount}, 
+			#{busDate}, 
+			#{queueId}, 
+			#{queueName}, 
+			#{exceptionFlag}, 
+			#{exceptionCheckTime}, 
+			#{exceptionType}
+		)
+	</insert>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+		insert into case_info
+		(
+			`id`, 
+			`depart_id`, 
+			`personal_id`, 
+			`area_id`, 
+			`batch_number`, 
+			`case_number`, 
+			`collection_type`, 
+			`product_id`, 
+			`contract_number`, 
+			`contract_amount`, 
+			`overdue_amount`, 
+			`left_capital`, 
+			`left_interest`, 
+			`overdue_capital`, 
+			`overdue_interest`, 
+			`overdue_fine`, 
+			`overdue_delay_fine`, 
+			`periods`, 
+			`per_due_date`, 
+			`per_pay_amount`, 
+			`overdue_periods`, 
+			`overdue_days`, 
+			`over_due_date`, 
+			`has_pay_amount`, 
+			`has_pay_periods`, 
+			`lately_pay_date`, 
+			`lately_pay_amount`, 
+			`lately_collector`, 
+			`current_collector`, 
+			`assist_flag`, 
+			`assist_collector`, 
+			`assist_status`, 
+			`assist_way`, 
+			`hold_days`, 
+			`left_days`, 
+			`case_type`, 
+			`leave_case_flag`, 
+			`leave_date`, 
+			`has_leave_days`, 
+			`case_mark`, 
+			`follow_up_num`, 
+			`case_follow_in_time`, 
+			`pay_status`, 
+			`principal_id`, 
+			`collection_status`, 
+			`order_id`, 
+			`delegation_date`, 
+			`close_date`, 
+			`commission_rate`, 
+			`hand_number`, 
+			`loan_date`, 
+			`overdue_manage_fee`, 
+			`hand_up_flag`, 
+			`derate_amt`, 
+			`real_pay_amount`, 
+			`early_settle_amt`, 
+			`early_real_settle_amt`, 
+			`early_derate_amt`, 
+			`other_amt`, 
+			`score`, 
+			`operator`, 
+			`operator_time`, 
+			`company_code`, 
+			`end_remark`, 
+			`followup_time`, 
+			`followup_back`, 
+			`promise_amt`, 
+			`promise_time`, 
+			`end_type`, 
+			`credit_amount`, 
+			`circulation_status`, 
+			`memo`, 
+			`first_pay_date`, 
+			`account_age`, 
+			`recover_way`, 
+			`recover_remark`, 
+			`case_pool_type`, 
+			`turn_from_pool`, 
+			`product_type`, 
+			`product_name`, 
+			`executed_periods`, 
+			`max_overdue_days`, 
+			`lates_date_return`, 
+			`left_periods`, 
+			`unpaid_principal`, 
+			`account_balance`, 
+			`unpaid_interest`, 
+			`unpaid_fine`, 
+			`unpaid_other_interest`, 
+			`unpaid_mth_fee`, 
+			`unpaid_other_fee`, 
+			`unpaid_lpc`, 
+			`curr_pnlt_interest`, 
+			`remain_fee`, 
+			`overdue_account_number`, 
+			`in_colcnt`, 
+			`out_colcnt`, 
+			`settle_amount`, 
+			`clean_date`, 
+			`settle_date`, 
+			`pnlt_interest`, 
+			`pnlt_fine`, 
+			`into_apply_id`, 
+			`customer_id`, 
+			`into_time`, 
+			`source_channel`, 
+			`collection_method`, 
+			`loan_pay_time`, 
+			`five_level`, 
+			`apply_period`, 
+			`credit_period`, 
+			`apply_amount`, 
+			`loan_period`, 
+			`loan_amount`, 
+			`overdue_capital_interest`, 
+			`overdue_interest_before`, 
+			`overdue_interest_current`, 
+			`overdue_delay_fine_before`, 
+			`overdue_delay_fine_current`, 
+			`current_debt_amount`, 
+			`loan_purpose`, 
+			`loan_invoice_number`, 
+			`pre_repay_principal`, 
+			`advances_flag`, 
+			`overdue_manage_fee_before`, 
+			`overdue_manage_fee_current`, 
+			`repay_date`, 
+			`moving_back_flag`, 
+			`verfication_status`, 
+			`create_time`, 
+			`update_time`, 
+			`stop_time`, 
+			`risk_type`, 
+			`overdue_count`, 
+			`bus_date`, 
+			`queue_id`, 
+			`queue_name`, 
+			`exception_flag`, 
+			`exception_check_time`, 
+			`exception_type`
+		)
+		values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+			#{item.id}, 
+			#{item.departId}, 
+			#{item.personalId}, 
+			#{item.areaId}, 
+			#{item.batchNumber}, 
+			#{item.caseNumber}, 
+			#{item.collectionType}, 
+			#{item.productId}, 
+			#{item.contractNumber}, 
+			#{item.contractAmount}, 
+			#{item.overdueAmount}, 
+			#{item.leftCapital}, 
+			#{item.leftInterest}, 
+			#{item.overdueCapital}, 
+			#{item.overdueInterest}, 
+			#{item.overdueFine}, 
+			#{item.overdueDelayFine}, 
+			#{item.periods}, 
+			#{item.perDueDate}, 
+			#{item.perPayAmount}, 
+			#{item.overduePeriods}, 
+			#{item.overdueDays}, 
+			#{item.overDueDate}, 
+			#{item.hasPayAmount}, 
+			#{item.hasPayPeriods}, 
+			#{item.latelyPayDate}, 
+			#{item.latelyPayAmount}, 
+			#{item.latelyCollector}, 
+			#{item.currentCollector}, 
+			#{item.assistFlag}, 
+			#{item.assistCollector}, 
+			#{item.assistStatus}, 
+			#{item.assistWay}, 
+			#{item.holdDays}, 
+			#{item.leftDays}, 
+			#{item.caseType}, 
+			#{item.leaveCaseFlag}, 
+			#{item.leaveDate}, 
+			#{item.hasLeaveDays}, 
+			#{item.caseMark}, 
+			#{item.followUpNum}, 
+			#{item.caseFollowInTime}, 
+			#{item.payStatus}, 
+			#{item.principalId}, 
+			#{item.collectionStatus}, 
+			#{item.orderId}, 
+			#{item.delegationDate}, 
+			#{item.closeDate}, 
+			#{item.commissionRate}, 
+			#{item.handNumber}, 
+			#{item.loanDate}, 
+			#{item.overdueManageFee}, 
+			#{item.handUpFlag}, 
+			#{item.derateAmt}, 
+			#{item.realPayAmount}, 
+			#{item.earlySettleAmt}, 
+			#{item.earlyRealSettleAmt}, 
+			#{item.earlyDerateAmt}, 
+			#{item.otherAmt}, 
+			#{item.score}, 
+			#{item.operator}, 
+			#{item.operatorTime}, 
+			#{item.companyCode}, 
+			#{item.endRemark}, 
+			#{item.followupTime}, 
+			#{item.followupBack}, 
+			#{item.promiseAmt}, 
+			#{item.promiseTime}, 
+			#{item.endType}, 
+			#{item.creditAmount}, 
+			#{item.circulationStatus}, 
+			#{item.memo}, 
+			#{item.firstPayDate}, 
+			#{item.accountAge}, 
+			#{item.recoverWay}, 
+			#{item.recoverRemark}, 
+			#{item.casePoolType}, 
+			#{item.turnFromPool}, 
+			#{item.productType}, 
+			#{item.productName}, 
+			#{item.executedPeriods}, 
+			#{item.maxOverdueDays}, 
+			#{item.latesDateReturn}, 
+			#{item.leftPeriods}, 
+			#{item.unpaidPrincipal}, 
+			#{item.accountBalance}, 
+			#{item.unpaidInterest}, 
+			#{item.unpaidFine}, 
+			#{item.unpaidOtherInterest}, 
+			#{item.unpaidMthFee}, 
+			#{item.unpaidOtherFee}, 
+			#{item.unpaidLpc}, 
+			#{item.currPnltInterest}, 
+			#{item.remainFee}, 
+			#{item.overdueAccountNumber}, 
+			#{item.inColcnt}, 
+			#{item.outColcnt}, 
+			#{item.settleAmount}, 
+			#{item.cleanDate}, 
+			#{item.settleDate}, 
+			#{item.pnltInterest}, 
+			#{item.pnltFine}, 
+			#{item.intoApplyId}, 
+			#{item.customerId}, 
+			#{item.intoTime}, 
+			#{item.sourceChannel}, 
+			#{item.collectionMethod}, 
+			#{item.loanPayTime}, 
+			#{item.fiveLevel}, 
+			#{item.applyPeriod}, 
+			#{item.creditPeriod}, 
+			#{item.applyAmount}, 
+			#{item.loanPeriod}, 
+			#{item.loanAmount}, 
+			#{item.overdueCapitalInterest}, 
+			#{item.overdueInterestBefore}, 
+			#{item.overdueInterestCurrent}, 
+			#{item.overdueDelayFineBefore}, 
+			#{item.overdueDelayFineCurrent}, 
+			#{item.currentDebtAmount}, 
+			#{item.loanPurpose}, 
+			#{item.loanInvoiceNumber}, 
+			#{item.preRepayPrincipal}, 
+			#{item.advancesFlag}, 
+			#{item.overdueManageFeeBefore}, 
+			#{item.overdueManageFeeCurrent}, 
+			#{item.repayDate}, 
+			#{item.movingBackFlag}, 
+			#{item.verficationStatus}, 
+			#{item.createTime}, 
+			#{item.updateTime}, 
+			#{item.stopTime}, 
+			#{item.riskType}, 
+			#{item.overdueCount}, 
+			#{item.busDate}, 
+			#{item.queueId}, 
+			#{item.queueName}, 
+			#{item.exceptionFlag}, 
+			#{item.exceptionCheckTime}, 
+			#{item.exceptionType}
+		)
+        </foreach>
+	</insert>
+
+	<update id="update" parameterType="cn.fintecher.pangolin.dataimp.entity.CaseInfoEntity">
+		update case_info 
+		<set>
+			<if test="departId != null and departId.trim() != ''">`depart_id` = #{departId}, </if>
+			<if test="personalId != null and personalId.trim() != ''">`personal_id` = #{personalId}, </if>
+			<if test="areaId != null">`area_id` = #{areaId}, </if>
+			<if test="batchNumber != null and batchNumber.trim() != ''">`batch_number` = #{batchNumber}, </if>
+			<if test="caseNumber != null and caseNumber.trim() != ''">`case_number` = #{caseNumber}, </if>
+			<if test="collectionType != null">`collection_type` = #{collectionType}, </if>
+			<if test="productId != null and productId.trim() != ''">`product_id` = #{productId}, </if>
+			<if test="contractNumber != null and contractNumber.trim() != ''">`contract_number` = #{contractNumber}, </if>
+			<if test="contractAmount != null">`contract_amount` = #{contractAmount}, </if>
+			<if test="overdueAmount != null">`overdue_amount` = #{overdueAmount}, </if>
+			<if test="leftCapital != null">`left_capital` = #{leftCapital}, </if>
+			<if test="leftInterest != null">`left_interest` = #{leftInterest}, </if>
+			<if test="overdueCapital != null">`overdue_capital` = #{overdueCapital}, </if>
+			<if test="overdueInterest != null">`overdue_interest` = #{overdueInterest}, </if>
+			<if test="overdueFine != null">`overdue_fine` = #{overdueFine}, </if>
+			<if test="overdueDelayFine != null">`overdue_delay_fine` = #{overdueDelayFine}, </if>
+			<if test="periods != null">`periods` = #{periods}, </if>
+			<if test="perDueDate != null and perDueDate.trim() != ''">`per_due_date` = #{perDueDate}, </if>
+			<if test="perPayAmount != null">`per_pay_amount` = #{perPayAmount}, </if>
+			<if test="overduePeriods != null">`overdue_periods` = #{overduePeriods}, </if>
+			<if test="overdueDays != null">`overdue_days` = #{overdueDays}, </if>
+			<if test="overDueDate != null">`over_due_date` = #{overDueDate}, </if>
+			<if test="hasPayAmount != null">`has_pay_amount` = #{hasPayAmount}, </if>
+			<if test="hasPayPeriods != null">`has_pay_periods` = #{hasPayPeriods}, </if>
+			<if test="latelyPayDate != null">`lately_pay_date` = #{latelyPayDate}, </if>
+			<if test="latelyPayAmount != null">`lately_pay_amount` = #{latelyPayAmount}, </if>
+			<if test="latelyCollector != null and latelyCollector.trim() != ''">`lately_collector` = #{latelyCollector}, </if>
+			<if test="currentCollector != null and currentCollector.trim() != ''">`current_collector` = #{currentCollector}, </if>
+			<if test="assistFlag != null">`assist_flag` = #{assistFlag}, </if>
+			<if test="assistCollector != null and assistCollector.trim() != ''">`assist_collector` = #{assistCollector}, </if>
+			<if test="assistStatus != null">`assist_status` = #{assistStatus}, </if>
+			<if test="assistWay != null">`assist_way` = #{assistWay}, </if>
+			<if test="holdDays != null">`hold_days` = #{holdDays}, </if>
+			<if test="leftDays != null">`left_days` = #{leftDays}, </if>
+			<if test="caseType != null">`case_type` = #{caseType}, </if>
+			<if test="leaveCaseFlag != null">`leave_case_flag` = #{leaveCaseFlag}, </if>
+			<if test="leaveDate != null">`leave_date` = #{leaveDate}, </if>
+			<if test="hasLeaveDays != null">`has_leave_days` = #{hasLeaveDays}, </if>
+			<if test="caseMark != null">`case_mark` = #{caseMark}, </if>
+			<if test="followUpNum != null">`follow_up_num` = #{followUpNum}, </if>
+			<if test="caseFollowInTime != null">`case_follow_in_time` = #{caseFollowInTime}, </if>
+			<if test="payStatus != null and payStatus.trim() != ''">`pay_status` = #{payStatus}, </if>
+			<if test="principalId != null and principalId.trim() != ''">`principal_id` = #{principalId}, </if>
+			<if test="collectionStatus != null">`collection_status` = #{collectionStatus}, </if>
+			<if test="orderId != null and orderId.trim() != ''">`order_id` = #{orderId}, </if>
+			<if test="delegationDate != null">`delegation_date` = #{delegationDate}, </if>
+			<if test="closeDate != null">`close_date` = #{closeDate}, </if>
+			<if test="commissionRate != null">`commission_rate` = #{commissionRate}, </if>
+			<if test="handNumber != null">`hand_number` = #{handNumber}, </if>
+			<if test="loanDate != null">`loan_date` = #{loanDate}, </if>
+			<if test="overdueManageFee != null">`overdue_manage_fee` = #{overdueManageFee}, </if>
+			<if test="handUpFlag != null">`hand_up_flag` = #{handUpFlag}, </if>
+			<if test="derateAmt != null">`derate_amt` = #{derateAmt}, </if>
+			<if test="realPayAmount != null">`real_pay_amount` = #{realPayAmount}, </if>
+			<if test="earlySettleAmt != null">`early_settle_amt` = #{earlySettleAmt}, </if>
+			<if test="earlyRealSettleAmt != null">`early_real_settle_amt` = #{earlyRealSettleAmt}, </if>
+			<if test="earlyDerateAmt != null">`early_derate_amt` = #{earlyDerateAmt}, </if>
+			<if test="otherAmt != null">`other_amt` = #{otherAmt}, </if>
+			<if test="score != null">`score` = #{score}, </if>
+			<if test="operator != null and operator.trim() != ''">`operator` = #{operator}, </if>
+			<if test="operatorTime != null">`operator_time` = #{operatorTime}, </if>
+			<if test="companyCode != null and companyCode.trim() != ''">`company_code` = #{companyCode}, </if>
+			<if test="endRemark != null and endRemark.trim() != ''">`end_remark` = #{endRemark}, </if>
+			<if test="followupTime != null">`followup_time` = #{followupTime}, </if>
+			<if test="followupBack != null">`followup_back` = #{followupBack}, </if>
+			<if test="promiseAmt != null">`promise_amt` = #{promiseAmt}, </if>
+			<if test="promiseTime != null">`promise_time` = #{promiseTime}, </if>
+			<if test="endType != null">`end_type` = #{endType}, </if>
+			<if test="creditAmount != null">`credit_amount` = #{creditAmount}, </if>
+			<if test="circulationStatus != null">`circulation_status` = #{circulationStatus}, </if>
+			<if test="memo != null and memo.trim() != ''">`memo` = #{memo}, </if>
+			<if test="firstPayDate != null">`first_pay_date` = #{firstPayDate}, </if>
+			<if test="accountAge != null and accountAge.trim() != ''">`account_age` = #{accountAge}, </if>
+			<if test="recoverWay != null">`recover_way` = #{recoverWay}, </if>
+			<if test="recoverRemark != null">`recover_remark` = #{recoverRemark}, </if>
+			<if test="casePoolType != null">`case_pool_type` = #{casePoolType}, </if>
+			<if test="turnFromPool != null">`turn_from_pool` = #{turnFromPool}, </if>
+			<if test="productType != null and productType.trim() != ''">`product_type` = #{productType}, </if>
+			<if test="productName != null and productName.trim() != ''">`product_name` = #{productName}, </if>
+			<if test="executedPeriods != null">`executed_periods` = #{executedPeriods}, </if>
+			<if test="maxOverdueDays != null">`max_overdue_days` = #{maxOverdueDays}, </if>
+			<if test="latesDateReturn != null">`lates_date_return` = #{latesDateReturn}, </if>
+			<if test="leftPeriods != null">`left_periods` = #{leftPeriods}, </if>
+			<if test="unpaidPrincipal != null">`unpaid_principal` = #{unpaidPrincipal}, </if>
+			<if test="accountBalance != null">`account_balance` = #{accountBalance}, </if>
+			<if test="unpaidInterest != null">`unpaid_interest` = #{unpaidInterest}, </if>
+			<if test="unpaidFine != null">`unpaid_fine` = #{unpaidFine}, </if>
+			<if test="unpaidOtherInterest != null">`unpaid_other_interest` = #{unpaidOtherInterest}, </if>
+			<if test="unpaidMthFee != null">`unpaid_mth_fee` = #{unpaidMthFee}, </if>
+			<if test="unpaidOtherFee != null">`unpaid_other_fee` = #{unpaidOtherFee}, </if>
+			<if test="unpaidLpc != null">`unpaid_lpc` = #{unpaidLpc}, </if>
+			<if test="currPnltInterest != null">`curr_pnlt_interest` = #{currPnltInterest}, </if>
+			<if test="remainFee != null">`remain_fee` = #{remainFee}, </if>
+			<if test="overdueAccountNumber != null">`overdue_account_number` = #{overdueAccountNumber}, </if>
+			<if test="inColcnt != null">`in_colcnt` = #{inColcnt}, </if>
+			<if test="outColcnt != null">`out_colcnt` = #{outColcnt}, </if>
+			<if test="settleAmount != null">`settle_amount` = #{settleAmount}, </if>
+			<if test="cleanDate != null">`clean_date` = #{cleanDate}, </if>
+			<if test="settleDate != null">`settle_date` = #{settleDate}, </if>
+			<if test="pnltInterest != null">`pnlt_interest` = #{pnltInterest}, </if>
+			<if test="pnltFine != null">`pnlt_fine` = #{pnltFine}, </if>
+			<if test="intoApplyId != null and intoApplyId.trim() != ''">`into_apply_id` = #{intoApplyId}, </if>
+			<if test="customerId != null and customerId.trim() != ''">`customer_id` = #{customerId}, </if>
+			<if test="intoTime != null">`into_time` = #{intoTime}, </if>
+			<if test="sourceChannel != null and sourceChannel.trim() != ''">`source_channel` = #{sourceChannel}, </if>
+			<if test="collectionMethod != null and collectionMethod.trim() != ''">`collection_method` = #{collectionMethod}, </if>
+			<if test="loanPayTime != null">`loan_pay_time` = #{loanPayTime}, </if>
+			<if test="fiveLevel != null and fiveLevel.trim() != ''">`five_level` = #{fiveLevel}, </if>
+			<if test="applyPeriod != null">`apply_period` = #{applyPeriod}, </if>
+			<if test="creditPeriod != null">`credit_period` = #{creditPeriod}, </if>
+			<if test="applyAmount != null">`apply_amount` = #{applyAmount}, </if>
+			<if test="loanPeriod != null">`loan_period` = #{loanPeriod}, </if>
+			<if test="loanAmount != null">`loan_amount` = #{loanAmount}, </if>
+			<if test="overdueCapitalInterest != null">`overdue_capital_interest` = #{overdueCapitalInterest}, </if>
+			<if test="overdueInterestBefore != null">`overdue_interest_before` = #{overdueInterestBefore}, </if>
+			<if test="overdueInterestCurrent != null">`overdue_interest_current` = #{overdueInterestCurrent}, </if>
+			<if test="overdueDelayFineBefore != null">`overdue_delay_fine_before` = #{overdueDelayFineBefore}, </if>
+			<if test="overdueDelayFineCurrent != null">`overdue_delay_fine_current` = #{overdueDelayFineCurrent}, </if>
+			<if test="currentDebtAmount != null">`current_debt_amount` = #{currentDebtAmount}, </if>
+			<if test="loanPurpose != null and loanPurpose.trim() != ''">`loan_purpose` = #{loanPurpose}, </if>
+			<if test="loanInvoiceNumber != null and loanInvoiceNumber.trim() != ''">`loan_invoice_number` = #{loanInvoiceNumber}, </if>
+			<if test="preRepayPrincipal != null">`pre_repay_principal` = #{preRepayPrincipal}, </if>
+			<if test="advancesFlag != null and advancesFlag.trim() != ''">`advances_flag` = #{advancesFlag}, </if>
+			<if test="overdueManageFeeBefore != null">`overdue_manage_fee_before` = #{overdueManageFeeBefore}, </if>
+			<if test="overdueManageFeeCurrent != null">`overdue_manage_fee_current` = #{overdueManageFeeCurrent}, </if>
+			<if test="repayDate != null">`repay_date` = #{repayDate}, </if>
+			<if test="movingBackFlag != null and movingBackFlag.trim() != ''">`moving_back_flag` = #{movingBackFlag}, </if>
+			<if test="verficationStatus != null and verficationStatus.trim() != ''">`verfication_status` = #{verficationStatus}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="stopTime != null">`stop_time` = #{stopTime}, </if>
+			<if test="riskType != null and riskType.trim() != ''">`risk_type` = #{riskType}, </if>
+			<if test="overdueCount != null">`overdue_count` = #{overdueCount}, </if>
+			<if test="busDate != null">`bus_date` = #{busDate}, </if>
+			<if test="queueId != null and queueId.trim() != ''">`queue_id` = #{queueId}, </if>
+			<if test="queueName != null and queueName.trim() != ''">`queue_name` = #{queueName}, </if>
+			<if test="exceptionFlag != null">`exception_flag` = #{exceptionFlag}, </if>
+			<if test="exceptionCheckTime != null">`exception_check_time` = #{exceptionCheckTime}, </if>
+			<if test="exceptionType != null and exceptionType.trim() != ''">`exception_type` = #{exceptionType}</if>
+		</set>
+		where id = #{id}
+	</update>
+	<update id="updateBatchByCaseNum" parameterType="list">
+		update case_info
+		<trim prefix="set" suffixOverrides=",">
+			<trim prefix="queue_id =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+					<if test="i.queueId!=null">
+						when case_number=#{i.caseNumber} then #{i.queueId}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="queue_name =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+					<if test="i.queueName!=null">
+						when case_number=#{i.caseNumber} then #{i.queueName}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="allocate_time =case" suffix="end,">
+				<foreach collection="list" item="i" index="index">
+					<if test="i.allocateTime!=null">
+						when case_number=#{i.caseNumber} then #{i.allocateTime}
+					</if>
+				</foreach>
+			</trim>
+		</trim>
+		where
+		<foreach collection="list" separator="or" item="i" index="index">
+			case_number=#{i.caseNumber}
+		</foreach>
+	</update>
+
+	<update id="updateCaseInfoByCaseNum">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+
+		</foreach>
+		update case_info
+		<set>
+			<if test="departId != null and departId.trim() != ''">`depart_id` = #{departId}, </if>
+			<if test="personalId != null and personalId.trim() != ''">`personal_id` = #{personalId}, </if>
+			<if test="areaId != null">`area_id` = #{areaId}, </if>
+			<if test="batchNumber != null and batchNumber.trim() != ''">`batch_number` = #{batchNumber}, </if>
+			<if test="collectionType != null">`collection_type` = #{collectionType}, </if>
+			<if test="productId != null and productId.trim() != ''">`product_id` = #{productId}, </if>
+			<if test="contractNumber != null and contractNumber.trim() != ''">`contract_number` = #{contractNumber}, </if>
+			<if test="contractAmount != null">`contract_amount` = #{contractAmount}, </if>
+			<if test="overdueAmount != null">`overdue_amount` = #{overdueAmount}, </if>
+			<if test="leftCapital != null">`left_capital` = #{leftCapital}, </if>
+			<if test="leftInterest != null">`left_interest` = #{leftInterest}, </if>
+			<if test="overdueCapital != null">`overdue_capital` = #{overdueCapital}, </if>
+			<if test="overdueInterest != null">`overdue_interest` = #{overdueInterest}, </if>
+			<if test="overdueFine != null">`overdue_fine` = #{overdueFine}, </if>
+			<if test="overdueDelayFine != null">`overdue_delay_fine` = #{overdueDelayFine}, </if>
+			<if test="periods != null">`periods` = #{periods}, </if>
+			<if test="perDueDate != null and perDueDate.trim() != ''">`per_due_date` = #{perDueDate}, </if>
+			<if test="perPayAmount != null">`per_pay_amount` = #{perPayAmount}, </if>
+			<if test="overduePeriods != null">`overdue_periods` = #{overduePeriods}, </if>
+			<if test="overdueDays != null">`overdue_days` = #{overdueDays}, </if>
+			<if test="overDueDate != null">`over_due_date` = #{overDueDate}, </if>
+			<if test="hasPayAmount != null">`has_pay_amount` = #{hasPayAmount}, </if>
+			<if test="hasPayPeriods != null">`has_pay_periods` = #{hasPayPeriods}, </if>
+			<if test="latelyPayDate != null">`lately_pay_date` = #{latelyPayDate}, </if>
+			<if test="latelyPayAmount != null">`lately_pay_amount` = #{latelyPayAmount}, </if>
+			<if test="latelyCollector != null and latelyCollector.trim() != ''">`lately_collector` = #{latelyCollector}, </if>
+			<if test="currentCollector != null and currentCollector.trim() != ''">`current_collector` = #{currentCollector}, </if>
+			<if test="assistFlag != null">`assist_flag` = #{assistFlag}, </if>
+			<if test="assistCollector != null and assistCollector.trim() != ''">`assist_collector` = #{assistCollector}, </if>
+			<if test="assistStatus != null">`assist_status` = #{assistStatus}, </if>
+			<if test="assistWay != null">`assist_way` = #{assistWay}, </if>
+			<if test="holdDays != null">`hold_days` = #{holdDays}, </if>
+			<if test="leftDays != null">`left_days` = #{leftDays}, </if>
+			<if test="caseType != null">`case_type` = #{caseType}, </if>
+			<if test="leaveCaseFlag != null">`leave_case_flag` = #{leaveCaseFlag}, </if>
+			<if test="leaveDate != null">`leave_date` = #{leaveDate}, </if>
+			<if test="hasLeaveDays != null">`has_leave_days` = #{hasLeaveDays}, </if>
+			<if test="caseMark != null">`case_mark` = #{caseMark}, </if>
+			<if test="followUpNum != null">`follow_up_num` = #{followUpNum}, </if>
+			<if test="caseFollowInTime != null">`case_follow_in_time` = #{caseFollowInTime}, </if>
+			<if test="payStatus != null and payStatus.trim() != ''">`pay_status` = #{payStatus}, </if>
+			<if test="principalId != null and principalId.trim() != ''">`principal_id` = #{principalId}, </if>
+			<if test="collectionStatus != null">`collection_status` = #{collectionStatus}, </if>
+			<if test="orderId != null and orderId.trim() != ''">`order_id` = #{orderId}, </if>
+			<if test="delegationDate != null">`delegation_date` = #{delegationDate}, </if>
+			<if test="closeDate != null">`close_date` = #{closeDate}, </if>
+			<if test="commissionRate != null">`commission_rate` = #{commissionRate}, </if>
+			<if test="handNumber != null">`hand_number` = #{handNumber}, </if>
+			<if test="loanDate != null">`loan_date` = #{loanDate}, </if>
+			<if test="overdueManageFee != null">`overdue_manage_fee` = #{overdueManageFee}, </if>
+			<if test="handUpFlag != null">`hand_up_flag` = #{handUpFlag}, </if>
+			<if test="derateAmt != null">`derate_amt` = #{derateAmt}, </if>
+			<if test="realPayAmount != null">`real_pay_amount` = #{realPayAmount}, </if>
+			<if test="earlySettleAmt != null">`early_settle_amt` = #{earlySettleAmt}, </if>
+			<if test="earlyRealSettleAmt != null">`early_real_settle_amt` = #{earlyRealSettleAmt}, </if>
+			<if test="earlyDerateAmt != null">`early_derate_amt` = #{earlyDerateAmt}, </if>
+			<if test="otherAmt != null">`other_amt` = #{otherAmt}, </if>
+			<if test="score != null">`score` = #{score}, </if>
+			<if test="operator != null and operator.trim() != ''">`operator` = #{operator}, </if>
+			<if test="operatorTime != null">`operator_time` = #{operatorTime}, </if>
+			<if test="companyCode != null and companyCode.trim() != ''">`company_code` = #{companyCode}, </if>
+			<if test="endRemark != null and endRemark.trim() != ''">`end_remark` = #{endRemark}, </if>
+			<if test="followupTime != null">`followup_time` = #{followupTime}, </if>
+			<if test="followupBack != null">`followup_back` = #{followupBack}, </if>
+			<if test="promiseAmt != null">`promise_amt` = #{promiseAmt}, </if>
+			<if test="promiseTime != null">`promise_time` = #{promiseTime}, </if>
+			<if test="endType != null">`end_type` = #{endType}, </if>
+			<if test="creditAmount != null">`credit_amount` = #{creditAmount}, </if>
+			<if test="circulationStatus != null">`circulation_status` = #{circulationStatus}, </if>
+			<if test="memo != null and memo.trim() != ''">`memo` = #{memo}, </if>
+			<if test="firstPayDate != null">`first_pay_date` = #{firstPayDate}, </if>
+			<if test="accountAge != null and accountAge.trim() != ''">`account_age` = #{accountAge}, </if>
+			<if test="recoverWay != null">`recover_way` = #{recoverWay}, </if>
+			<if test="recoverRemark != null">`recover_remark` = #{recoverRemark}, </if>
+			<if test="casePoolType != null">`case_pool_type` = #{casePoolType}, </if>
+			<if test="turnFromPool != null">`turn_from_pool` = #{turnFromPool}, </if>
+			<if test="productType != null and productType.trim() != ''">`product_type` = #{productType}, </if>
+			<if test="productName != null and productName.trim() != ''">`product_name` = #{productName}, </if>
+			<if test="executedPeriods != null">`executed_periods` = #{executedPeriods}, </if>
+			<if test="maxOverdueDays != null">`max_overdue_days` = #{maxOverdueDays}, </if>
+			<if test="latesDateReturn != null">`lates_date_return` = #{latesDateReturn}, </if>
+			<if test="leftPeriods != null">`left_periods` = #{leftPeriods}, </if>
+			<if test="unpaidPrincipal != null">`unpaid_principal` = #{unpaidPrincipal}, </if>
+			<if test="accountBalance != null">`account_balance` = #{accountBalance}, </if>
+			<if test="unpaidInterest != null">`unpaid_interest` = #{unpaidInterest}, </if>
+			<if test="unpaidFine != null">`unpaid_fine` = #{unpaidFine}, </if>
+			<if test="unpaidOtherInterest != null">`unpaid_other_interest` = #{unpaidOtherInterest}, </if>
+			<if test="unpaidMthFee != null">`unpaid_mth_fee` = #{unpaidMthFee}, </if>
+			<if test="unpaidOtherFee != null">`unpaid_other_fee` = #{unpaidOtherFee}, </if>
+			<if test="unpaidLpc != null">`unpaid_lpc` = #{unpaidLpc}, </if>
+			<if test="currPnltInterest != null">`curr_pnlt_interest` = #{currPnltInterest}, </if>
+			<if test="remainFee != null">`remain_fee` = #{remainFee}, </if>
+			<if test="overdueAccountNumber != null">`overdue_account_number` = #{overdueAccountNumber}, </if>
+			<if test="inColcnt != null">`in_colcnt` = #{inColcnt}, </if>
+			<if test="outColcnt != null">`out_colcnt` = #{outColcnt}, </if>
+			<if test="settleAmount != null">`settle_amount` = #{settleAmount}, </if>
+			<if test="cleanDate != null">`clean_date` = #{cleanDate}, </if>
+			<if test="settleDate != null">`settle_date` = #{settleDate}, </if>
+			<if test="pnltInterest != null">`pnlt_interest` = #{pnltInterest}, </if>
+			<if test="pnltFine != null">`pnlt_fine` = #{pnltFine}, </if>
+			<if test="intoApplyId != null and intoApplyId.trim() != ''">`into_apply_id` = #{intoApplyId}, </if>
+			<if test="customerId != null and customerId.trim() != ''">`customer_id` = #{customerId}, </if>
+			<if test="intoTime != null">`into_time` = #{intoTime}, </if>
+			<if test="sourceChannel != null and sourceChannel.trim() != ''">`source_channel` = #{sourceChannel}, </if>
+			<if test="collectionMethod != null and collectionMethod.trim() != ''">`collection_method` = #{collectionMethod}, </if>
+			<if test="loanPayTime != null">`loan_pay_time` = #{loanPayTime}, </if>
+			<if test="fiveLevel != null and fiveLevel.trim() != ''">`five_level` = #{fiveLevel}, </if>
+			<if test="applyPeriod != null">`apply_period` = #{applyPeriod}, </if>
+			<if test="creditPeriod != null">`credit_period` = #{creditPeriod}, </if>
+			<if test="applyAmount != null">`apply_amount` = #{applyAmount}, </if>
+			<if test="loanPeriod != null">`loan_period` = #{loanPeriod}, </if>
+			<if test="loanAmount != null">`loan_amount` = #{loanAmount}, </if>
+			<if test="overdueCapitalInterest != null">`overdue_capital_interest` = #{overdueCapitalInterest}, </if>
+			<if test="overdueInterestBefore != null">`overdue_interest_before` = #{overdueInterestBefore}, </if>
+			<if test="overdueInterestCurrent != null">`overdue_interest_current` = #{overdueInterestCurrent}, </if>
+			<if test="overdueDelayFineBefore != null">`overdue_delay_fine_before` = #{overdueDelayFineBefore}, </if>
+			<if test="overdueDelayFineCurrent != null">`overdue_delay_fine_current` = #{overdueDelayFineCurrent}, </if>
+			<if test="currentDebtAmount != null">`current_debt_amount` = #{currentDebtAmount}, </if>
+			<if test="loanPurpose != null and loanPurpose.trim() != ''">`loan_purpose` = #{loanPurpose}, </if>
+			<if test="loanInvoiceNumber != null and loanInvoiceNumber.trim() != ''">`loan_invoice_number` = #{loanInvoiceNumber}, </if>
+			<if test="preRepayPrincipal != null">`pre_repay_principal` = #{preRepayPrincipal}, </if>
+			<if test="advancesFlag != null and advancesFlag.trim() != ''">`advances_flag` = #{advancesFlag}, </if>
+			<if test="overdueManageFeeBefore != null">`overdue_manage_fee_before` = #{overdueManageFeeBefore}, </if>
+			<if test="overdueManageFeeCurrent != null">`overdue_manage_fee_current` = #{overdueManageFeeCurrent}, </if>
+			<if test="repayDate != null">`repay_date` = #{repayDate}, </if>
+			<if test="movingBackFlag != null and movingBackFlag.trim() != ''">`moving_back_flag` = #{movingBackFlag}, </if>
+			<if test="verficationStatus != null and verficationStatus.trim() != ''">`verfication_status` = #{verficationStatus}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="stopTime != null">`stop_time` = #{stopTime}, </if>
+			<if test="riskType != null and riskType.trim() != ''">`risk_type` = #{riskType}, </if>
+			<if test="overdueCount != null">`overdue_count` = #{overdueCount}, </if>
+			<if test="busDate != null">`bus_date` = #{busDate}, </if>
+			<if test="queueId != null and queueId.trim() != ''">`queue_id` = #{queueId}, </if>
+			<if test="queueName != null and queueName.trim() != ''">`queue_name` = #{queueName}, </if>
+			<if test="allocateTime != null">`allocate_time` = #{allocateTime}, </if>
+			<if test="exceptionFlag != null">`exception_flag` = #{exceptionFlag}, </if>
+			<if test="exceptionCheckTime != null">`exception_check_time` = #{exceptionCheckTime}, </if>
+			<if test="exceptionType != null and exceptionType.trim() != ''">`exception_type` = #{exceptionType}</if>
+		</set>
+		where case_number = #{caseNumber}
+	</update>
+	<update id="signExceptionCase">
+		update case_info set exception_flag = 1, exception_check_time = now(), exception_type = 1112
+		where
+		<if test="list != null and list.size()>0">
+			id IN
+			<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<delete id="delete">
+		delete from case_info where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from case_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

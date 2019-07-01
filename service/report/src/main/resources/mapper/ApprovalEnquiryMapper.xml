@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.ApprovalEnquiryMapper">
+
+    <!-- 多条件查询费用减免审批 -->
+    <select id="getFeeWaiverApproval" parameterType="cn.fintecher.pangolin.report.model.ApprovalEnquiryParams"
+            resultType="cn.fintecher.pangolin.report.model.ApprovalEnquiryModel">
+        SELECT case_number as caseNumber ,batch_number as batchNumber ,approve_status as approveStatus,apply_derate_amt as applyDerateAmt
+        ,pay_type as payType,approve_result as approveResult,apply_date as applyDate,apply_real_name as applyRealName,principal_name as
+        principalName ,personal_phone as mobileNo,personal_name as personalName FROM case_pay_apply WHERE company_code = #{companyCode}
+        AND approve_status IN (55,56) AND approve_status !=54
+
+        <if test="personalName != null">
+            AND personal_name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND personal_phone = trim(#{mobileNo})
+        </if>
+        <if test="batchNumber != null">
+            AND batch_number = trim(#{batchNumber})
+        </if>
+        <if test="applyDerateMaxAmt != null">
+            AND <![CDATA[apply_derate_amt <= trim(#{applyDerateMaxAmt})]]>
+        </if>
+        <if test="applyDerateMinAmt != null">
+            AND <![CDATA[apply_derate_amt >= trim(#{applyDerateMinAmt})]]>
+        </if>
+        <if test="principalName != null">
+            AND principal_name = trim(#{principalName})
+        </if>
+        ORDER BY  apply_date DESC
+    </select>
+    <!-- 多条件查询核销案件审批 -->
+    <select id="getCaseInfoVerificationApproval" parameterType="cn.fintecher.pangolin.report.model.ApprovalEnquiryParams"
+            resultType="cn.fintecher.pangolin.report.model.ApprovalEnquiryModel">
+        SELECT case_number as caseNumber,batch_number as batchNumber,principal_name as principalName,personal_name as personalName
+        ,mobile_no as mobileNo,Id_card as idCard ,overdue_days as overdueDays,overdue_amount as overdueAmount,application_date as applyDate,
+        applicant as applyRealName,application_reason as applicationReason,approval_status as approveStatus,pay_status as overduePeriods
+        FROM case_info_verification_apply WHERE company_code = #{companyCode} AND approval_status in (221,222)
+
+        <if test="personalName != null">
+            AND personal_name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="idCard != null">
+            AND Id_card = trim(#{idCard})
+        </if>
+        <if test="batchNumber != null">
+            AND batch_number = trim(#{batchNumber})
+        </if>
+        <if test="overdueMaxAmount != null">
+            AND <![CDATA[overdue_amount <= trim(#{overdueMaxAmount})]]>
+        </if>
+        <if test="overdueMinAmount != null">
+            AND <![CDATA[overdue_amount >= trim(#{overdueMinAmount})]]>
+        </if>
+        <if test="overdueMaxDays != null">
+            AND <![CDATA[overdue_days <= trim(#{overdueMaxDays})]]>
+        </if>
+        <if test="overdueMinDays != null">
+            AND <![CDATA[overdue_days >= trim(#{overdueMinDays})]]>
+        </if>
+        <if test="applicationDate != null">
+            AND application_date = trim(#{applicationDate})
+        </if>
+        <if test="principalName != null">
+            AND principal_name = trim(#{principalName})
+        </if>
+        <if test="approvalStatus != null">
+            AND approval_status = trim(#{approvalStatus})
+        </if>
+        ORDER BY  application_date ASC
+    </select>
+    <!-- 多条件查询电催协催申请审批 -->
+    <select id="getElecAssistApplyCase" parameterType="cn.fintecher.pangolin.report.model.ApprovalEnquiryParams"
+            resultType="cn.fintecher.pangolin.report.model.ApprovalEnquiryModel">
+        SELECT
+        case_number as caseNumber,personal_name as personalName,personal_phone as mobileNo,overdue_amount as overdueAmount,
+        overdue_days as overdueDays,principal_name as principalName,assist_way as assistWay,apply_real_name as applyRealName,
+        approve_status as approveStatus,approve_phone_result as approvePhoneResult,approve_out_result as approveOutResult,
+        apply_date as applyDate,apply_invalid_time as applyInvalidTime FROM case_assist_apply WHERE company_code = #{companyCode}
+
+        <if test="personalName != null">
+            AND personal_name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND personal_phone = trim(#{mobileNo})
+        </if>
+        <if test="overdueMaxAmount != null">
+            AND <![CDATA[overdue_amount <= trim(#{overdueMaxAmount})]]>
+        </if>
+        <if test="overdueMinAmount != null">
+            AND <![CDATA[overdue_amount >= trim(#{overdueMinAmount})]]>
+        </if>
+        <if test="applyRealName != null">
+            AND apply_real_name = trim(#{applyRealName})
+        </if>
+        <if test="principalName != null">
+            AND principal_name = trim(#{principalName})
+        </if>
+        ORDER BY  apply_date DESC
+    </select>
+    <!-- 多条件查询外访协催申请审批 -->
+    <select id="getOutAssistApplyCase" parameterType="cn.fintecher.pangolin.report.model.ApprovalEnquiryParams"
+            resultType="cn.fintecher.pangolin.report.model.ApprovalEnquiryModel">
+        SELECT
+        case_number as caseNumber,personal_name as personalName,personal_phone as mobileNo,overdue_amount as overdueAmount,
+        overdue_days as overdueDays,principal_name as principalName,assist_way as assistWay,apply_real_name as applyRealName,
+        approve_status as approveStatus,approve_out_result as approveOutResult,apply_date as applyDate,apply_invalid_time as
+        applyInvalidTime FROM case_assist_apply WHERE company_code = #{companyCode} AND approve_phone_result = 37
+
+        <if test="personalName != null">
+            AND personal_name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND personal_phone = trim(#{mobileNo})
+        </if>
+        <if test="overdueMaxAmount != null">
+            AND <![CDATA[overdue_amount <= trim(#{overdueMaxAmount})]]>
+        </if>
+        <if test="overdueMinAmount != null">
+            AND <![CDATA[overdue_amount >= trim(#{overdueMinAmount})]]>
+        </if>
+        <if test="applyRealName != null">
+            AND apply_real_name = trim(#{applyRealName})
+        </if>
+        <if test="principalName != null">
+            AND principal_name = trim(#{principalName})
+        </if>
+        ORDER BY  apply_date DESC
+    </select>
+</mapper>

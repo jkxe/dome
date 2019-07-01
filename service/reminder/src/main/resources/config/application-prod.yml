@@ -1,0 +1,32 @@
+spring:
+    profiles:
+        active: prod
+    devtools:
+        restart:
+            enabled: false
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+        mongodb:
+            uri: mongodb://admin:HYxf_Risk%402019!@10.20.5.139:27017,10.20.6.16:27017,10.20.5.140:27017
+            database: pangolin
+    rabbitmq:
+        username: 51xf
+        password: 51xf@0219
+        host: 10.20.5.138
+        virtual-host: urge
+        port: 5672
+eureka:
+  instance:
+    hostname: reminder-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://10.0.5.44:8761/eureka/,http://10.0.6.199:8761/eureka/
+
+server:
+    port: 9005

@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.QueryOutsourcePoolMapper">
+
+    <resultMap id="queryOutsourcePool" type="cn.fintecher.pangolin.report.model.QueryOutsourcePool">
+        <result column="out_id" property="outsId"/>
+        <result column="outs_name" property="outsName"/>
+        <result column="come_outsource_time" property="comeOutsourceTime"/>
+        <result column="out_batch" property="batchNumber"/>
+        <result column="out_time" property="outTime"/>
+        <result column="over_outsource_time" property="overOutsourceTime"/>
+        <result column="left_days" property="leftDay"/>
+        <result column="total_outsource_count" property="outcaseTotalCount"/>
+        <result column="total_outsource_amt" property="outcaseTotalAmt"/>
+        <result column="real_pay_count" property="outcaseClosedCount"/>
+        <result column="outsource_count_rate" property="outcaseCountRate"/>
+        <result column="real_pay_amount" property="outcaseClosedAmt"/>
+        <result column="outsource_amt_rate" property="outcaseAmtRate"/>
+        <result column="company_code" property="companyCode"/>
+        <result column="outs_code" property="outsCode"/>
+        <result column="current_outsource_count" property="currentOutsourceCount"/>
+        <result column="current_outsource_amt" property="currentOutsourceAmt"/>
+        <result column="close_date" property="closeDate"/>
+        <result column="account_balance" property="accountBalance"/>
+        <result column="overdue_amount" property="overdueAmount"/>
+    </resultMap>
+
+    <!-- 委外催收中按批次号查询 -->
+    <select id="getAllOutSourcePoolByBatchNumber"
+            parameterType="cn.fintecher.pangolin.report.model.QueryOutsourcePoolParams"
+            resultMap="queryOutsourcePool">
+        <!--案件总数量：委外池中案件的总数量
+            案件总金额: 委外池中案件的总金额
+            已催回案件数：caseInfo中的realPayAmount不为空的案件数
+            已催回案件金额：caseInfo中的realPayAmount不为空的案件金额
+            已催回案件比率：已催回的案件数/案件总数量
+            已催回金额比率：已催回案件金额/案件总金额
+         -->
+        SELECT
+        bb.out_id,
+        bb.outs_name,
+        bb.come_outsource_time,
+        bb.out_batch,
+        DATE_FORMAT(bb.out_time, '%Y-%m-%d') AS out_time,
+        bb.over_outsource_time,
+        bb.overdue_amount,
+        IFNULL(bb.left_days, 0) AS left_days,
+        IFNULL(bb.total_outsource_count, 0) AS total_outsource_count,
+        IFNULL(
+        bb.total_outsource_amt,
+        0.00
+        ) AS total_outsource_amt,
+        IFNULL(bb.real_pay_count, 0) AS real_pay_count,
+        IFNULL(
+        real_pay_count / bb.total_outsource_count,
+        0.00
+        ) AS outsource_count_rate,
+        IFNULL(bb.real_pay_amount, 0.00) AS real_pay_amount,
+        IFNULL(
+        real_pay_amount / bb.total_outsource_amt,
+        0.00
+        ) AS outsource_amt_rate,
+        bb.company_code,
+        bb.outs_code,
+        (
+        IFNULL(bb.current_pay_count, 0)
+        ) AS current_outsource_count,
+        bb.close_date,
+        bb.account_balance,
+        (
+        IFNULL(current_pay_amount, 0.00)
+        ) AS current_outsource_amt,
+        bb.series_name AS seriesName,
+        bb.cityName,
+        bb.areaName
+        FROM
+        (
+        SELECT
+        aa.out_id out_id,
+        aa.outs_code,
+        aa.outs_name,
+        aa.overdue_amount,
+        MIN(aa.come_outsource_time) AS come_outsource_time,
+        aa.out_batch,
+        MIN(aa.out_time) AS out_time,
+        Max(aa.over_outsource_time) AS over_outsource_time,
+        Max(aa.left_days) AS left_days,
+        sum(aa.contract_amt) AS total_outsource_amt,
+        count(*) AS total_outsource_count,
+        aa.company_code,
+        SUM(aa.real_pay_amount) AS real_pay_amount,
+        SUM(
+        CASE
+        WHEN out_status = 168 THEN
+        aa.contract_amt
+        END
+        ) AS current_pay_amount,
+        count(
+        CASE
+        WHEN out_status = 168 THEN
+        aa.out_id
+        END
+        ) AS current_pay_count,
+        COUNT(
+        CASE
+        WHEN aa.real_pay_amount != 0 THEN
+        0
+        END
+        ) AS real_pay_count,
+        aa.series_name,
+        aa.cityName,
+        aa.areaName,
+        aa.cityId,
+        aa.areaId,
+        aa.seriesId,
+        aa.close_date,
+        sum(aa.account_balance) account_balance
+        FROM
+        (
+        SELECT
+        a.out_id out_id,
+        d.case_pool_type,
+        d.recover_remark,
+
+        c.outs_name,
+        min(a.out_time) AS come_outsource_time,
+        a.out_batch,
+        min(a.out_time) out_time,
+        max(a.over_outsource_time) over_outsource_time,
+        max(
+        TIMESTAMPDIFF(
+        DAY,
+        curdate(),
+        over_outsource_time
+        )
+        ) AS left_days,
+        sum(a.contract_amt) contract_amt,
+        a.out_status,
+        a.company_code,
+        c.outs_code,
+        sum(d.real_pay_amount) real_pay_amount,
+        f.series_name,
+        d.account_balance,
+        d.overdue_amount ,
+        g.id AS cityId,
+        g.area_name AS cityName,
+        h.id AS areaId,
+        h.area_name AS areaName,
+        f.id AS seriesId,
+        d.close_date
+        FROM
+        outsource c
+        LEFT JOIN outsource_pool a ON c.id = a.out_id
+        LEFT JOIN case_info d ON a.case_id = d.id
+        LEFT JOIN product e ON d.product_id = e.id
+        LEFT JOIN product_series f ON e.series_id = f.id
+        LEFT JOIN area_code g ON d.area_id = g.id
+        LEFT JOIN area_code h ON g.parent_id = g.id
+        WHERE
+        a.company_code = #{companyCode} and d.collection_status = 21
+        AND c.flag = 0
+        AND d.case_pool_type = 227
+        AND d.recover_remark = 0
+        AND d.collection_status NOT IN (800, 24)
+        GROUP BY
+        d.case_number
+        ) AS aa
+        GROUP BY
+        aa.out_batch
+        ) AS bb
+        WHERE
+        1 = 1
+        <if test="batchNumber != null and batchNumber != ''">
+            AND bb.out_batch = #{batchNumber}
+        </if>
+        <if test="seriesId != null">
+            AND bb.seriesId=#{seriesId}
+        </if>
+        <if test="cityId != null">
+            AND bb.cityId=#{cityId}
+        </if>
+        <if test="areaId != null">
+            AND bb.areaId=#{areaId}
+        </if>
+        <if test="outsId != null and outsId != ''">
+            AND bb.out_id = #{outsId}
+        </if>
+        <if test="outTimeStart != null and outTimeStart != ''">
+            AND <![CDATA[DATE_FORMAT(out_time,'%Y-%m-%d') >= DATE_FORMAT(#{outTimeStart},'%Y-%m-%d')]]>
+        </if>
+        <if test="outTimeEnd != null and outTimeEnd !=''">
+            AND <![CDATA[DATE_FORMAT(out_time,'%Y-%m-%d') <= DATE_FORMAT(#{outTimeEnd},'%Y-%m-%d')]]>
+        </if>
+        <if test="overOutSourceTimeStart != null and overOutSourceTimeStart != ''">
+            AND
+            <![CDATA[DATE_FORMAT(over_outsource_time,'%Y-%m-%d') >= DATE_FORMAT(#{overOutSourceTimeStart},'%Y-%m-%d')]]>
+        </if>
+        <if test="overOutSourceTimeEnd != null and overOutSourceTimeEnd != ''">
+            AND
+            <![CDATA[DATE_FORMAT(over_outsource_time,'%Y-%m-%d') <= DATE_FORMAT(#{overOutSourceTimeEnd},'%Y-%m-%d')]]>
+        </if>
+        ORDER BY out_batch desc
+    </select>
+
+    <!-- 委外催收中按委外方查询 -->
+    <select id="getAllOutSourceByOutsName" parameterType="cn.fintecher.pangolin.report.model.QueryOutsourcePoolParams"
+            resultMap="queryOutsourcePool">
+        SELECT
+        bb.out_id,
+        bb.outs_name,
+        bb.overdue_amount,
+        IFNULL(bb.zz, 0) AS total_outsource_count,
+        IFNULL(
+        bb.total_outsource_amt,
+        0.00
+        ) AS total_outsource_amt,
+        IFNULL(bb.real_pay_count, 0) AS real_pay_count,
+        IFNULL(
+        real_pay_count / bb.zz,
+        0.00
+        ) AS outsource_count_rate,
+        IFNULL(bb.real_pay_amount, 0.00) AS real_pay_amount,
+        IFNULL(
+        real_pay_amount / bb.total_outsource_amt,
+        0.00
+        ) AS outsource_amt_rate,
+        bb.company_code,
+        bb.outs_code,
+        (
+        IFNULL(current_pay_count, 0)
+        ) AS current_outsource_count,
+        bb.close_date,
+        bb.account_balance,
+        (
+        IFNULL(current_pay_amount, 0.00)
+        ) AS current_outsource_amt,
+        bb.series_name AS seriesName,
+        bb.cityName,
+        bb.areaName
+        FROM
+        (
+        SELECT
+        aa.out_id,
+        aa.outs_code,
+        aa.outs_name,
+        sum(aa.contract_amt) AS total_outsource_amt,
+        --         count(*) AS total_outsource_count,
+        aa.company_code,
+        aa.case_pool_type,
+        SUM(aa.real_pay_amount) AS real_pay_amount,
+        SUM(
+        CASE
+        WHEN out_status = 168 THEN
+        aa.contract_amt
+        END
+        ) AS current_pay_amount,
+        SUM(
+        CASE
+        WHEN out_status = 168 THEN
+        aa.out_id
+        END
+        ) AS current_pay_count,
+        COUNT(
+        CASE
+        WHEN aa.real_pay_amount != 0 THEN
+        0
+        END
+        ) AS real_pay_count,
+        sum(aa.account_balance) account_balance,
+        sum(aa.overdue_amount) overdue_amount,
+        count(aa.zz) zz,
+        aa.series_name,
+        aa.cityName,
+        aa.areaName,
+        aa.cityId,
+        aa.areaId,
+        aa.seriesId,
+        aa.close_date
+        FROM
+        (
+        SELECT
+        a.out_id,
+        d.case_pool_type,
+        c.outs_name,
+        a.contract_amt,
+        a.out_id zz,
+        /*COUNT(a.out_id) AS zz,*/
+        a.out_status,
+        a.company_code,
+        c.outs_code,
+        sum(d.real_pay_amount) real_pay_amount,
+        f.series_name,
+        d.close_date,
+        d.account_balance,
+        sum(d.overdue_amount) overdue_amount,
+        g.id AS cityId,
+        g.area_name AS cityName,
+        h.id AS areaId,
+        h.area_name AS areaName,
+        f.id AS seriesId
+        FROM
+        outsource c
+        LEFT JOIN outsource_pool a ON c.id = a.out_id
+        LEFT JOIN case_info d ON a.case_id = d.id
+        LEFT JOIN product e ON d.product_id = e.id
+        LEFT JOIN product_series f ON e.series_id = f.id
+        LEFT JOIN area_code g ON d.area_id = g.id
+        LEFT JOIN area_code h ON g.parent_id = g.id
+        WHERE
+        c.company_code = #{companyCode} and d.case_pool_type=227 and c.flag=0 AND d.recover_remark = 0 and d.collection_status = 21
+        GROUP BY a.case_number
+        ) AS aa
+        GROUP BY
+        aa.outs_name
+        ) AS bb
+        WHERE
+        1 = 1
+        <if test="seriesId != null">
+            AND bb.seriesId=#{seriesId}
+        </if>
+        <if test="cityId != null">
+            AND bb.cityId=#{cityId}
+        </if>
+        <if test="areaId != null">
+            AND bb.areaId=#{areaId}
+        </if>
+        <if test="outsId != null and outsId != ''">
+            AND bb.out_id = #{outsId}
+        </if>
+        ORDER BY outs_name desc
+    </select>
+
+    <!--委外待分配、委外已结案-->
+    <select id="queryDistribute" parameterType="cn.fintecher.pangolin.report.model.QueryOutsourcePoolParams" resultType="cn.fintecher.pangolin.report.model.OutSourceDistModel">
+        SELECT
+        outCase.id AS outId,
+        outCase.case_id AS caseId,
+        caseInfo.case_number AS caseNumber,
+        outCase.out_batch AS batchNumber,
+        person.name AS personalName,
+        person.mobile_no AS mobileNo,
+        person.certificates_number AS idCard,
+        caseInfo.personal_id AS personalId,
+        max(caseInfo.pay_status) AS payStatus,
+        max(caseInfo.overdue_days) AS overdueDays,
+        outCase.out_time AS outTime,
+        outCase.out_back_amt AS outBackAmt,
+        caseInfo.followup_time AS followupTime,
+        record.turn_from_pool AS turnFromPool,
+        caseInfo.account_balance AS accountBalance,
+        sum(caseInfo.overdue_amount) AS overdueAmount,
+        outCase.commission_rate AS commissionRate,
+        outS.outs_name AS outSourceName,
+        series.series_name AS seriesName,
+        principal.`name` AS principalName,
+        outCase.over_outsource_time AS overOutSourceTime,
+        caseInfo.case_follow_in_time AS caseFollowInTime,
+        caseInfo.close_date AS closeDate,
+        u.real_name AS collector,
+        caseInfo.leave_case_flag AS leaveCaseFlag,
+        caseInfo.source_channel AS sourceChannel,
+        caseInfo.collection_method AS collectionMethod,
+        max(caseInfo.overdue_count) AS overdueCount,
+        caseInfo.followup_back AS followupBack,
+        caseInfo.hold_days AS holdDays,
+        caseInfo.left_days AS leftDays,
+        caseInfo.settle_date AS endOutsourceTime,
+        caseInfo.order_id AS orderId,
+        product.product_name AS productName,
+        caseInfo.loan_invoice_number AS loanInvoiceNumber,
+        caseInfo.queue_name queueName
+        FROM outsource_pool AS outCase
+        LEFT JOIN case_info AS caseInfo ON outCase.case_id = caseInfo.id
+        LEFT JOIN (
+        SELECT
+        case_id,
+        case_number,
+        operator_time,
+        turn_from_pool,
+        turn_to_pool,
+        turn_approval_status
+        FROM case_turn_record WHERE circulation_type in(3,4) order by operator_time desc limit 1
+        ) as record on caseInfo.case_number=record.case_number
+        LEFT JOIN personal AS person ON caseInfo.personal_id = person.id
+        LEFT JOIN outsource AS outS ON outS.id = outCase.out_id
+        LEFT JOIN product as product on caseInfo.product_id=product.id
+        LEFT JOIN product_series as series on product.series_id=series.id
+        LEFT JOIN principal as principal on caseInfo.principal_id=principal.id
+        LEFT JOIN `user` as u on caseInfo.current_collector=u.id
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            caseInfo.collection_status = #{queryOutsourcePoolParams.collectionStatus} and
+            <if test="queryOutsourcePoolParams.outSourceName != null">
+                outS.outs_name like concat('%',#{queryOutsourcePoolParams.outSourceName},'%') AND
+            </if>
+            <if test="queryOutsourcePoolParams.endOutsourceTimeStart != null">
+                <![CDATA[DATE_FORMAT(outCase.end_outsource_time,'%Y-%m-%d') >= DATE_FORMAT(#{queryOutsourcePoolParams.endOutsourceTimeStart},'%Y-%m-%d')]]> AND
+            </if>
+            <if test="queryOutsourcePoolParams.endOutsourceTimeEnd != null">
+                <![CDATA[DATE_FORMAT(outCase.end_outsource_time,'%Y-%m-%d') <= DATE_FORMAT(#{queryOutsourcePoolParams.endOutsourceTimeEnd},'%Y-%m-%d')]]> AND
+            </if>
+            <if test="queryOutsourcePoolParams.outTimeStart != null and queryOutsourcePoolParams.outTimeStart != ''">
+                <![CDATA[DATE_FORMAT(outCase.out_time,'%Y-%m-%d') >= DATE_FORMAT(#{queryOutsourcePoolParams.outTimeStart},'%Y-%m-%d')]]> AND
+            </if>
+            <if test="queryOutsourcePoolParams.outTimeEnd != null and queryOutsourcePoolParams.outTimeEnd !=''">
+                <![CDATA[DATE_FORMAT(outCase.out_time,'%Y-%m-%d') <= DATE_FORMAT(#{queryOutsourcePoolParams.outTimeEnd},'%Y-%m-%d')]]> AND
+            </if>
+            <if test="queryOutsourcePoolParams.overOutSourceTimeStart != null">
+                <![CDATA[DATE_FORMAT(outCase.over_outsource_time,'%Y-%m-%d') >= DATE_FORMAT(#{queryOutsourcePoolParams.overOutSourceTimeStart},'%Y-%m-%d')]]> AND
+            </if>
+            <if test="queryOutsourcePoolParams.overOutSourceTimeEnd != null">
+                <![CDATA[DATE_FORMAT(outCase.over_outsource_time,'%Y-%m-%d') <= DATE_FORMAT(#{queryOutsourcePoolParams.overOutSourceTimeEnd},'%Y-%m-%d')]]> AND
+            </if>
+
+            <if test="queryOutsourcePoolParams.companyCode != null">
+                outCase.company_code = #{queryOutsourcePoolParams.companyCode} AND
+            </if>
+            <if test="queryOutsourcePoolParams.personalName != null">
+                person.name LIKE CONCAT('%',#{queryOutsourcePoolParams.personalName},'%') AND
+            </if>
+            <if test="queryOutsourcePoolParams.mobileNo != null">
+                person.mobile_no = #{queryOutsourcePoolParams.mobileNo} AND
+            </if>
+            <if test="queryOutsourcePoolParams.idCard != null">
+                person.certificates_number = #{queryOutsourcePoolParams.idCard} AND
+            </if>
+            <if test="queryOutsourcePoolParams.caseNumber != null ">
+                caseInfo.case_number=#{queryOutsourcePoolParams.caseNumber} AND
+            </if>
+            <if test="queryOutsourcePoolParams.departId != null">
+                caseInfo.depart_id=#{queryOutsourcePoolParams.departId} AND
+            </if>
+            <if test="queryOutsourcePoolParams.queueName != null">
+                caseInfo.queue_name LIKE CONCAT('%',#{queryOutsourcePoolParams.queueName},'%') AND
+            </if>
+            <if test="queryOutsourcePoolParams.sourceChannel != null">
+                caseInfo.source_channel =#{queryOutsourcePoolParams.sourceChannel} AND
+            </if>
+            <if test="queryOutsourcePoolParams.turnFromPool != null">
+                record.turn_from_pool=#{queryOutsourcePoolParams.turnFromPool} AND
+            </if>
+            <if test="queryOutsourcePoolParams.collectionMethod != null">
+                caseInfo.collection_method=#{queryOutsourcePoolParams.collectionMethod} AND
+            </if>
+            <if test="queryOutsourcePoolParams.principalId != null">
+                caseInfo.principal_id=#{queryOutsourcePoolParams.principalId} AND
+            </if>
+            <if test="queryOutsourcePoolParams.realName != null">
+                u.real_name=#{queryOutsourcePoolParams.realName} AND
+            </if>
+            <if test="queryOutsourcePoolParams.productName != null">
+                product.product_name LIKE CONCAT('%',#{queryOutsourcePoolParams.productName},'%') AND
+            </if>
+            <if test="queryOutsourcePoolParams.caseFollowInTime != null">
+                DATE_FORMAT(caseInfo.case_follow_in_time,'%Y-%m-%d')=DATE_FORMAT (#{queryOutsourcePoolParams.caseFollowInTime},'%Y-%m-%d') AND
+            </if>
+            <if test="queryOutsourcePoolParams.batchNumber != null">
+                outCase.out_batch = #{queryOutsourcePoolParams.batchNumber} AND
+            </if>
+            <if test="queryOutsourcePoolParams.outsId != null">
+                outCase.out_id = #{queryOutsourcePoolParams.outsId} AND
+            </if>
+            <if test="queryOutsourcePoolParams.seriesId != null">
+                series.id=#{queryOutsourcePoolParams.seriesId} AND
+            </if>
+            <if test="queryOutsourcePoolParams.followupBack != null">
+                caseInfo.followup_back=#{queryOutsourcePoolParams.followupBack} AND
+            </if>
+        </trim>
+        group by caseInfo.case_number having 1=1
+        <if test="queryOutsourcePoolParams.payStatus != null and queryOutsourcePoolParams.payStatus !='' and queryOutsourcePoolParams.payStatus == 'M6'">
+            and payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="queryOutsourcePoolParams.payStatus != null and queryOutsourcePoolParams.payStatus !='' and queryOutsourcePoolParams.payStatus != 'M6'">
+            and payStatus = #{queryOutsourcePoolParams.payStatus}
+        </if>
+        <if test="queryOutsourcePoolParams.overMaxDay != null">
+            and overdueDays &lt;= #{queryOutsourcePoolParams.overMaxDay}
+        </if>
+        <if test="queryOutsourcePoolParams.overMinDay != null">
+            and overdueDays &gt;= #{queryOutsourcePoolParams.overMinDay}
+        </if>
+        <if test="queryOutsourcePoolParams.overdueMaxAmt != null">
+            and overdueAmount &lt;= #{queryOutsourcePoolParams.overdueMaxAmt}
+        </if>
+        <if test="queryOutsourcePoolParams.overdueMinAmt != null">
+            and overdueAmount &gt;= #{queryOutsourcePoolParams.overdueMinAmt}
+        </if>
+        <if test="queryOutsourcePoolParams.overdueCount != null">
+            and overdueCount=#{queryOutsourcePoolParams.overdueCount}
+        </if>
+        <if test="queryOutsourcePoolParams.sort != null">
+            ORDER BY ${queryOutsourcePoolParams.sort}
+        </if>
+    </select>
+
+    <!--委外待分配、委外已结案-->
+    <select id="findCountOfEnd" parameterType="cn.fintecher.pangolin.report.model.BatchAndNameParams" resultType="cn.fintecher.pangolin.report.model.BatchAndNameModel">
+        SELECT
+        sum(ci.overdue_amount) AS outcaseClosedAmt,
+        count(ci.numbers) AS outcaseClosedCount
+        FROM outsource_pool AS outCase
+        LEFT JOIN
+        (select count(caseInfo.id) as numbers,caseInfo.collection_status as collection_status,caseInfo.batch_number as batch_number,caseInfo.id as id,sum(caseInfo.overdue_amount) as overdue_amount,caseInfo.case_number as case_number from case_info caseInfo GROUP BY caseInfo.case_number ) ci
+        on ci.id = outCase.case_id
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            ci.collection_status = 24
+            <if test="batchNumber != null">
+                AND ci.batch_number=#{batchNumber}
+            </if>
+            <if test="outsId != null">
+                AND outCase.out_id=#{outsId}
+            </if>
+        </trim>
+    </select>
+    <!--委外回收案件查询-->
+    <select id="queryReturn" parameterType="cn.fintecher.pangolin.report.model.QueryOutsourcePoolParams" resultType="cn.fintecher.pangolin.report.model.OutSourceDistModel">
+        SELECT
+        caseReturn.id AS id,
+        caseReturn.case_id AS caseId,
+        caseInfo.case_number AS caseNumber,
+        caseReturn.out_batch AS batchNumber,
+        caseReturn.return_type AS returnType,
+        person.name AS personalName,
+        person.id AS personalId,
+        person.mobile_no AS mobileNo,
+        person.certificates_number AS idCard,
+        sum(caseInfo.overdue_amount) AS overdueAmount,
+        max(caseInfo.overdue_days) AS overdueDays,
+        pa.living_province_name AS areaName,
+        pa.living_city_name AS city,
+        caseInfo.pay_status AS payStatus,
+        caseReturn.out_time AS outTime,
+        caseReturn.over_outsource_time AS overOutSourceTime,
+        series.series_name AS seriesName,
+        principal.`name` AS principalName,
+        caseReturn.operator_time AS returnDate,
+        caseReturn.reason AS returnReason,
+        caseReturn.source AS source,
+        caseInfo.account_balance AS accountBalance,
+        caseInfo.source_channel AS sourceChannel,
+        caseInfo.collection_method AS collectionMethod,
+        max(caseInfo.overdue_count) AS overdueCount,
+        u.real_name AS collector,
+        turnRecord.turn_from_pool AS turnFromPool,
+        turnRecord.turn_to_pool AS turnToPool,
+        turnRecord.turn_approval_status AS turnStatus,
+        caseInfo.case_follow_in_time AS caseFollowInTime,
+        caseInfo.followup_time AS followupTime,
+        caseInfo.followup_back AS followupBack,
+        caseInfo.hold_days AS holdDays,
+        caseInfo.left_days AS leftDays,
+        caseInfo.leave_case_flag AS leaveCaseFlag,
+        law.lawsuit_result AS lawsuitResult,
+        anti.anti_fraud_result AS antiFraudResult
+        FROM case_info_return AS caseReturn
+        LEFT JOIN outsource_pool AS outPool ON outPool.case_id = caseReturn.case_id
+        LEFT JOIN case_info AS caseInfo ON caseInfo.id = caseReturn.case_id
+        LEFT JOIN area_code as city on caseInfo.area_id=city.id
+        LEFT JOIN area_code as area on city.parent_id=area.id
+        LEFT JOIN personal AS person ON person.id = caseInfo.personal_id
+        LEFT JOIN personal_address AS pa ON pa.personal_id = caseInfo.personal_id AND pa.relation = 69
+        LEFT JOIN `user` as u on caseInfo.current_collector=u.id
+        LEFT JOIN product as product on caseInfo.product_id=product.id
+        LEFT JOIN product_series as series on product.series_id=series.id
+        LEFT JOIN lawsuit_record as law on caseInfo.case_number=law.case_number
+        LEFT JOIN anti_fraud_record as anti on caseInfo.case_number= anti.case_number
+        LEFT JOIN principal as principal on caseInfo.principal_id=principal.id
+        LEFT JOIN
+        (
+        SELECT
+        case_id,
+        case_number,
+        operator_time,
+        turn_from_pool,
+        turn_to_pool,
+        turn_approval_status
+        FROM
+        case_turn_record AS a
+        WHERE
+        operator_time = (
+        SELECT
+        MAX(operator_time)
+        FROM
+        case_turn_record
+        WHERE
+        circulation_type in(3,4))
+        )
+        turnRecord ON turnRecord.case_id = caseReturn.case_id
+        WHERE caseInfo.case_pool_type= 1120
+        <if test="caseNumber != null">
+            AND caseInfo.case_number = #{caseNumber}
+        </if>
+        <if test="companyCode != null">
+            AND caseReturn.company_code = #{companyCode}
+        </if>
+        <if test="collector != null">
+            AND person.name LIKE CONCAT('%',#{collector},'%')
+        </if>
+        <if test="personalName != null">
+            AND person.name LIKE CONCAT('%',#{personalName},'%')
+        </if>
+        <if test="mobileNo != null">
+            AND person.mobile_no = #{mobileNo}
+        </if>
+        <if test="idCard != null">
+            AND person.certificates_number = #{idCard}
+        </if>
+        <if test="batchNumber != null">
+            AND caseReturn.out_batch = #{batchNumber}
+        </if>
+        <if test="outsId != null">
+            AND outPool.out_id = #{outsId}
+        </if>
+        <!--<if test="overOutsourceTimeStart != null">-->
+            <!--AND caseReturn.over_outsource_time &gt;= #{overOutsourceTimeStart}-->
+        <!--</if>-->
+        <!--<if test="overOutsourceTimeEnd != null">-->
+            <!--AND caseReturn.over_outsource_time &lt;= #{overOutsourceTimeEnd}-->
+        <!--</if>-->
+        <if test="departId != null">
+            AND caseInfo.depart_id=#{departId}
+        </if>
+        <if test="queueName != null">
+            AND caseInfo.queue_name LIKE CONCAT('%',#{queueName},'%')
+        </if>
+        <if test="sourceChannel != null">
+            AND caseInfo.source_channel=#{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND caseInfo.collection_method=#{collectionMethod}
+        </if>
+        <if test="caseMark != null">
+            AND caseInfo.case_mark=#{caseMark}
+        </if>
+        <if test="realName != null">
+            AND u.real_name=#{realName}
+        </if>
+        <if test="seriesId != null">
+            AND series.series_name=#{seriesId}
+        </if>
+        <if test="overduePeriods != null">
+            AND caseInfo.overdue_periods=#{overduePeriods}
+        </if>
+        <if test="payStatus != null">
+            AND caseInfo.overdue_periods=#{payStatus}
+        </if>
+        <if test="followupBack != null">
+            AND caseInfo.followup_back=#{followupBack}
+        </if>
+        <if test="turnFromPool != null">
+            AND turnRecord.turn_from_pool=#{turnFromPool}
+        </if>
+        <if test="turnToPool != null">
+            AND turnRecord.turn_to_pool=#{turnToPool}
+        </if>
+        <if test="turnStatus != null">
+            AND turnRecord.turn_approval_status=#{turnStatus}
+        </if>
+        <if test="lawsuitResult != null">
+            AND law.lawsuit_result=#{lawsuitResult}
+        </if>
+        <if test="antiFraudResult != null">
+            AND anti.anti_fraud_result=#{antiFraudResult}
+        </if>
+        <if test="caseFollowInTime != null">
+            AND <![CDATA[DATE_FORMAT(caseInfo.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="startFollowDate != null">
+            AND caseInfo.followup_time &gt;= #{startFollowDate}
+        </if>
+        <if test="endFollowDate != null">
+            AND caseInfo.followup_time &lt;= #{endFollowDate}
+        </if>
+        <if test="areaId != null">
+            AND area.id=#{areaId}
+        </if>
+        <if test="cityId != null">
+            AND city.id=#{cityId}
+        </if>
+        <if test="principalId != null">
+            AND principal.id=#{principalId}
+        </if>
+        <if test="returnType != null">
+            AND caseReturn.return_type=#{returnType}
+        </if>
+        group by caseInfo.case_number having 1=1
+        <if test="overdueMaxAmt != null">
+            AND overdueAmount &lt;= #{overdueMaxAmt}
+        </if>
+        <if test="overdueMinAmt != null">
+            AND overdueAmount &gt;= #{overdueMinAmt}
+        </if>
+        <if test="overMaxDay != null">
+            AND overdueDays &lt;= #{overMaxDay}
+        </if>
+        <if test="overMinDay != null">
+            AND overdueDays &gt;= #{overMinDay}
+        </if>
+        <if test="overdueCount != null">
+            AND overdueCount=#{overdueCount}
+        </if>
+        <if test="sort != null">
+            ORDER BY ${sort}
+        </if>
+    </select>
+
+    <!--委外归C案件的查询-->
+    <select id="queryCleanUpcaseInfo" resultType="cn.fintecher.pangolin.report.model.OutSourceDistModel">
+        SELECT outCase.id AS outId,outCase.case_id AS caseId,caseInfo.case_number AS caseNumber,
+        outCase.out_batch AS batchNumber,person.name AS personalName,person.mobile_no AS mobileNo,
+        person.id_card AS idCard,pare.area_name as areaName,area.area_name AS city,caseInfo.pay_status AS
+        payStatus,caseInfo.overdue_days AS
+        overdueDays,outCase.out_time AS outTime,caseInfo.followup_time as followupTime,
+        caseInfo.overdue_amount AS overdueAmount,series.series_name as seriesName,principal.`name` as principalName,
+        u.real_name as collector,caseInfo.leave_case_flag as leaveCaseFlag,outCase.over_outsource_time as
+        overOutSourceTime,outs.outs_name as outSourceName,caseInfo.account_balance AS accountBalance,
+        caseInfo.followup_back as followupBack,caseInfo.hold_days as holdDays,caseInfo.left_days as leftDays,
+        outCase.contract_amt as contractAmt
+        FROM outsource_pool AS outCase
+        LEFT JOIN outsource as outs on outCase.out_id=outs.id
+        LEFT JOIN case_info AS caseInfo ON outCase.case_id = caseInfo.id
+        LEFT JOIN personal AS person ON caseInfo.personal_id = person.id
+        LEFT JOIN area_code AS area ON area.id = caseInfo.area_id
+        LEFT JOIN area_code as pare on area.parent_id=pare.id
+        LEFT JOIN product as product on caseInfo.product_id=product.id
+        LEFT JOIN product_series as series on product.series_id=series.id
+        LEFT JOIN principal as principal on caseInfo.principal_id=principal.id
+        LEFT JOIN `user` as u on caseInfo.current_collector=u.id
+        where outCase.out_status=832
+        <if test="caseNumber != null">
+            and caseInfo.case_number=#{caseNumber}
+        </if>
+        <if test="personalName != null">
+            AND person.name LIKE CONCAT('%',#{personalName},'%')
+        </if>
+        <if test="mobileNo != null">
+            AND person.mobile_no = #{mobileNo}
+        </if>
+        <if test="idCard != null">
+            AND person.id_card = #{idCard}
+        </if>
+        <if test="batchNumber != null">
+            and outCase.out_batch=#{batchNumber}
+        </if>
+        <if test="departId != null">
+            AND caseInfo.depart_id=#{departId}
+        </if>
+        <if test="seriesId != null">
+            AND series.id=#{seriesId}
+        </if>
+        <if test="principalId != null">
+            AND caseInfo.principal_id=#{principalId}
+        </if>
+        <if test="outsId != null">
+            AND outCase.out_id = #{outsId}
+        </if>
+        <if test="realName != null">
+            AND u.real_name=#{realName}
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND outCase.contract_amt &lt;= #{overdueMaxAmt}
+        </if>
+        <if test="overdueMinAmt != null">
+            AND outCase.contract_amt &gt;= #{overdueMinAmt}
+        </if>
+        <if test="overduePeriods != null">
+            AND caseInfo.pay_status=#{overduePeriods}
+        </if>
+        <if test="overMaxDay != null">
+            AND caseInfo.overdue_days &lt;= #{overMaxDay}
+        </if>
+        <if test="overMinDay != null">
+            AND caseInfo.overdue_days &gt;= #{overMinDay}
+        </if>
+        <if test="followupTime != null">
+            AND DATE(caseInfo.followup_time)=DATE(#{followupTime})
+        </if>
+        <if test="areaId != null">
+            AND pare.id=#{areaId}
+        </if>
+        <if test="cityId != null">
+            AND area.id=#{cityId}
+        </if>
+        <if test="sort != null">
+            ORDER BY ${sort}
+        </if>
+
+
+
+
+
+    </select>
+
+</mapper>

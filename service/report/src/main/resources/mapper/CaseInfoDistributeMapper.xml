@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.CaseInfoDistributeMapper">
+
+    <!--多条件查询待分配案件-->
+    <select id="findCaseInfoDistribute" parameterType="cn.fintecher.pangolin.report.model.CaseInfoDistributeQueryParams"
+            resultType="cn.fintecher.pangolin.report.entity.response.CaseInfoDistributedListResponse">
+        SELECT
+        a.id as id,
+        a.case_number as caseNumber,
+        sum(a.account_balance) as accountBalance,
+        sum(a.overdue_amount) as overdueAmount,
+        max(a.periods) as periods,
+        a.pay_status as payStatus,
+        max(a.overdue_days) as overdueDays,
+        a.operator,
+        max(a.overdue_periods) as overduePeriods,
+        a.source_channel,
+        a.collection_method,
+        a.repay_date as repayDate,
+        a.loan_invoice_number as loanInvoiceNumber,
+        c.name as personalInfoName,
+        c.mobile_no as personalInfoMobileNo
+        FROM case_info_distributed a
+        LEFT JOIN personal c ON a.personal_id = c.id
+        WHERE 1=1
+        AND a.recover_remark = 0
+        <if test="companyCode != null and companyCode !=''">
+            AND a.company_code = #{companyCode}
+        </if>
+        <if test="caseNumber != null and caseNumber !=''">
+            AND a.case_number = #{caseNumber}
+        </if>
+        <if test="personalName != null and personalName !=''">
+            AND c.name LIKE concat('%', #{personalName},'%')
+        </if>
+        <if test="mobileNo != null and mobileNo !=''">
+            AND c.mobile_no = #{mobileNo}
+        </if>
+        <if test="handNumberStart != null and handNumberStart !=''">
+            AND <![CDATA[a.hand_number >= #{handNumberStart}]]>
+        </if>
+        <if test="handNumberEnd != null and handNumberEnd !=''">
+            AND <![CDATA[a.hand_number <= #{handNumberEnd}]]>
+        </if>
+        <if test="commissionRateStart != null and commissionRateStart !=''">
+            AND <![CDATA[a.commission_rate >= #{commissionRateStart}]]>
+        </if>
+        <if test="commissionRateEnd != null and commissionRateEnd !=''">
+            AND <![CDATA[a.commission_rate <= #{commissionRateEnd}]]>
+        </if>
+        <if test="collectionMethod != null and collectionMethod != ''">
+            AND a.collection_method = #{collectionMethod}
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="sourceChannel != null and sourceChannel !=''">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        group by a.case_number
+        having 1=1
+        <if test="overDueAmountStart != null and overDueAmountStart !=''">
+            AND <![CDATA[overdueAmount >= #{overDueAmountStart}]]>
+        </if>
+        <if test="overDueAmountEnd != null and overDueAmountEnd !=''">
+            AND <![CDATA[overdueAmount <= #{overDueAmountEnd}]]>
+        </if>
+        <if test="overdueDaysStart != null">
+            AND <![CDATA[overdueDays >= #{overdueDaysStart}]]>
+        </if>
+        <if test="overdueDaysEnd !=null">
+            AND <![CDATA[overdueDays <= #{overdueDaysEnd}]]>
+        </if>
+        <if test="payStatus != null and payStatus !='' and payStatus == 'M6'">
+            AND payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus !='' and payStatus != 'M6'">
+            AND payStatus = #{payStatus}
+        </if>
+    </select>
+
+    <!--查询待分配案件详情-->
+    <select id="getCaseInfoDistributedDetails"
+            resultMap="CaseInfoExcelModelResultMap">
+        SELECT a.id,a.contract_number,a.loan_date,a.periods,a.per_due_date,a.per_pay_amount,a.contract_amount,a.left_capital,a.left_interest
+         ,a.overdue_amount,a.overdue_capital,a.overdue_interest,a.overdue_fine,a.overdue_delay_fine,a.other_amt,a.over_due_date,a.overdue_periods,
+          overdue_days,has_pay_amount,has_pay_periods,lately_pay_date,lately_pay_amount,memo,commission_rate,overdue_manage_fee,
+          a.batch_number,a.first_pay_date,a.account_age,a.hand_number,a.pay_status,a.delegation_date,a.close_date,a.operator_time,a.operator,a.company_code,
+          a.case_number,a.case_mark,a.recover_way,c.name,c.id_card,c.mobile_no,b.series_name,d.product_name,f.area_name,g.area_name as parentName ,
+          c.id_card_address,c.local_home_address,c.local_phone_no,i.company_name , i.address,i.phone,e.code,e.name as prinName,h.real_name,c.number,j.account_number
+          ,c.marital,j.deposit_bank,j.card_number,c.id as personalId
+           FROM case_info_distributed a
+          LEFT JOIN personal c ON a.personal_id = c.id
+          LEFT JOIN product d ON a.product_id = d.id
+          LEFT JOIN product_series b ON d.series_id = b.id
+          LEFT JOIN principal e ON a.principal_id = e.id
+          LEFT JOIN area_code f on a.area_id = f.id
+          LEFT JOIN area_code g on f.parent_id = g.id
+          LEFT JOIN personal_job i ON c.id = i.personal_id
+          LEFT JOIN USER h ON  a.operator = h.id
+          LEFT JOIN personal_bank j ON j.personal_id = c.id
+          WHERE a.id=#{id}
+    </select>
+
+    <resultMap id="CaseInfoExcelModelResultMap" type="cn.fintecher.pangolin.report.model.CaseInfoExcelModel">
+        <id column="id" property="id"/>
+        <result column="contract_number" property="contractNumber"/>
+        <result column="loan_date" property="loanDate"/>
+        <result column="periods" property="periods"/>
+        <result column="per_due_date" property="perDueDate"/>
+        <result column="per_pay_amount" property="perPayAmount"/>
+        <result column="contract_amount" property="contractAmount"/>
+        <result column="left_capital" property="leftCapital"></result>
+        <result column="left_interest" property="leftInterest"/>
+        <result column="overdue_amount" property="overdueAmount"></result>
+        <result column="overdue_capital" property="overdueCapital"></result>
+        <result column="overdue_interest" property="overDueInterest"></result>
+        <result column="overdue_fine" property="overdueFine"></result>
+        <result column="overdue_delay_fine" property="overdueDelayFine"></result>
+        <result column="other_amt" property="otherAmt"></result>
+        <result column="over_due_date" property="overDueDate"></result>
+        <result column="overdue_periods" property="overDuePeriods"></result>
+        <result column="overdue_days" property="overDueDays"></result>
+        <result column="has_pay_amount" property="hasPayAmount"></result>
+        <result column="has_pay_periods" property="hasPayPeriods"></result>
+        <result column="lately_pay_date" property="latelyPayDate"></result>
+        <result column="lately_pay_amount" property="latelyPayAmount"></result>
+        <result column="memo" property="memo"></result>
+        <result column="commission_rate" property="commissionRate"></result>
+        <result column="overdue_manage_fee" property="overdueManageFee"></result>
+        <result column="batch_number" property="batchNumber"></result>
+        <result column="first_pay_date" property="firstPayDate"></result>
+        <result column="account_age" property="accountAge"></result>
+        <result column="hand_number" property="caseHandNum"></result>
+        <result column="pay_status" property="paymentStatus"></result>
+        <result column="delegation_date" property="delegationDate"></result>
+        <result column="close_date" property="closeDate"></result>
+        <result column="operator_time" property="operatorTime"></result>
+        <result column="operator" property="operator"></result>
+        <result column="company_code" property="companyCode"></result>
+        <result column="case_number" property="caseNumber"></result>
+        <result column="case_mark" property="color"></result>
+        <result column="recover_way" property="recoverWay"></result>
+        <result column="name" property="personalName"></result>
+        <result column="id_card" property="idCard"></result>
+        <result column="mobile_no" property="mobileNo"></result>
+        <result column="series_name" property="productSeriesName"></result>
+        <result column="product_name" property="productName"></result>
+        <result column="area_name" property="city"></result>
+        <result column="parentName" property="province"></result>
+        <result column="id_card_address" property="idCardAddress"></result>
+        <result column="local_home_address" property="homeAddress"></result>
+        <result column="local_phone_no" property="homePhone"></result>
+        <result column="company_name" property="companyName"></result>
+        <result column="address" property="companyAddr"></result>
+        <result column="phone" property="companyPhone"></result>
+        <result column="code" property="prinCode"></result>
+        <result column="prinName" property="prinName"></result>
+        <result column="real_name" property="operatorName"></result>
+        <result column="number" property="personalNumber"></result>
+        <result column="account_number" property="accountNumber"></result>
+        <result column="marital" property="marital"></result>
+        <result column="deposit_bank" property="depositBank"></result>
+        <result column="card_number" property="cardNumber"></result>
+        <result column="personalId" property="personalId"></result>
+    </resultMap>
+</mapper>

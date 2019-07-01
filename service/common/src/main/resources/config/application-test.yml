@@ -1,0 +1,119 @@
+spring:
+    profiles:
+        active: test
+        include: swagger
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+        mongodb:
+             uri: mongodb://sit1:sit2019!@192.168.0.230:27017,192.168.0.227:27017,192.168.0.220:27017
+             database: pangolin_dataimp_db
+    rabbitmq:
+        username: admin
+        password: admin
+        host: 192.192.0.49
+        virtual-host: admin
+        port: 5672
+    mail:
+        host:  smtp.yeah.net
+        username: cuidaren@yeah.net
+        password: cuidaren123456
+        port : 25
+        properties:
+          mail:
+            smtp:
+              auth: true
+              starttls:
+                enable: true
+                required: true
+    freemarker:
+      enabled: false
+eureka:
+  instance:
+    hostname: common-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+pangolin:
+  fdd:
+    url: http://172.16.2.24:8080/hyxfFdd/fdd/downLoadUrlByContractId
+  oss:
+    domain: 1
+    prefix: 1
+    endpoint: oss-cn-hzfinance.aliyuncs.com
+    accesskeyId: LTAIusvxtjgM1sBd
+    accessKeySecret: l0LIxfshobbVOgY8FrCj1ETzcDWUXA
+    bucketName: prod-core-platform-ali
+  call-server:
+    enterprise-code: 4216052302
+    secret: e10adc3949ba59abbe56e057f20f883e
+    host: m.icsoc.net/v2/wintelapi/webcall
+    protocol: http
+    port: 80
+    two-way-interface: /cti
+  sma:
+    seed: abc
+    smaUrl:  http://116.236.220.210:18082/sma/
+    sysTarget: mr.cui
+  message:
+    url: http://sms.zzlgroup.com/sms/sendMsg.html
+    urlQueue: http://sms.zzlgroup.com/sms/querySmsRecordMinute.html
+    channel: 5
+    sysNumber: cuibei_business
+    seed: zzl_apt
+    verificationCode: 123654
+  zhongtong-server:
+    cti: http://m.icsoc.net/v2/wintelapi/webcall/cti
+    webCall1800: http://m.icsoc.net/v2/wintelapi/webcall/webcall800
+    callout: http://m.icsoc.net/v2/wintelapi/detail/callout
+    downloadrRecord: http://m.icsoc.net/v2/wintelapi/record/playrecord
+    enterprise-code: 4216052701
+    proceedSign: 59715406
+    secret: 6b21a1c997dcea6a20c3181677c20744
+    recordlist: http://m.icsoc.net/v2/wintelapi/record/recordlist
+  yunyi-server:
+    host: 116.236.220.211
+    port: 12345
+    timeout: 10000000
+    customerDisplayNum: 51300794
+    agentPwd : zhiwang123
+  hantian-server:
+    host: 192.168.3.16
+    port: 8088
+    callengine: http://${pangolin.hantian-server.host}:${pangolin.hantian-server.port}/callengine/http/operation
+    cdr: http://${pangolin.hantian-server.host}:${pangolin.hantian-server.port}/callengine/http/pull_cdr
+    record: http://${pangolin.hantian-server.host}:${pangolin.hantian-server.port}/recordings
+    token:
+  jiguang:
+    appKey: a06c080ce726b538738b18c9
+    masterSecret: 0c1f4c5b6599df23fe1c3f42
+    msgUrl: https://api.sms.jpush.cn/v1/messages
+  smsVariable:
+        account: N3207154
+        pswd: dAJLRXFC3l9097
+        smsVariableUrl: http://smssh1.253.com/msg/send/json
+  winnerLook:
+      userCode: ZWXXYX
+      userPass: Qjg888888
+      lookUrl: http://112.124.24.5/api/MsgSend.asmx/SendMsg
+      channel: 52
+  aliyun:
+      product: Dysmsapi
+      domain: dysmsapi.aliyuncs.com
+      accessKeyId: LTAIAgxYdlgmOCtw
+      accessKeySecret: HKcYeDkCWUxZKHXhdTueJ892qPXFKb
+      signName: 高贝贝
+  UDesk:
+      callerEmail: ceshi1007@51xf.cn
+      secret: f2eef2a0f660cdd1a3841af2b58f0dd5
+      callUrl: https://51xf.udesk.cn/
+server:
+    port: 9002

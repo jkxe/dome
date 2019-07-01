@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.fintecher.pangolin.dataimp.mapper.CaseInfoDistributedMapper">
+
+<!--
+
+    <select id="getCaseNumberList4Distributed" parameterType="java.lang.String" resultType="cn.fintecher.pangolin.dataimp.model.CaseDistributedResultModel">
+        select case_number caseNumber,left_capital leftCapital, product_type productType,
+        product_name productName,collection_type collectionType,case_pool_type casePoolType from case_info_distributed
+        <if test="queryStr != null">
+            ${queryStr}
+        </if>
+    </select>
+-->
+<!--
+
+    <select id="getCaseNumberList4CaseInfo" parameterType="java.lang.String" resultType="cn.fintecher.pangolin.dataimp.model.CaseDistributedResultModel">
+        select case_number caseNumber,left_capital leftCapital, product_type productType,
+        product_name productName,current_collector currentCollector,collection_type collectionType,
+        recover_remark recoverRemark,case_pool_type casePoolType,collection_status collectionStatus from case_info
+        <if test="queryStr != null">
+            ${queryStr}
+        </if>
+    </select>
+-->
+
+
+    <select id="getCaseProperties" resultType="cn.fintecher.pangolin.dataimp.entity.CaseDistributedResult" parameterType="java.lang.String">
+        SELECT d.case_number caseNumber,p.product_name productName,s.id productTypeId FROM case_info_distributed d LEFT JOIN product p
+        ON d.product_id=p.id LEFT JOIN product_series s ON p.series_id=s.id where d.company_code= #{companyCode} and (d.product_name = '' or d.product_name is null)
+        or (d.product_type ='' or d.product_type is null)
+    </select>
+
+    <select id="selectProductSeries" resultType="cn.fintecher.pangolin.dataimp.model.ProductSeriesImpModel">
+        SELECT 	id,series_name typeName FROM product_series
+    </select>
+
+
+    <select id="getCaseDistributedResultList" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.dataimp.model.CaseInfoDistributedModelImp">
+
+        SELECT
+        SUM(overdue_amount) sum_overdue_amount,
+        MAX(overdue_periods) max_overdue_periods,
+        MAX(overdue_days) max_overdue_days,
+        id distributedId,
+        depart_id  departId,
+        personal_id   personalId,
+        area_id  areaId,
+        batch_number  batchNumber,
+        case_number  caseNumber,
+        collection_type  collectionType,
+        product_id  productId,
+        contract_number  contractNumber,
+        contract_amount  contractAmount,
+        overdue_amount  overdueAmount,
+        left_capital   leftCapital,
+        left_interest  leftInterest,
+        overdue_capital overdueCapital,
+        overdue_interest overdueInterest,
+        overdue_fine overdueFine,
+        overdue_delay_fine overdueDelayFine,
+        periods,
+        per_due_date perDueDate,
+        per_pay_amount perPayAmount,
+        overdue_periods overduePeriods,
+        overdue_days overdueDays,
+        has_pay_amount hasPayAmount,
+        has_pay_periods hasPayPeriods,
+        lately_pay_date latelyPayDate,
+        lately_pay_amount latelyPayAmount,
+        lately_collector latelyCollector,
+        current_collector currentCollector,
+        assist_flag assistFlag,
+        assist_collector assistCollector,
+        assist_status assistStatus,
+        assist_way assistWay,
+        hold_days holdDays,
+        left_days leftDays,
+        case_type caseType,
+        leave_case_flag leaveCaseFlag,
+        leave_date leaveDate,
+        has_leave_days hasLeaveDays,
+        case_mark caseMark,
+        follow_up_num followUpNum,
+        pay_status payStatus,
+        principal_id principalId,
+        collection_status collectionStatus,
+        order_id orderId,
+        commission_rate commissionRate,
+        hand_number handNumber,
+        loan_date loanDate,
+        overdue_manage_fee overdueManageFee,
+        hand_up_flag handUpFlag,
+        derate_amt derateAmt,
+        real_pay_amount realPayAmount,
+        early_settle_amt earlySettleAmt,
+        early_real_settle_amt earlyRealSettleAmt,
+        early_derate_amt earlyDerateAmt,
+        other_amt otherAmt,
+        score,
+        operator,
+        company_code companyCode,
+        end_remark endRemark,
+        over_due_date overDueDate,
+        memo,
+        first_pay_date firstPayDate,
+        account_age accountAge,
+        recover_way recoverWay,
+        recover_remark recoverRemark,
+        case_pool_type casePoolType,
+        product_type productType,
+        product_name productName,
+        case_pool_type casePoolType,
+        close_date closeDate,
+        account_balance accountBalance,
+        is_processed isProcessed FROM case_info_distributed
+        <if test="queryStr != null">
+            ${queryStr}
+        </if>
+    </select>
+
+
+    <select id="getCaseInfoResultList" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.dataimp.model.CaseInfoDistributedModelImp">
+
+        SELECT
+        SUM(overdue_amount) sum_overdue_amount,
+        MAX(overdue_periods) max_overdue_periods,
+        MAX(overdue_days) max_overdue_days,
+        id id,
+        depart_id  departId,
+        personal_id   personalId,
+        area_id  areaId,
+        batch_number  batchNumber,
+        case_number  caseNumber,
+        collection_type  collectionType,
+        product_id  productId,
+        contract_number  contractNumber,
+        contract_amount  contractAmount,
+        overdue_amount  overdueAmount,
+        left_capital   leftCapital,
+        left_interest  leftInterest,
+        overdue_capital overdueCapital,
+        overdue_interest overdueInterest,
+        overdue_fine overdueFine,
+        overdue_delay_fine overdueDelayFine,
+        periods,
+        per_due_date perDueDate,
+        per_pay_amount perPayAmount,
+        overdue_periods overduePeriods,
+        overdue_days overdueDays,
+        has_pay_amount hasPayAmount,
+        has_pay_periods hasPayPeriods,
+        lately_pay_date latelyPayDate,
+        lately_pay_amount latelyPayAmount,
+        lately_collector latelyCollector,
+        current_collector currentCollector,
+        assist_flag assistFlag,
+        assist_collector assistCollector,
+        assist_status assistStatus,
+        assist_way assistWay,
+        hold_days holdDays,
+        left_days leftDays,
+        case_type caseType,
+        leave_case_flag leaveCaseFlag,
+        leave_date leaveDate,
+        has_leave_days hasLeaveDays,
+        case_mark caseMark,
+        follow_up_num followUpNum,
+        pay_status payStatus,
+        principal_id principalId,
+        collection_status collectionStatus,
+        order_id orderId,
+        commission_rate commissionRate,
+        hand_number handNumber,
+        loan_date loanDate,
+        overdue_manage_fee overdueManageFee,
+        hand_up_flag handUpFlag,
+        derate_amt derateAmt,
+        real_pay_amount realPayAmount,
+        early_settle_amt earlySettleAmt,
+        early_real_settle_amt earlyRealSettleAmt,
+        early_derate_amt earlyDerateAmt,
+        other_amt otherAmt,
+        score,
+        operator,
+        company_code companyCode,
+        end_remark endRemark,
+        over_due_date overDueDate,
+        memo,
+        first_pay_date firstPayDate,
+        account_age accountAge,
+        recover_way recoverWay,
+        recover_remark recoverRemark,
+        product_type productType,
+        product_name productName,
+        close_date closeDate,
+        account_balance accountBalance,
+        case_pool_type casePoolType FROM case_info
+        <if test="queryStr != null">
+            ${queryStr}
+        </if>
+    </select>
+
+
+    <delete id="deleteByCaseNumbers" parameterType="java.util.List">
+        DELETE FROM case_info_distributed WHERE 1=1
+        <if test="caseNumberList != null and caseNumberList.size() > 0 ">
+            and case_number in
+            <foreach collection="caseNumberList"  item="caseNumberList" open="(" separator="," close=")">
+                #{caseNumberList}
+            </foreach>
+        </if>
+    </delete>
+
+
+    <delete id="deleteOutsourcePoolByCaseIds" parameterType="java.util.List">
+        DELETE FROM outsource_pool WHERE 1=1
+        <if test="caseIdList != null and caseIdList.size() > 0 ">
+            and case_id in
+            <foreach collection="caseIdList"  item="caseIdList" open="(" separator="," close=")">
+                #{caseIdList}
+            </foreach>
+        </if>
+    </delete>
+
+    <select id="getCaseInfoByCasePoolType" parameterType="java.lang.Integer" resultType="cn.fintecher.pangolin.dataimp.model.CaseInfo">
+        select id,case_number as caseNumber from case_info where case_pool_type=#{casePoolType}
+    </select>
+    <select id="getOutSourcePoolByCaseId" parameterType="String" resultType="cn.fintecher.pangolin.dataimp.model.OutSourcePoolModel">
+        select id,case_id as caseId,out_time as outTime,out_status as outStatus,contract_amt as contractAmt,
+          outoperation_status as outoperationStatus,operator,operate_time as operateTime,overdue_periods as overduePeriods
+          from outsource_pool where case_id=#{caseId}
+    </select>
+    <insert id="insertOutSourcePool" parameterType="cn.fintecher.pangolin.dataimp.model.OutSourcePoolModel">
+      insert INTO outsource_pool(id,case_id,out_time,out_status,contract_amt,outoperation_status,operator,operate_time,overdue_periods,company_code)
+      VALUES (#{id},#{caseId},#{outTime},#{outStatus},#{contractAmt},#{outoperationStatus},#{operator},#{operateTime},#{overduePeriods},#{companyCode})
+    </insert>
+    <select id="selectCompanyByName" parameterType="string" resultType="cn.fintecher.pangolin.entity.Company">
+          select code,china_name from company where china_name=#{companyName}
+    </select>
+
+
+    <select id="getByCaseNumber" parameterType="java.lang.String" resultType="java.lang.String">
+          select id from case_info where case_number= #{caseNumber}
+    </select>
+
+
+    <update id="updateCaseInfo" parameterType="java.lang.String">
+        UPDATE case_info SET overdue_periods = #{overduePeriods},
+        current_collector = #{currentCollector},
+        depart_id = #{departId},collection_type = #{collectionType}
+        <if test="overdueDays != null">
+            ,overdue_days = #{overdueDays}
+        </if>
+        <if test="caseType != null">
+            ,case_type = #{caseType}
+        </if>
+        <if test="collectionStatus != null">
+            ,collection_status = #{collectionStatus}
+        </if>
+        <if test="casePoolType != null">
+            ,case_pool_type = #{casePoolType}
+        </if>
+        <if test="recoverRemark != null">
+            ,recover_remark = #{recoverRemark}
+        </if>
+        WHERE case_number = #{caseNumber}
+    </update>
+
+    <select id="getOutStatusByCaseId" resultType="java.lang.Integer">
+        select out_status from outsource_pool where case_id=#{caseId}
+    </select>
+
+
+</mapper>

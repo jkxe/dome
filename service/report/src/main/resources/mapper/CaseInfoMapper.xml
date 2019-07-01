@@ -1,0 +1,2573 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.fintecher.pangolin.report.mapper.CaseInfoMapper">
+    <resultMap id="caseInfoBean" type="cn.fintecher.pangolin.report.entity.CaseInfo">
+        <id column="id" property="id"/>
+        <result column="batch_number" property="batchNumber"/>
+        <result column="case_number" property="caseNumber"/>
+        <result column="contract_amount" property="contractAmount"/>
+        <result column="collection_type" property="collectionType"/>
+        <result column="overdue_fine" property="overdueFine"/>
+        <result column="overdue_delay_fine" property="overdueDelayFine"/>
+        <result column="periods" property="periods"/>
+        <result column="loan_date" property="loanDate"/>
+        <result column="per_due_date" property="perDueDate"/>
+        <result column="per_pay_amount" property="perPayAmount"/>
+        <result column="overdue_days" property="overdueDays"/>
+        <result column="overdue_periods" property="overduePeriods"/>
+        <result column="lately_pay_amount" property="latelyPayAmount"/>
+        <result column="overdue_amount" property="overdueAmount"/>
+        <result column="overdue_capital" property="overdueCapital"/>
+        <result column="overdue_interest" property="overdueInterest"/>
+        <result column="has_pay_amount" property="hasPayAmount"/>
+        <result column="has_pay_periods" property="hasPayPeriods"/>
+        <result column="leave_date" property="leaveDate"/>
+        <result column="lately_pay_date" property="latelyPayDate"/>
+        <result column="assist_flag" property="assistFlag"/>
+        <result column="assist_status" property="assistStatus"/>
+        <result column="has_leave_days" property="hasLeaveDays"/>
+        <result column="assist_way" property="assistWay"/>
+        <result column="hold_days" property="holdDays"/>
+        <result column="operator_time" property="operatorTime"/>
+        <result column="left_days" property="leftDays"/>
+        <result column="leave_case_flag" property="leaveCaseFlag"/>
+        <result column="promise_amt" property="promiseAmt"/>
+        <result column="promise_time" property="promiseTime"/>
+        <result column="case_follow_in_time" property="caseFollowInTime"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="collection_status" property="collectionStatus"/>
+        <result column="overdue_manage_fee" property="overdueManageFee"/>
+        <result column="derate_amt" property="derateAmt"/>
+        <result column="real_pay_amount" property="realPayAmount"/>
+        <result column="early_real_settle_amt" property="earlyRealSettleAmt"/>
+        <result column="early_derate_amt" property="earlyDerateAmt"/>
+        <result column="early_settle_amt" property="earlySettleAmt"/>
+        <result column="other_amt" property="otherAmt"/>
+        <result column="left_capital" property="leftCapital"/>
+        <result column="left_interest" property="leftInterest"/>
+        <result column="followup_back" property="followupBack"/>
+        <association property="personalInfo" column="personal_id" select="selectPersonal">
+        </association>
+        <association property="product" column="product_id" select="selectProduct">
+        </association>
+
+        <association property="principalId" column="principal_id" select="selectPrincipal">
+        </association>
+        <association property="area" column="area_id" select="selectArea">
+        </association>
+    </resultMap>
+
+    <resultMap id="personalMap" type="cn.fintecher.pangolin.entity.Personal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="sex" property="sex"/>
+        <result column="mobile_no" property="mobileNo"/>
+        <result column="mobile_status" property="mobileStatus"/>
+        <result column="id_card" property="idCard"/>
+        <result column="local_home_address" property="localHomeAddress"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <collection property="personalJobs" column="id"
+                    ofType="cn.fintecher.pangolin.entity.PersonalJob" select="selectJob">
+        </collection>
+    </resultMap>
+
+    <resultMap id="personalJobMap" type="cn.fintecher.pangolin.entity.PersonalJob">
+        <id column="id" property="id"/>
+        <result column="company_name" property="companyName"/>
+        <result column="department" property="department"/>
+        <result column="phone" property="phone"/>
+        <result column="rank" property="rank"/>
+    </resultMap>
+
+    <resultMap id="productMap" type="cn.fintecher.pangolin.entity.Product">
+        <id column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+    </resultMap>
+
+    <resultMap id="principalMap" type="cn.fintecher.pangolin.entity.Principal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <resultMap id="areaMap" type="cn.fintecher.pangolin.entity.AreaCode">
+        <id column="id" property="id"/>
+        <result column="area_name" property="areaName"/>
+    </resultMap>
+
+    <select id="selectJob" parameterType="String" resultMap="personalJobMap">
+        select * from personal_job where personal_id = #{id}
+    </select>
+
+    <select id="selectProduct" parameterType="String" resultMap="productMap">
+        select id,product_name from product where id = #{product_id}
+    </select>
+
+    <select id="selectPrincipal" parameterType="String" resultMap="principalMap">
+        select id,name from principal where id = #{principal_id}
+    </select>
+
+    <select id="selectArea" parameterType="String" resultMap="areaMap">
+        select id,area_name from area_code where id = #{area_id}
+    </select>
+
+    <select id="queryWaitCollectCase" parameterType="cn.fintecher.pangolin.report.model.CaseInfoParams"
+            resultMap="caseInfoBean">
+        select
+        b.id,b.batch_number,b.case_number,b.contract_amount,b.overdue_fine,b.collection_type,b.overdue_amount,b.left_capital,b.left_interest,b.overdue_capital,
+        b.overdue_interest,b.has_pay_amount,b.assist_flag,b.assist_status,b.assist_way,b.hold_days,b.left_days,b.leave_case_flag,b.overdue_delay_fine,b.periods,
+        b.has_leave_days,b.case_follow_in_time,b.pay_status,b.collection_status,b.overdue_manage_fee,b.derate_amt,b.real_pay_amount,b.per_pay_amount,b.per_due_date,
+        b.early_settle_amt,b.early_real_settle_amt,b.early_derate_amt,b.other_amt,b.followup_back,b.product_id,b.overdue_periods,b.overdue_days,
+        b.has_pay_periods,b.lately_pay_date,b.lately_pay_amount,b.leave_date,b.operator_time,b.promise_amt,b.promise_time,b.area_id,b.loan_date,b.early_derate_amt,
+        b.principal_id,b.personal_id,b.early_real_settle_amt from
+        (
+        select a.*
+        from case_info a ,department b,personal p
+        where a.depart_id=b.id
+        and b.code like CONCAT(#{deptCode}, '%')
+        and a.company_code = #{companyCode}
+        and a.collection_type=16
+        and a.collection_status = 20
+        and a.case_type in(173,181)
+        and a.case_pool_type = 225
+        and a.personal_id = p.id
+        <if test="name != null">
+            and p.name like CONCAT('%',#{name}, '%')
+        </if>
+        <if test="address != null">
+            and p.local_home_address like CONCAT('%', #{address}, '%')
+        </if>
+        UNION ALL
+        select b.*
+        from case_assist a ,case_info b,department c,personal p
+        where a.case_id=b.id
+        and a.depart_id=c.id
+        and c.code like CONCAT(#{deptCode}, '%')
+        and a.company_code = #{companyCode}
+        and a.assist_status = 118
+        and b.personal_id = p.id
+        <if test="name != null">
+            and p.name like CONCAT('%',#{name}, '%')
+        </if>
+        <if test="address != null">
+            and p.local_home_address like CONCAT('%', #{address}, '%')
+        </if>
+        ) as b
+    </select>
+
+    <select id="queryWaitOwnCollectCase" parameterType="cn.fintecher.pangolin.report.model.CaseInfoParams"
+            resultMap="caseInfoBean">
+
+        select
+        b.id,b.batch_number,b.case_number,b.contract_amount,b.overdue_fine,b.collection_type,b.overdue_amount,b.left_capital,b.left_interest,b.overdue_capital,
+        b.overdue_interest,b.has_pay_amount,b.assist_flag,b.assist_status,b.assist_way,b.hold_days,b.left_days,b.leave_case_flag,b.overdue_delay_fine,b.periods,
+        b.has_leave_days,b.case_follow_in_time,b.pay_status,b.collection_status,b.overdue_manage_fee,b.derate_amt,b.real_pay_amount,b.per_pay_amount,b.per_due_date,
+        b.early_settle_amt,b.early_real_settle_amt,b.early_derate_amt,b.other_amt,b.followup_back,b.product_id,b.overdue_periods,b.overdue_days,
+        b.has_pay_periods,b.lately_pay_date,b.lately_pay_amount,b.leave_date,b.operator_time,b.promise_amt,b.promise_time,b.area_id,b.loan_date,b.early_derate_amt,
+        b.principal_id,b.personal_id,b.early_real_settle_amt from
+        (
+        SELECT
+        a.*
+        FROM
+        case_info AS a, personal AS p
+        WHERE
+        a.company_code = #{companyCode}
+        and a.collection_status = 20
+        and a.current_collector = #{collector}
+        and a.case_type in(173,181)
+        and a.personal_id = p.id
+        <if test="name != null">
+            and p.name like CONCAT('%',#{name}, '%')
+        </if>
+        <if test="address != null">
+            and p.local_home_address like CONCAT('%', #{address}, '%')
+        </if>
+        UNION ALL
+        SELECT
+        b.*
+        from case_info as b, case_assist as a,personal as p
+        WHERE
+        a.company_code = #{companyCode}
+        and a.assist_collector= #{collector}
+        and a.assist_status = 118
+        and a.case_id = b.id
+        and b.personal_id = p.id
+        <if test="name != null">
+            and p.name like CONCAT('%',#{name}, '%')
+        </if>
+        <if test="address != null">
+            and p.local_home_address like CONCAT('%', #{address}, '%')
+        </if>
+        ) as b
+        ORDER BY b.operator_time desc
+    </select>
+
+    <select id="selectPersonal" parameterType="String" resultMap="personalMap">
+        select p.id,p.name,p.sex,p.mobile_no,p.mobile_status,p.id_card,p.local_home_address,p.longitude,p.latitude
+        from personal p where p.id = #{personal_id}
+    </select>
+
+    <update id="updateLngLat" parameterType="cn.fintecher.pangolin.entity.Personal">
+        update personal
+        set longitude = #{longitude},latitude = #{latitude}
+        where id = #{id}
+    </update>
+
+    <select id="queryCollectingCase" parameterType="cn.fintecher.pangolin.report.model.CollectingCaseParams"
+            resultType="cn.fintecher.pangolin.report.model.CollectingCaseInfo">
+        select a.batch_number as
+        batchNumber,a.name,a.caseFollowInTime,a.delegationDate,a.closeDate,a.leftDays,a.caseNum,a.caseAmt,a.endCaseAmt,ifnull(endCaseNum,0)
+        as endCaseNum,truncate(ifnull(( endCaseNum/caseNum),0),4) as numRate,truncate((endCaseAmt/caseAmt),4) as
+        amtRate
+        from
+        (
+        select
+        aa.batch_number,aa.caseFollowInTime,aa.delegationDate,aa.closeDate,aa.leftDays,aa.caseNum,aa.caseAmt,aa.endCaseAmt,ab.name,
+        aa.endCaseNum
+        from
+        (
+        select batch_number,principal_id,MIN(case_follow_in_time) as caseFollowInTime ,MIN(delegation_date) as
+        delegationDate,Max(close_date) as closeDate,Min(left_days) as leftDays,count(*) as caseNum,sum(overdue_amount)
+        as caseAmt,sum(real_pay_amount+early_real_settle_amt) as endCaseAmt,
+        count(case when real_pay_amount!=0.00 then 0 end) as endCaseNum
+        from case_info cc
+        left join department on cc.depart_id = department.id
+        where 1 = 1
+        and department.code like CONCAT(#{deptCode}, '%')
+        and (collection_status in (20,21,22,23,171,172) or (collection_status =25 and depart_id is not null))
+        and case_pool_type = 225
+        and recover_remark = 0
+        <if test="batchNumber != null">
+            and batch_number = #{batchNumber}
+        </if>
+        <if test="delegationDateStart != null and delegationDateStart != ''">
+            AND <![CDATA[DATE_FORMAT(delegation_date,'%Y-%m-%d') >= DATE_FORMAT(#{delegationDateStart},'%Y-%m-%d')]]>
+        </if>
+        <if test="delegationDateEnd != null and delegationDateEnd != ''">
+            AND <![CDATA[DATE_FORMAT(delegation_date,'%Y-%m-%d') <= DATE_FORMAT(#{delegationDateEnd},'%Y-%m-%d')]]>
+        </if>
+        <if test="closeDateStart != null and closeDateStart != ''">
+            AND <![CDATA[DATE_FORMAT(close_date,'%Y-%m-%d') >= DATE_FORMAT(#{closeDateStart},'%Y-%m-%d')]]>
+        </if>
+        <if test="closeDateEnd != null and closeDateEnd != ''">
+            AND <![CDATA[DATE_FORMAT(close_date,'%Y-%m-%d') <= DATE_FORMAT(#{closeDateEnd},'%Y-%m-%d')]]>
+        </if>
+        <if test="companyCode != null">
+            and cc.company_code = #{companyCode}
+        </if>
+        GROUP BY batch_number,principal_id
+        )as aa
+        inner join
+        (
+        select id,name from principal
+        where 1 = 1
+        <if test="principalId != null">
+            and id = #{principalId}
+        </if>
+        ) as ab
+        on aa.principal_id = ab.id
+        )
+        as a order by a.delegationDate DESC
+    </select>
+
+    <!-- 多条件查询电催、外访案件信息 -->
+    <select id="getCaseInfoByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.id AS caseId,
+        a.loan_invoice_number AS loanInvoiceNumber,
+        a.case_number As caseNumber,
+        a.collection_type AS collectionType,
+        sum(a.overdue_amount) AS overdueAmount,
+        max(a.pay_status) AS payStatus,
+        max(a.overdue_days) AS overdueDays,
+        max(a.overdue_periods) AS overduePeriods,
+        a.collection_status AS collectionStatus,
+        a.followup_time AS followupTime,
+        a.case_follow_in_time AS caseFollowInTime,
+        a.followup_back AS followupBack,
+        a.assist_way AS assistWay,
+        a.case_mark AS caseMark,
+        a.stop_time AS stopTime,
+        a.over_due_date AS overDueDate,
+        a.source_channel AS sourceChannel,
+        a.collection_method AS collectionMethod,
+        a.queue_name AS queueName,
+        a.operator_time AS operatorTime,
+        a.real_pay_amount AS realPayAmount,
+        a.promise_amt AS promiseAmt,
+        a.promise_time AS promiseTime,
+        a.close_date AS closeDate,
+        sum(a.account_balance) AS accountBalance,
+        b.`name` AS personalName,
+        b.type AS personalType,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS idCard,
+        b.id AS personalId,
+        d.real_name AS collectorName,
+        e.`code` AS deptCode,
+        e.`name` AS deptName,
+        i.real_name AS lastCollectorName,
+        l.product_name AS productName,
+        m.series_name AS seriesName,
+        max(a.overdue_count) AS overdueCount,
+        a.repay_date AS repayDate,
+        a.settle_date AS settleDate
+        FROM
+        (
+        SELECT
+        id, case_number, batch_number, overdue_amount, pay_status, overdue_days, overdue_periods, collection_status, followup_time, case_follow_in_time,
+        followup_back, assist_way, product_id, personal_id, principal_id, current_collector, lately_collector,case_mark,
+        depart_id, collection_type, case_pool_type, promise_amt, promise_time, operator_time, real_pay_amount, close_date,
+        account_balance,loan_invoice_number,overdue_count,stop_time,over_due_date,source_channel,collection_method,queue_name,settle_date,repay_date
+        FROM
+        case_info
+        WHERE
+        case_pool_type = 225
+        AND recover_remark = 0
+        AND  depart_id IS NOT NULL
+        AND company_code = #{companyCode}) a
+        LEFT JOIN personal b ON a.personal_id = b.id
+        LEFT JOIN `user` d ON a.current_collector = d.id
+        LEFT JOIN `user` i ON a.lately_collector = i.id
+        LEFT JOIN department e ON a.depart_id = e.id
+        LEFT JOIN product l ON a.product_id = l.id
+        LEFT JOIN product_series m ON m.id = l.series_id
+        where a.collection_status in(${collectionStatusList}) and a.collection_type in(${collectionType})
+        <if test="isManager == 1">
+            AND e.`code` LIKE concat(#{code},'%')
+        </if>
+        <if test="isManager == 0">
+            AND a.current_collector = #{userId}
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="followupBack != null">
+            AND a.followup_back = #{followupBack}
+        </if>
+        <if test="queueName != null">
+            AND a.queue_name LIKE concat('%',#{queueName},'%')
+        </if>
+        <if test="sourceChannel != null">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND a.collection_method = #{collectionMethod}
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="lastCollectorName != null">
+            AND i.real_name LIKE concat('%',#{lastCollectorName},'%')
+        </if>
+        <if test="collectorName != null">
+            AND d.real_name LIKE concat('%',#{collectorName},'%')
+        </if>
+        <if test="overdueCountMax != null">
+            AND <![CDATA[a.overdue_count <= #{overdueCountMax}]]>
+        </if>
+        <if test="overdueCountMin != null">
+            AND <![CDATA[a.overdue_count >= #{overdueCountMin}]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batch_number = #{batchNumber}
+        </if>
+        <if test="caseNumber != null">
+            AND a.case_number = #{caseNumber}
+        </if>
+        <if test="loanInvoiceNumber != null">
+            AND a.loan_invoice_number = #{loanInvoiceNumber}
+        </if>
+        <if test="principalId != null">
+            AND c.id = #{principalId}
+        </if>
+        <if test="idCard != null">
+            AND b.certificates_number = #{idCard}
+        </if>
+        <if test="principalName != null">
+            AND c.name = #{principalName}
+        </if>
+        <if test="assistWay != null">
+            AND a.assist_way = #{assistWay}
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collection_status = #{collectionStatus}
+        </if>
+        <if test="realPayMaxAmt != null">
+            AND <![CDATA[a.real_pay_amount <= #{realPayMaxAmt}]]>
+        </if>
+        <if test="realPayMinAmt != null">
+            AND <![CDATA[a.real_pay_amount >= #{realPayMinAmt}]]>
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="productName != null and productName != ''">
+            AND l.product_name LIKE concat('%',#{productName},'%')
+        </if>
+        <if test="seriesName != null and seriesName != ''">
+            AND m.series_name = trim(#{seriesName})
+        </if>
+        <if test="startFollowDate != null and startFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') >= DATE_FORMAT(#{startFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endFollowDate != null and endFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') <= DATE_FORMAT(#{endFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startSettleDate != null and startSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') >= DATE_FORMAT(#{startSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endSettleDate != null and endSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') <= DATE_FORMAT(#{endSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseFollowInTime != null and caseFollowInTime != ''">
+            AND <![CDATA[DATE_FORMAT(a.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalType != null and personalType != ''">
+            AND b.type = trim(#{personalType})
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        group by a.case_number having 1=1
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[overdueAmount <= #{overdueMaxAmt}]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[overdueAmount >= #{overdueMinAmt}]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND payStatus = #{payStatus}
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[overdueDays <= #{overMaxDay}]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[overdueDays >= #{overMinDay}]]>
+        </if>
+        <if test="overduePeriods != null and overduePeriods gt 5">
+            AND overduePeriods > 5
+        </if>
+        <if test="overduePeriods != null and overduePeriods lt 5">
+            AND overduePeriods = #{overduePeriods}
+        </if>
+        <if test="overduePeriods != null and overduePeriods eq 5">
+            AND overduePeriods = #{overduePeriods}
+        </if>
+        order by caseMark DESC
+        <if test="sort != null and sort == 'followupBack,asc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back asc
+        </if>
+        <if test="sort != null and sort == 'followupBack,desc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back desc
+        </if>
+        <if test="sort != null and sort == 'followupTime,asc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time asc
+        </if>
+        <if test="sort != null and sort == 'followupTime,desc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,sum(a.overdue_amount) asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,sum(a.overdue_amount) desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,max(a.overdue_days) asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,max(a.overdue_days) desc
+        </if>
+        <if test="sort != null and sort == 'seriesName,asc'">
+            ,m.series_name asc
+        </if>
+        <if test="sort != null and sort == 'seriesName,desc'">
+            ,m.series_name desc
+        </if>
+        <if test="sort != null and sort == 'productName,asc'">
+            ,l.product_name asc
+        </if>
+        <if test="sort != null and sort == 'productName,desc'">
+            ,l.product_name desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batch_number asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batch_number desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,desc'">
+            ,a.case_follow_in_time desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,asc'">
+            ,a.case_follow_in_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,asc'">
+            ,a.operator_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,a.operator_time desc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,asc'">
+            ,a.real_pay_amount asc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,desc'">
+            ,a.real_pay_amount desc
+        </if>
+    </select>
+
+    <select id="getCaseInfoByNoPower" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.id AS caseId,
+        a.loan_invoice_number AS loanInvoiceNumber,
+        a.case_number As caseNumber,
+        a.batch_number AS batchNumber,
+        a.collection_type AS collectionType,
+        a.overdue_amount AS overdueAmount,
+        a.pay_status AS payStatus,
+        a.overdue_days AS overdueDays,
+        a.overdue_periods AS overduePeriods,
+        a.collection_status AS collectionStatus,
+        a.followup_time AS followupTime,
+        a.case_follow_in_time AS caseFollowInTime,
+        a.followup_back AS followupBack,
+        a.assist_way AS assistWay,
+        a.hold_days AS holdDays,
+        a.left_days AS leftDays,
+        a.stop_time AS stopTime,
+        a.over_due_date AS overDueDate,
+        a.source_channel AS sourceChannel,
+        a.collection_method AS collectionMethod,
+        a.queue_name AS queueName,
+        a.leave_case_flag AS leaveCaseFlag,
+        a.operator_time AS operatorTime,
+        a.real_pay_amount AS realPayAmount,
+        a.end_remark AS endRemark,
+        a.case_mark AS caseMark,
+        a.promise_amt AS promiseAmt,
+        a.promise_time AS promiseTime,
+        a.close_date AS closeDate,
+        a.account_balance AS accountBalance,
+        b.`name` AS personalName,
+        b.type AS personalType,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS idCard,
+        b.id AS personalId,
+--         c.`name` AS principalName,
+--         c.id AS principalId,
+        d.real_name AS collectorName,
+        e.`code` AS deptCode,
+        e.`name` AS deptName,
+        i.real_name AS lastCollectorName,
+        l.product_name AS productName,
+        m.series_name AS seriesName,
+        a.overdue_count AS overdueCount,
+        b.sex AS sex,
+        a.repay_date AS repayDate,
+        a.settle_date AS settleDate
+        FROM
+        (
+        SELECT
+        id, case_number, batch_number, overdue_amount, pay_status, overdue_days, overdue_periods, collection_status, followup_time, case_follow_in_time,
+        followup_back, assist_way, hold_days, left_days, leave_case_flag, product_id, personal_id, principal_id, current_collector, lately_collector,
+        depart_id, collection_type, case_mark, case_pool_type, promise_amt, promise_time, area_id, operator_time, real_pay_amount, end_remark,close_date,
+        account_balance,loan_invoice_number,overdue_count,stop_time,over_due_date,source_channel,collection_method,queue_name,merchant_name,settle_date,repay_date
+        FROM
+        case_info
+        WHERE
+        case_pool_type = 225
+        AND recover_remark = 0
+        AND  depart_id IS NOT NULL
+        AND company_code = #{companyCode}) a
+        LEFT JOIN personal b ON a.personal_id = b.id
+--         LEFT JOIN principal c ON a.principal_id = c.id
+        LEFT JOIN `user` d ON a.current_collector = d.id
+        LEFT JOIN `user` i ON a.lately_collector = i.id
+        LEFT JOIN department e ON a.depart_id = e.id
+        LEFT JOIN product l ON a.product_id = l.id
+        LEFT JOIN product_series m ON m.id = l.series_id
+        where a.collection_status in(${collectionStatusList}) and a.collection_type in(${collectionType})
+        <if test="isManager == 1">
+            AND e.`code` LIKE concat(#{code},'%')
+        </if>
+        <if test="isManager == 0">
+            AND a.current_collector = #{userId}
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="followupBack != null">
+            AND a.followup_back = #{followupBack}
+        </if>
+        <if test="queueName != null">
+            AND a.queue_name LIKE concat('%',#{queueName},'%')
+        </if>
+        <if test="sourceChannel != null">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND a.collection_method = #{collectionMethod}
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="lastCollectorName != null">
+            AND i.real_name LIKE concat('%',#{lastCollectorName},'%')
+        </if>
+        <if test="collectorName != null">
+            AND d.real_name LIKE concat('%',#{collectorName},'%')
+        </if>
+        <if test="overdueCountMax != null">
+            AND <![CDATA[a.overdue_count <= #{overdueCountMax}]]>
+        </if>
+        <if test="overdueCountMin != null">
+            AND <![CDATA[a.overdue_count >= #{overdueCountMin}]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batch_number = #{batchNumber}
+        </if>
+        <if test="caseNumber != null">
+            AND a.case_number = #{caseNumber}
+        </if>
+        <if test="loanInvoiceNumber != null">
+            AND a.loan_invoice_number = #{loanInvoiceNumber}
+        </if>
+<!--        <if test="principalId != null">-->
+<!--            AND c.id = #{principalId}-->
+<!--        </if>-->
+        <if test="idCard != null">
+            AND b.certificates_number = #{idCard}
+        </if>
+        <if test="principalName != null">
+            AND c.name = #{principalName}
+        </if>
+        <if test="assistWay != null">
+            AND a.assist_way = #{assistWay}
+        </if>
+        <if test="caseMark != null">
+            AND a.case_mark = #{caseMark}
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collection_status = #{collectionStatus}
+        </if>
+        <if test="realPayMaxAmt != null">
+            AND <![CDATA[a.real_pay_amount <= #{realPayMaxAmt}]]>
+        </if>
+        <if test="realPayMinAmt != null">
+            AND <![CDATA[a.real_pay_amount >= #{realPayMinAmt}]]>
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="productName != null and productName != ''">
+            AND l.product_name LIKE concat('%',#{productName},'%')
+        </if>
+        <if test="seriesName != null and seriesName != ''">
+            AND m.series_name = trim(#{seriesName})
+        </if>
+        <if test="startFollowDate != null and startFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') >= DATE_FORMAT(#{startFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endFollowDate != null and endFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') <= DATE_FORMAT(#{endFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startSettleDate != null and startSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') >= DATE_FORMAT(#{startSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endSettleDate != null and endSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') <= DATE_FORMAT(#{endSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseFollowInTime != null and caseFollowInTime != ''">
+            AND <![CDATA[DATE_FORMAT(a.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalType != null and personalType != ''">
+            AND b.type = trim(#{personalType})
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="merchantName != null">
+            AND a.merchant_name LIKE concat('%',#{merchantName},'%')
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdue_amount <= #{overdueMaxAmt}]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdue_amount >= #{overdueMinAmt}]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND a.pay_status not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND a.pay_status = #{payStatus}
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdue_days <= #{overMaxDay}]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdue_days >= #{overMinDay}]]>
+        </if>
+        <if test="overduePeriods != null and overduePeriods gt 5">
+            AND a.overdue_periods > 5
+        </if>
+        <if test="overduePeriods != null and overduePeriods lt 5">
+            AND a.overdue_periods = #{overduePeriods}
+        </if>
+        <if test="overduePeriods != null and overduePeriods eq 5">
+            AND a.overdue_periods = #{overduePeriods}
+        </if>
+        ORDER BY a.id asc
+        <if test="sort != null and sort == 'followupBack,asc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back asc
+        </if>
+        <if test="sort != null and sort == 'followupBack,desc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back desc
+        </if>
+        <if test="sort != null and sort == 'followupTime,asc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time asc
+        </if>
+        <if test="sort != null and sort == 'followupTime,desc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdue_amount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdue_amount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdue_days asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdue_days desc
+        </if>
+        <if test="sort != null and sort == 'seriesName,asc'">
+            ,m.series_name asc
+        </if>
+        <if test="sort != null and sort == 'seriesName,desc'">
+            ,m.series_name desc
+        </if>
+        <if test="sort != null and sort == 'productName,asc'">
+            ,l.product_name asc
+        </if>
+        <if test="sort != null and sort == 'productName,desc'">
+            ,l.product_name desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batch_number asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batch_number desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,desc'">
+            ,a.case_follow_in_time desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,asc'">
+            ,a.case_follow_in_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,asc'">
+            ,a.operator_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,a.operator_time desc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,asc'">
+            ,a.real_pay_amount asc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,desc'">
+            ,a.real_pay_amount desc
+        </if>
+        ,b.`name` asc
+    </select>
+
+
+
+
+
+
+    <!-- 多条件查询内催回收案件信息 -->
+    <select id="getInnerAllCaseInfoReturn" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        b.case_number as caseNumber, b.batch_number as batchNumber ,e.name as personalName,e.mobile_no as mobileNo,e.id_card as idCard,
+        b.overdue_amount as overdueAmount,b.has_pay_amount as hasPayAmount, b.pay_status as overduePeriods, b.overdue_days as overdueDays ,
+        a.operatorTime,a.reason, b.account_balance AS accountBalance
+        FROM
+        (SELECT case_id as caseId,operator_time as operatorTime,reason,source
+        from case_info_return where  company_code= #{companyCode}) a
+        LEFT JOIN case_info b on a.caseId = b.id
+        LEFT JOIN personal e on e.id = b.personal_id
+        LEFT JOIN department f on b.depart_id = f.id
+        WHERE a.source = 225
+
+        <if test="personalName != null">
+            AND e.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+
+        <if test="mobileNo != null">
+            AND e.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="batchNumber != null">
+            AND b.batch_number = trim(#{batchNumber})
+        </if>
+        <if test="operatorMaxTime != null">
+            AND <![CDATA[a.operatorTime <= trim(#{operatorMaxTime})]]>
+        </if>
+        <if test="operatorMinTime != null">
+            AND <![CDATA[a.operatorTime >= trim(#{operatorMinTime})]]>
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[b.overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[b.overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[b.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[b.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="overduePeriods != null">
+            AND b.pay_status = trim(#{overduePeriods})
+        </if>
+        ORDER BY a.operatorTime DESC
+    </select>
+
+    <!-- 多条件查询委外回收案件信息 -->
+    <select id="getOutAllCaseInfoReturn" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        b.case_number as caseNumber, a.batchNumber,e.name as personalName,e.mobile_no as mobileNo,e.id_card as idCard,
+        b.overdue_amount as overdueAmount,b.pay_status as overduePeriods, b.overdue_days as overdueDays , a.outTime,
+        a.overOutsourceTime,a.operatorTime,a.reason,a.outsName,b.account_balance AS accountBalance
+        FROM
+        (SELECT case_id as caseId,operator_time as operatorTime,reason,source,outs_name as outsName,out_time as outTime,
+        over_outsource_time as overOutsourceTime,out_batch as batchNumber from case_info_return where  company_code= #{companyCode}) a
+        LEFT JOIN case_info b on a.caseId = b.id
+        LEFT JOIN personal e on e.id = b.personal_id
+        LEFT JOIN department f on b.depart_id = f.id
+        where a.source=226
+        <if test="personalName != null">
+            AND e.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="idCard != null">
+            AND e.id_card = trim(#{idCard})
+        </if>
+        <if test="mobileNo != null">
+            AND e.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="batchNumber != null">
+            AND a.batchNumber = trim(#{batchNumber})
+        </if>
+        <if test="outsName != null">
+            AND a.outsName = trim(#{outsName})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[b.overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[b.overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[b.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[b.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="overOutsourceTime != null">
+            AND a.overOutsourceTime = trim(#{overOutsourceTime})
+        </if>
+        ORDER BY a.operatorTime DESC
+
+    </select>
+
+    <!-- 多条件查询协催案件信息 -->
+    <select id="getCaseAssistByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseAssistModel">
+        SELECT
+        a.caseId,a.assistId,a.leaveCaseFlag,a.markId,a.caseFlowinTime,a.assistWay,a.assistStatus,b.case_number as
+        caseNumber,b.followup_back as followupBack,b.overdue_days  as overDueDays, b.overdue_periods as overDuePeriods,
+        b.followup_time as followupTime,b.promise_amt as promiseAmt,b.promise_time as promiseTime,
+        sum(b.overdue_amount) as overdueAmount,c.real_name as latelyCollectorName,d.real_name as
+        currentCollectorName,e.real_name as assistCollectorName,sum(b.account_balance) AS accountBalance,
+        f.real_name as operatorName,g.`name` as personalName,g.mobile_no as mobileNo,g.id as personalId from
+        (SELECT dept_code, depart_id,case_id as caseId,id as assistId,lately_collector as
+        latelyCollectorId,current_collector as
+        currentCollectorId,assist_collector as assistCollectorId,leave_case_flag as leaveCaseFlag,mark_id as
+        markId,case_flowin_time as caseFlowinTime,operator,assist_way as assistWay,assist_status as
+        assistStatus,operator_time as operatorTime from
+        case_assist where company_code = #{companyCode}) a
+        LEFT JOIN case_info b on a.caseId = b.id
+        LEFT JOIN `user` c on a.latelyCollectorId = c.id
+        LEFT JOIN `user` d on a.currentCollectorId = d.id
+        LEFT JOIN `user` e on a.assistCollectorId = e.id
+        LEFT JOIN `user` f on a.operator = f.id
+        LEFT JOIN personal g on b.personal_id = g.id
+        LEFT JOIN department h on a.depart_id = h.id
+        where a.assistStatus in(${assistStatusList})
+        <if test="isManager == 0">
+            AND a.assistCollectorId = #{userId}
+        </if>
+        <if test="personalName != null">
+            AND g.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="mobileNo != null">
+            AND g.mobile_no = #{mobileNo}
+        </if>
+
+        <if test="followupBack != null">
+            AND b.followup_back = ${followupBack}
+        </if>
+        group by b.case_number having 1=1
+        <if test="overdueMaxAmount != null">
+        AND <![CDATA[overdueAmount <= #{overdueMaxAmount}]]>
+        </if>
+        <if test="overdueMinAmount != null">
+        AND <![CDATA[overdueAmount >= #{overdueMinAmount}]]>
+        </if>
+
+        ORDER BY a.markId asc
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,a.operatorTime desc
+        </if>
+        <if test="sort != null and sort == 'assistStatus,asc'">
+            ,a.assistStatus asc
+        </if>
+        <if test="sort != null and sort == 'assistStatus,desc'">
+            ,a.assistStatus desc
+        </if>
+        <if test="sort != null and sort == 'caseFlowinTime,asc'">
+            ,a.caseFlowinTime asc
+        </if>
+        <if test="sort != null and sort == 'caseFlowinTime,desc'">
+            ,a.caseFlowinTime desc
+        </if>
+        <if test="sort != null and sort == 'leaveCaseFlag,asc'">
+            ,a.leaveCaseFlag asc
+        </if>
+        <if test="sort != null and sort == 'leaveCaseFlag,desc'">
+            ,a.leaveCaseFlag desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,b.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,b.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,b.overdue_amount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,b.overdue_amount desc
+        </if>
+    </select>
+
+    <!-- 多条件查询内催案件信息 根据 批次号 委托方 查询案件信息 -->
+    <select id="getInnerCaseInfoByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.caseId,a.caseNumber as caseNumber,a.batchNumber as batchNumber,a.collectionType,a.overdueAmount as
+        overdueAmount,a.payStatus,a.overdueDays as overdueDays,a.collectionStatus,a.followupTime as followupTime,
+        a.caseFollowInTime,a.followupBack as followupBack,a.assistWay,a.holdDays,a.leftDays,a.leaveCaseFlag,b.`name` as
+        personalName,b.mobile_no as mobileNo,b.id_card as idCard,c.`name` as principalName,c.id as principalId,
+        d.real_name as collectorName,e.`code` as deptCode,a.caseMark,a.case_pool_type,b.id as
+        personalId,a.promiseAmt,a.promiseTime,a.accountBalance,f.area_name as cityName,f.id as areaId,g.id as
+        parentAreaId,a.operatorTime,a.realPayAmount,a.endRemark,a.score,a.delegationDate,a.closeDate,e.name as deptName
+        from
+        (SELECT id as caseId,case_number as caseNumber,batch_number as batchNumber,overdue_amount as
+        overdueAmount,pay_status as payStatus,overdue_days as overdueDays,collection_status as
+        collectionStatus,followup_time
+        as followupTime,case_follow_in_time as caseFollowInTime,followup_back as followupBack,assist_way as
+        assistWay,hold_days
+        as holdDays,left_days as leftDays,leave_case_flag as
+        leaveCaseFlag,personal_id,principal_id,current_collector,depart_id,collection_type as collectionType,case_mark
+        as caseMark,case_pool_type,promise_amt as promiseAmt,promise_time as promiseTime,area_id,operator_time as
+        operatorTime,real_pay_amount as realPayAmount, end_remark AS endRemark,score,delegation_date as
+        delegationDate,close_date as closeDate, account_balance AS accountBalance from
+        case_info where recover_remark=0 and company_code = #{companyCode}) a
+        LEFT JOIN personal b on a.personal_id = b.id
+        LEFT JOIN principal c on a.principal_id = c.id
+        LEFT JOIN `user` d on a.current_collector = d.id
+        LEFT JOIN department e on a.depart_id = e.id
+        LEFT JOIN area_code f on a.area_id = f.id
+        LEFT JOIN area_code g on f.parent_id = g.id
+        where a.case_pool_type = 225 and a.collectionStatus in(${collectionStatusList})
+        and (a.collectionType in(${collectionType}) or a.current_collector is NULL )
+        <if test="isManager == 1">
+            AND e.`code` LIKE concat(trim(#{code}),'%')
+        </if>
+        <if test="isManager == 0">
+            AND a.current_collector = trim(#{userId})
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="collectorName != null">
+            AND d.real_name LIKE concat('%',trim(#{collectorName}),'%')
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdueAmount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdueAmount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND a.payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND a.payStatus = trim(#{payStatus})
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdueDays <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdueDays >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batchNumber = trim(#{batchNumber})
+        </if>
+        <if test="principalId != null">
+            AND c.id = trim(#{principalId})
+        </if>
+        <if test="idCard != null">
+            AND b.id_card = trim(#{idCard})
+        </if>
+        <if test="feedBack != null">
+            AND a.followupBack = trim(#{feedBack})
+        </if>
+        <if test="assistWay != null">
+            AND a.assistWay = trim(#{assistWay})
+        </if>
+        <if test="caseMark != null">
+            AND a.caseMark = trim(#{caseMark})
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collectionStatus = trim(#{collectionStatus})
+        </if>
+        <if test="parentAreaId != null">
+            AND g.id = trim(#{parentAreaId})
+        </if>
+        <if test="areaId != null">
+            AND f.id = trim(#{areaId}) OR f.parent_id = trim(#{areaId})
+        </if>
+        <if test="realPayMaxAmt != null">
+            AND <![CDATA[a.realPayAmount <= trim(#{realPayMaxAmt})]]>
+        </if>
+        <if test="realPayMinAmt != null">
+            AND <![CDATA[a.realPayAmount >= trim(#{realPayMinAmt})]]>
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="deptCode != null and deptCode != ''">
+            AND e.code = trim(#{deptCode})
+        </if>
+        ORDER BY a.caseMark desc
+        <if test="sort != null and sort == 'followupBack,asc'">
+            ,if(isnull(a.followupBack),1,0),a.followupBack asc
+        </if>
+        <if test="sort != null and sort == 'followupBack,desc'">
+            ,if(isnull(a.followupBack),1,0),a.followupBack desc
+        </if>
+        <if test="sort != null and sort == 'followupTime,asc'">
+            ,if(isnull(a.followupTime),1,0),a.followupTime asc
+        </if>
+        <if test="sort != null and sort == 'followupTime,desc'">
+            ,if(isnull(a.followupTime),1,0),a.followupTime desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.caseNumber asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.caseNumber desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdueAmount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdueAmount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdueDays asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdueDays desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batchNumber asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batchNumber desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        ,b.`name` asc
+    </select>
+
+    <select id="getExportCaseInfoBycaseInfo"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.case_number AS caseNumber,
+        a.batch_number AS batchNumber,
+        b. NAME AS personalName,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS idCard,
+        c. NAME AS principalName,
+        d.area_name AS cityName,
+        a.pay_status AS payStatus,
+        a.overdue_periods AS overduePeriods,
+        a.overdue_days AS overdueDays,
+        a.merchant_name  as merchantName,
+        a.repay_date as overDueDate,
+        a.settle_date as settleDate,
+        a.product_name productName,
+        p.series_name as  seriesName,
+        a.overdue_amount AS overdueAmount,
+        a.commission_rate AS commissionRate,
+        a.delegation_date AS delegationDate,
+        a.source_channel  as  sourceChannel,
+        a.collection_method as collectionMethod,
+        a.close_date AS closeDate,
+        f. NAME AS deptName,
+        g.real_name AS collectorName,
+        a.followup_back AS followupBack,
+        a.account_balance AS accountBalance,
+        e.id as parentAreaId
+        FROM
+        case_info a
+        LEFT JOIN personal b ON a.personal_id = b.id
+        LEFT JOIN principal c ON a.principal_id = c.id
+        LEFT JOIN area_code d ON a.area_id = d.id
+        LEFT JOIN area_code e ON d.parent_id = e.id
+        LEFT JOIN department f ON f.id = a.depart_id
+        left join product_series p  on p.id = a.product_type
+        LEFT JOIN USER g ON a.current_collector = g.id
+        WHERE a.company_code = #{caseInfo.companyCode}
+        <if test="caseInfo.areaId !=null and caseInfo.areaId !=''">
+            AND d.id=#{caseInfo.areaId}
+        </if>
+        <if test="caseInfo.parentAreaId !=null and caseInfo.parentAreaId !=''">
+            AND e.id=#{caseInfo.parentAreaId}
+        </if>
+        <if test="caseInfo.personName != null and caseInfo.personName != ''">
+            AND b.name  LIKE concat('%',trim(#{caseInfo.personName}),'%')
+        </if>
+        <if test="caseInfo.mobileNo != null and caseInfo.mobileNo != ''">
+            AND b.mobile_no=#{caseInfo.mobileNo}
+        </if>
+        <if test="caseInfo.merchantName != null and caseInfo.merchantName != ''">
+            AND a.merchant_name = #{caseInfo.merchantName}
+        </if>
+        <if test="caseInfo.principalId != null and caseInfo.principalId != ''">
+            AND c.id=#{caseInfo.principalId}
+        </if>
+
+        <if test="caseInfo.currentCollector != null and caseInfo.currentCollector != ''">
+            AND a.current_collector  = #{caseInfo.currentCollector}
+        </if>
+        <if test="caseInfo.startOverDueAmount != null and caseInfo.startOverDueAmount != ''">
+            AND <![CDATA[a.overdue_amount >= trim(#{caseInfo.startOverDueAmount})]]>
+        </if>
+        <if test="caseInfo.endOverDueAmount != null and caseInfo.endOverDueAmount != ''">
+            AND <![CDATA[a.overdue_amount <= trim(#{caseInfo.endOverDueAmount})]]>
+        </if>
+        <if test="caseInfo.startOverDueDays != null and caseInfo.startOverDueDays != ''">
+            AND <![CDATA[a.overdue_days >= trim(#{caseInfo.startOverDueDays})]]>
+        </if>
+        <if test="caseInfo.endOverDueDays != null and caseInfo.endOverDueDays != ''">
+            AND <![CDATA[a.overdue_days <= trim(#{caseInfo.endOverDueDays})]]>
+        </if>
+        <if test="caseInfo.deptCode != null and caseInfo.deptCode != ''">
+            AND f.`code`  = #{caseInfo.deptCode}
+        </if>
+        <if test="caseInfo.sourceChannel != null and caseInfo.sourceChannel != ''">
+            AND a.source_channel  = #{caseInfo.sourceChannel}
+        </if>
+        <if test="caseInfo.collectionMethod != null and caseInfo.collectionMethod != ''">
+            AND a.collection_method    = #{caseInfo.collectionMethod}
+        </if>
+        <if test="caseInfo.payStatus != null and caseInfo.payStatus != 'M6' and caseInfo.payStatus != '' ">
+            AND a.pay_status  = #{caseInfo.payStatus}
+        </if>
+        <if test="caseInfo.payStatus != null and caseInfo.payStatus == 'M6' and caseInfo.payStatus != ''">
+            AND a.pay_status not in ('M1','M2','M3','M4','M5')
+        </if>
+        <if test="caseInfo.caseNumber != null and caseInfo.caseNumber != ''">
+            AND a.case_number  LIKE concat('%',trim(#{caseInfo.caseNumber}),'%')
+        </if>
+        <if test="caseInfo.startOverDueDate != null and caseInfo.startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{caseInfo.startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseInfo.endOverDueDate != null and caseInfo.endOverDueDate != ''">
+        AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{caseInfo.endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseInfo.settleStartDate != null and caseInfo.settleStartDate != ''">
+        AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') >= DATE_FORMAT(#{caseInfo.settleStartDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseInfo.settleEndDate != null and caseInfo.settleEndDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') <= DATE_FORMAT(#{caseInfo.settleEndDate},'%Y-%m-%d')]]>
+        </if>
+    </select>
+
+
+
+
+
+    <!-- 多条件查询内催案件待分配和已结案信息  -->
+    <select id="getInnerWaitCollectCase" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.caseId,a.caseNumber,a.batchNumber,
+        b.name as personalName,b.mobile_no as mobileNo,a.personal_id as personalId,
+        b.certificates_number as idCard,
+        b.type as personalType,max(a.overdueDays) as overdueDays, max(a.pay_status) as payStatus,sum(a.overdueAmount) as overdueAmount,
+        h.product_name as productName,i.series_name as seriesName,j.real_name as lastCollectorName,
+        a.delegationDate,a.closeDate,e.name as deptName,d.real_name as collectorName,a.assistFlag,a.real_pay_amount
+        as realPayAmount,a.followup_back as followupBack,a.followup_time AS followupTime,
+        a.hold_days as holdDays,a.left_days as leftDays,a.leave_case_flag as leaveCaseFlag,max(a.overdue_periods) AS overduePeriods,a.repay_date AS repayDate,a.source_channel AS sourceChannel,a.collection_method AS collectionMethod,
+        a.case_follow_in_time as caseFollowInTime,a.queue_name queueName,
+        caseType,assistStatus,assistWay,sum(a.account_balance) AS accountBalance,a.settle_date AS settleDate
+        FROM
+        (SELECT id as caseId,case_number as caseNumber,batch_number as batchNumber,overdue_amount as
+        overdueAmount,overdue_days as overdueDays,collection_status as
+        collectionStatus,assist_flag as assistFlag,personal_id,principal_id,depart_id,collection_type as collectionType,overdue_periods,
+        product_id,lately_collector,case_pool_type,delegation_date as delegationDate,close_date as closeDate,current_collector,pay_status ,
+        real_pay_amount ,area_id ,operator_time ,recover_remark,case_mark,turn_from_pool,followup_back,hold_days,settle_date,
+        left_days,leave_case_flag,case_follow_in_time, followup_time,case_type caseType,assist_status assistStatus,assist_way assistWay,account_balance,repay_date,source_channel,collection_method ,queue_name,merchant_name FROM
+        case_info where recover_remark=0 and company_code = #{companyCode}) a
+        LEFT JOIN personal b on a.personal_id = b.id
+        LEFT JOIN `user` d on a.current_collector = d.id
+        LEFT JOIN `user` j on a.lately_collector=j.id
+        LEFT JOIN department e on a.depart_id = e.id
+        LEFT JOIN product h on a.product_id=h.id
+        LEFT JOIN product_series i on h.series_id=i.id
+        where  a.case_pool_type = 225
+        <if test="type == 0">
+            and a.depart_id is null and a.collectionStatus in (${collectionStatusList})
+        </if>
+        <if test="type == 1">
+            and a.depart_id is NOT  null and e.code LIKE concat('%',trim(#{deptCode}),'%') and a.collectionStatus in (20,21,25)
+        </if>
+        <if test="type == 2">
+            and e.code LIKE concat(trim(#{deptCode}),'%') and a.collectionStatus in (${collectionStatusList})
+        </if>
+        <if test="type == 3">
+            and a.collectionStatus in (${collectionStatusList})
+        </if>
+        <if test="caseNumber != null ">
+            and a.caseNumber = #{caseNumber}
+        </if>
+        <if test="queueName != null">
+            AND a.queue_name LIKE concat('%',#{queueName},'%')
+        </if>
+        <if test="startFollowDate != null and startFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') >= DATE_FORMAT(#{startFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endFollowDate != null and endFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') <= DATE_FORMAT(#{endFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="sourceChannel != null">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND a.collection_method = #{collectionMethod}
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startSettleDate != null and startSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') >= DATE_FORMAT(#{startSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endSettleDate != null and endSettleDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.settle_date,'%Y-%m-%d') <= DATE_FORMAT(#{endSettleDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdueDays <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdueDays >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batchNumber = trim(#{batchNumber})
+        </if>
+        <if test="idCard != null">
+            AND b.certificates_number = trim(#{idCard})
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="collectorName != null and collectorName != ''">
+            AND d.real_name=#{collectorName}
+        </if>
+        <if test="lastCollectorName != null and lastCollectorName != ''">
+            AND j.real_name=#{lastCollectorName}
+        </if>
+        <if test="followupBack != null">
+            AND a.followup_back=#{followupBack}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND h.product_name LIKE concat('%',trim(#{productName}),'%')
+        </if>
+        <if test="seriesId != null and seriesId != ''">
+            AND i.id=#{seriesId}
+        </if>
+        <if test="seriesName != null and seriesName != ''">
+            AND i.series_name = trim(#{seriesName})
+        </if>
+        <if test="caseFollowInTime != null and seriesName != ''">
+          AND  <![CDATA[DATE_FORMAT(a.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalType != null">
+            AND b.type=#{personalType}
+        </if>
+        group by caseNumber having 1=1
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[overdueAmount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[overdueAmount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND payStatus not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND payStatus = #{payStatus}
+        </if>
+        ORDER BY a.case_mark desc
+    </select>
+
+    <!-- 多条件查询委外案件待分配和已结案信息  -->
+    <select id="getoutWaitCollectCase" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        b.case_number as caseNumber, b.batch_number as batchNumber, c.name as personalName, c.mobile_no as mobileNo,
+        c.id_card as idCard, e.area_name as cityName,a.overdueAmount,a.outBackAmt,a.commissionRate,a.outTime,a.account_balance AS accountBalance,
+        a.endOutsourceTime,a.overduePeriods,b.overdue_days as overdueDays,b.score as score,d.outs_name as outsName FROM
+        (SELECT case_id as caseId, out_id as outId, operate_time as operateTime,out_time as outTime, end_outsource_time as endOutsourceTime,
+        contract_amt as overdueAmount, out_back_amt as outBackAmt,commission_rate as commissionRate,overdue_periods as
+        overduePeriods,out_status,account_balance FROM outsource_pool
+        WHERE company_code = #{companyCode}) a
+        LEFT JOIN  case_info b on a.caseId = b.id
+        LEFT JOIN  personal c on b.personal_id = c.id
+        LEFT JOIN outsource d on a.outId = d.id
+        LEFT JOIN area_code e on e.id = b.area_id
+        LEFT JOIN department f on b.depart_id = f.id
+        where b.case_pool_type = 226 and a.out_status in(${outStatusList}) AND  b.recover_remark = 0
+
+
+        <if test="personalName != null">
+            AND c.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdueAmount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdueAmount >= trim(#{overdueMinAmt})]]>
+        </if>
+
+        <if test="overMaxDay != null">
+            AND <![CDATA[b.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[b.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND b.batch_number = trim(#{batchNumber})
+        </if>
+        <if test="overduePeriods != null">
+            AND a.overduePeriods = trim(#{overduePeriods})
+        </if>
+        <if test="outTime != null">
+            AND a.outTime = trim(#{outTime})
+        </if>
+        <if test="endOutsourceTime != null">
+            AND a.endOutsourceTime = trim(#{endOutsourceTime})
+        </if>
+        <if test="idCard != null">
+            AND c.id_card = trim(#{idCard})
+        </if>
+
+        <if test="mobileNo != null and mobileNo != ''">
+            AND c.mobile_no = trim(#{mobileNo})
+        </if>
+
+        ORDER BY a.operateTime desc
+    </select>
+    <!-- 多条件查询司法案件信息  -->
+    <select id="getCaseInfoJudicialByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoJudicialModel">
+        SELECT
+        a.caseId,a.caseNumber as caseNumber,a.batchNumber as batchNumber,b.name as personalName,b.mobile_no as
+        mobileNo,b.id_card as idCard,a.overdueAmount as overdueAmount,a.overduePeriods as overduePeriods,a.overdueDays as
+        overdueDays,c.name as principalName,d.state as state,d.operator_time as operatorTime
+        from
+        (SELECT id as caseId,case_number as caseNumber,batch_number as batchNumber,overdue_amount as
+        overdueAmount,overdue_days as overdueDays,personal_id,depart_id,collection_type as collectionType,case_pool_type,
+        collection_status as collectionStatus, pay_status as overduePeriods ,principal_id ,current_collector from
+        case_info where company_code = #{companyCode}) a
+        LEFT JOIN personal b on a.personal_id = b.id
+        LEFT JOIN principal c on a.principal_id = c.id
+        LEFT JOIN case_info_judicial d on a.caseId = d.case_id
+        LEFT JOIN department e on a.depart_id = e.id
+        where a.case_pool_type = 227
+        <if test="overduePeriods != null and overduePeriods == 'M6'">
+            AND overduePeriods not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="overduePeriods != null and overduePeriods != 'M6'">
+            AND overduePeriods = #{overduePeriods}
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="idCard != null">
+            AND b.id_card = trim(#{idCard})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdueAmount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdueAmount >= trim(#{overdueMinAmt})]]>
+        </if>
+
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdueDays <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdueDays >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batchNumber = trim(#{batchNumber})
+        </if>
+        <if test="principalName != null">
+            AND c.name = trim(#{principalName})
+        </if>
+
+        ORDER BY d.operator_time desc
+
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.caseNumber asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.caseNumber desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdueAmount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdueAmount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdueDays asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdueDays desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batchNumber asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batchNumber desc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,asc'">
+            ,d.operator_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,b.operator_time desc
+        </if>
+
+    </select>
+    <!-- 多条件查询流转案件信息  -->
+    <select id="getTurnCaseByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.case_number as caseNumber,a.batch_number as batchNumber,b.name as personalName,b.mobile_no as mobileNo,b.id_card as idCard,
+        a.overdue_amount as overdueAmount,a.overdue_days as overdueDays,d.name as principalName,a.operator_time as operatorTime, a.collection_status as collectionStatus,
+        a.circulation_status as circulationStatus,a.case_follow_in_time as caseFollowInTime,f.area_name as cityName,
+        f.id as areaId,g.id as parentAreaId,g.id as parentAreaId,f.id as areaId,a.account_balance AS accountBalance FROM case_info a
+        LEFT JOIN personal b on a.personal_id = b.id
+        LEFT JOIN principal d on d.id = a.principal_id
+        LEFT JOIN department e on a.depart_id = e.id
+        LEFT JOIN area_code f on a.area_id = f.id
+        LEFT JOIN area_code g on f.parent_id = g.id
+        WHERE a.case_type in (${caseTypeList}) AND a.company_code = #{companyCode}
+
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="idCard != null">
+            AND b.id_card = trim(#{idCard})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batch_number = trim(#{batchNumber})
+        </if>
+        <if test="principalName != null">
+            AND d.name = trim(#{principalName})
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collection_status = trim(#{collectionStatus})
+        </if>
+        <if test="circulationStatus != null">
+            AND a.circulation_status = trim(#{circulationStatus})
+        </if>
+        <if test="parentAreaId != null">
+            AND g.id = trim(#{parentAreaId})
+        </if>
+        <if test="areaId != null">
+            AND f.id = trim(#{areaId}) OR f.parent_id = trim(#{areaId})
+        </if>
+        ORDER BY a.case_follow_in_time desc
+
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,c.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,c.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdue_amount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdue_amount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdue_days asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdue_days desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batch_number asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batch_number desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,asc'">
+            ,a.case_follow_in_time asc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,desc'">
+            ,a.case_follow_in_time desc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+    </select>
+    <!-- 多条件查询案件导入重复案件信息  -->
+    <select id="getCaseInfoExceptionByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoExceptionModel">
+        SELECT
+        case_number as caseNumber,batch_number as batchNumber,prin_name as principalName,city ,personal_name as personalName,
+        mobile_no as mobileNo, over_due_periods as overDuePeriods , over_due_days as overDueDays,case_hand_num as caseHandNum,
+        overdue_amount as overdueAmount,commission_rate as commissionRate,delegation_date as delegationDate,
+        close_date as closeDate,operator_time FROM case_info_exception WHERE company_code = #{companyCode}
+
+        <if test="personalName != null">
+            AND personal_name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+
+        <if test="overMaxDay != null">
+            AND <![CDATA[over_due_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[over_due_days >= trim(#{overMinDay})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND batch_number = trim(#{batchNumber})
+        </if>
+        <if test="principalName != null">
+            AND prin_name = trim(#{principalName})
+        </if>
+
+        ORDER BY operator_time desc
+    </select>
+
+    <!-- 多条件查询核销案件信息  -->
+    <select id="getCaseInfoVerificationByCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        b.case_number as caseNumber,b.batch_number as batchNumber,d.name as principalName,c.name as personalName,
+        c.mobile_no as mobileNo,b.overdue_periods as overduePeriods,b.overdue_days as overdueDays,b.overdue_amount
+        as overdueAmount,b.commission_rate as commissionRate,b.delegation_date as delegationDate,b.close_date as closeDate,
+        b.collection_status as collectionStatus ,a.operator_time as operatorTime,a.state as state,b.account_balance AS accountBalance FROM
+        (SELECT case_id,operator_time,state,company_code FROM case_info_verification ) a
+        LEFT JOIN case_info b on b.id = a.case_id
+        LEFT JOIN personal c on c.id = b.personal_id
+        LEFT JOIN principal d on d.id = b.principal_id
+        WHERE a.company_code = #{companyCode}
+        <if test="personalName != null">
+            AND c.name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND c.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[b.overdue_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[b.overdue_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+        <if test="batchNumber != null">
+            AND b.batch_number = trim(#{batchNumber})
+        </if>
+        <if test="principalName != null">
+            AND d.name = trim(#{principalName})
+        </if>
+        <if test="commissionMaxRate != null">
+            AND <![CDATA[b.commission_rate <= trim(#{commissionMaxRate})]]>
+        </if>
+        <if test="commissionMinRate != null">
+            AND <![CDATA[b.commission_rate >= trim(#{commissionMinRate})]]>
+        </if>
+        <if test="delegationDate != null">
+            AND b.delegation_date = trim(#{delegationDate})
+        </if>
+        <if test="closeDate != null">
+            AND b.close_date = trim(#{closeDate})
+        </if>
+        ORDER BY a.operator_time DESC
+    </select>
+    <!-- 核销案件打包查询  -->
+    <select id="getCaseInfoVerificationPackaging" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.caseInfoVerificationPackagingModel">
+        SELECT packaging_time as packagingTime,count as count,total_amount as totalAmount,download_count as downloadCount,
+        packaging_state as packagingState FROM case_info_verification_packaging WHERE company_code = #{companyCode}
+        <if test="packagingTime != null">
+            AND packaging_time = trim(#{packagingTime})
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[total_amount <= trim(#{overdueMaxAmt})]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[total_amount >= trim(#{overdueMinAmt})]]>
+        </if>
+        ORDER BY packagingTime DESC
+    </select>
+    <!-- 多条件查询案件修复信息  -->
+    <select id="getAllRepairingCase" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.id AS caseRepairId,
+        b.case_number AS caseNumber,
+        b.loan_invoice_number AS loanInvoiceNumber,
+        d. NAME AS personalName,
+        d.mobile_no AS mobileNo,
+        d.certificates_number AS idCard,
+        ps.series_name seriesName,
+        b.product_name productName,
+        b.overdue_periods AS overduePeriods,
+        b.overdue_amount AS overdueAmount,
+        b.pay_status AS payStatus,
+        b.overdue_days AS overdueDays,
+        a.repair_status AS repairStatus,
+        b.overdue_count  AS overdueCount,
+        b.id AS caseId,
+        b.account_balance AS accountBalance,
+        DATE_FORMAT(a.operator_time,"%Y-%m-%d") operatorTime
+        FROM
+        (
+        SELECT
+        id,
+        case_id,
+        repair_status,
+        operator_time,
+        create_time
+        FROM
+        case_repair
+        WHERE
+        company_code = #{companyCode}
+        ) a
+        LEFT JOIN case_info b ON b.id = a.case_id
+        LEFT JOIN personal d ON d.id = b.personal_id
+        LEFT JOIN principal c ON c.id = b.principal_id
+        LEFT JOIN product t ON b.product_id = t.id
+        LEFT JOIN product_series ps ON ps.id = t.series_id
+        LEFT JOIN USER e ON b.current_collector = e.id
+        WHERE
+        b.recover_remark = 0
+        AND b.collection_status NOT IN (24, 166)
+
+
+        <if test="personalName != null">
+            AND d.name LIKE concat('%',trim(#{personalName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND c.mobile = #{mobileNo}
+        </if>
+        <if test="caseNumber != null">
+            AND b.case_number = #{caseNumber}
+        </if>
+
+        <if test="loanInvoiceNumber != null">
+            AND b.loan_invoice_number = #{loanInvoiceNumber}
+        </if>
+        <if test="overdueCount != null">
+            AND b.overdue_count = #{overdueCount}
+        </if>
+
+        <if test="overduePeriods != null and  overduePeriods gt 5">
+            AND b.overdue_periods = #{overduePeriods}
+        </if>
+        <if test="overduePeriods != null and  overduePeriods == 5">
+            AND b.overdue_periods = #{overduePeriods}
+        </if>
+        <if test="overduePeriods != null and  overduePeriods lt 5">
+            AND b.overdue_periods = #{overduePeriods}
+        </if>
+        <if test="idCard != null">
+            AND d.certificates_number LIKE concat('%',trim(#{idCard}),'%')
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[b.overdue_days <= trim(#{overMaxDay})]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[b.overdue_days >= trim(#{overMinDay})]]>
+        </if>
+
+
+        <if test="repairStatus != null">
+            AND a.repair_status = trim(#{repairStatus})
+        </if>
+        <if test="operatorTime != null">
+            AND <![CDATA[DATE_FORMAT(a.operator_time,'%Y-%m-%d') = DATE_FORMAT(#{operatorTime},'%Y-%m-%d')]]>
+        </if>
+        ORDER BY a.create_time DESC
+    </select>
+
+    <select id="getDataDict" parameterType="Integer" resultType="String">
+        select name FROM data_dict WHERE id = #{followupBack};
+    </select>
+
+    <select id="findCaseInfoById" parameterType="String" resultMap="caseInfoBean">
+        select * FROM case_info WHERE id = #{caseId};
+    </select>
+
+    <select id="findCaseInfoByCaseNumber" parameterType="String" resultMap="caseInfoBean">
+        select * FROM case_info WHERE case_number = #{caseNumber};
+    </select>
+
+    <!-- 多条件查询案间流转记录 -->
+    <select id="getCaseTurnRecord" parameterType="cn.fintecher.pangolin.report.model.CaseTurnParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseTurnModel">
+
+        SELECT b.batch_number as batchNumber,a.receive_user_real_name AS receiveUserRealName, a.case_number as caseNumber, d.name as principalName, c.name as personName, c.mobile_no as mobileNo, c.certificates_number as idCard,
+        b.overdue_amount as overdueAmount, b.overdue_periods as overduePeriods, b.overdue_days as overdueDays, b.hold_days as holdDays, b.left_days as leftDays,
+        a.turn_from_pool as turnFromPool, a.turn_to_pool as turnToPool, a.apply_name AS applyName,a.operator_time as operatorTime, a.turn_describe AS turnDescribe, a.turn_approval_status AS turnApprovalStatus,
+        a.trigger_action AS triggerAction,b.case_pool_type AS casePoolType,a.approval_opinion AS approvalOpinion, b.pay_status AS payStatus, b.followup_back AS followupBack, b.case_follow_in_time AS caseFollowInTime,
+        b.followup_time AS followupTime, e.real_name AS currentCollector, f.real_name AS latelyCollector, a.operator_user_name AS operatorUserName,a.approval_id AS approvalId,b.loan_invoice_number AS loanInvoiceNumber
+        from case_turn_record a
+        LEFT JOIN case_info b ON a.case_id = b.id
+        LEFT JOIN personal c on c.id = b.personal_id
+        LEFT JOIN principal d ON d.id =  b.principal_id
+        LEFT JOIN `user` e ON b.current_collector = e.id
+        LEFT JOIN `user` f ON b.lately_collector = f.id
+        WHERE a.company_code = #{companyCode}
+        <if test="circulationType != null">
+            AND a.circulation_type in(${circulationType})
+        </if>
+        <if test="turnApprovalStatus != null">
+            AND a.turn_approval_status = trim(#{turnApprovalStatus})
+        </if>
+        <if test="caseNumber != null">
+            AND a.case_number = trim(#{caseNumber})
+        </if>
+        <if test="batchNumber != null">
+            AND b.batch_number = trim(#{batchNumber})
+        </if>
+        <if test="principalName != null">
+            AND d.name = trim(#{principalName})
+        </if>
+        <if test="personName != null">
+            AND c.name LIKE concat('%',trim(#{personName}),'%')
+        </if>
+        <if test="mobileNo != null">
+            AND c.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="idCard != null">
+            AND c.certificates_number = trim(#{idCard})
+        </if>
+        <if test="operatorEndTime != null">
+           and  <![CDATA[DATE_FORMAT(a.operator_time,'%Y-%m-%d') <= DATE_FORMAT(#{operatorEndTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="operatorStartTime != null">
+            AND <![CDATA[a.operator_time >= #{operatorStartTime}]]>
+        </if>
+        <if test="applyTime != null">
+            and  <![CDATA[DATE_FORMAT(a.operator_time,'%Y-%m-%d') = DATE_FORMAT(#{applyTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="turnFromPool != null">
+            AND a.turn_from_pool = trim(#{turnFromPool})
+        </if>
+        <if test="turnToPool != null">
+            AND a.turn_to_pool = trim(#{turnToPool})
+        </if>
+        <if test="casePoolType != null">
+            AND b.case_pool_type = trim(#{casePoolType})
+        </if>
+        <if test="triggerAction != null">
+            AND a.trigger_action = trim(#{triggerAction})
+        </if>
+        ORDER BY a.operator_time DESC
+    </select>
+
+    <!-- 多条件查询不同案件池已分配案件 -->
+    <select id="getCaseByPoolTypeAndCondition" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.id AS caseId,
+        a.case_number As caseNumber,
+        a.batch_number AS batchNumber,
+        a.collection_type AS collectionType,
+        sum(a.overdue_amount) AS overdueAmount,
+        max(a.pay_status) AS payStatus,
+        max(a.overdue_days) AS overdueDays,
+        max(a.overdue_periods) AS overduePeriods,
+        a.collection_status AS collectionStatus,
+        a.followup_time AS followupTime,
+        a.case_follow_in_time AS caseFollowInTime,
+        a.followup_back AS followupBack,
+        a.assist_way AS assistWay,
+        a.operator_time AS operatorTime,
+        a.real_pay_amount AS realPayAmount,
+        a.promise_amt AS promiseAmt,
+        a.promise_time AS promiseTime,
+        a.repay_date AS repayDate,
+        a.source_channel AS sourceChannel,
+        a.collection_method AS collectionMethod,
+        max(a.overdue_count) AS overdueCount,
+        a.queue_name AS queueName,
+        sum(a.account_balance) AS accountBalance,
+        b.`name` AS personalName,
+        b.type AS personalType,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS idCard,
+        b.id AS personalId,
+        c.`name` AS principalName,
+        c.id AS principalId,
+        d.real_name AS collectorName,
+        e.`code` AS deptCode,
+        e.`name` AS deptName,
+        i.real_name AS lastCollectorName,
+         l.product_name AS productName,
+        m.series_name AS seriesName
+        FROM
+        (
+        SELECT
+        id, case_number, batch_number, overdue_amount, pay_status, overdue_days, overdue_periods, collection_status, followup_time, case_follow_in_time,
+        followup_back, assist_way, hold_days, left_days, leave_case_flag, product_id, personal_id, principal_id, current_collector, lately_collector,
+        depart_id, collection_type, case_mark, case_pool_type, promise_amt, promise_time, area_id, operator_time, real_pay_amount, end_remark, account_balance,
+        repay_date,source_channel,collection_method,queue_name,overdue_count,merchant_name
+        FROM
+        case_info
+        WHERE
+        case_pool_type = #{casePoolType}
+        AND recover_remark = 0
+        AND company_code = #{companyCode}) a
+        LEFT JOIN personal b ON a.personal_id = b.id
+        LEFT JOIN principal c ON a.principal_id = c.id
+        LEFT JOIN `user` d ON a.current_collector = d.id
+        LEFT JOIN `user` i ON a.lately_collector = i.id
+        LEFT JOIN department e ON a.depart_id = e.id
+        LEFT JOIN product l ON a.product_id = l.id
+        LEFT JOIN product_series m ON m.id = l.series_id
+        where a.collection_status in(${collectionStatusList})
+        <if test="collectionType != null and collectionType != ''">
+        AND a.collection_type in(${collectionType})
+        </if>
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="followupBack != null">
+            AND a.followup_back = #{followupBack}
+        </if>
+        <if test="queueName != null">
+            AND a.queue_name LIKE concat('%',#{queueName},'%')
+        </if>
+        <if test="merchantName != null">
+            AND a.merchant_name LIKE concat('%',#{merchantName},'%')
+        </if>
+        <if test="sourceChannel != null">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND a.collection_method = #{collectionMethod}
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="collectorName != null">
+            AND d.real_name LIKE concat('%',#{collectorName},'%')
+        </if>
+        <if test="lastCollectorName != null">
+            AND i.real_name LIKE concat('%',#{lastCollectorName},'%')
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdue_amount <= #{overdueMaxAmt}]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdue_amount >= #{overdueMinAmt}]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND a.pay_status not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND a.pay_status = #{payStatus}
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdue_days <= #{overMaxDay}]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdue_days >= #{overMinDay}]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batch_number = #{batchNumber}
+        </if>
+        <if test="caseNumber != null">
+            AND a.case_number = #{caseNumber}
+        </if>
+        <if test="principalId != null">
+            AND c.id = #{principalId}
+        </if>
+        <if test="idCard != null">
+            AND b.certificates_number = #{idCard}
+        </if>
+        <if test="principalName != null">
+            AND c.name = #{principalName}
+        </if>
+        <if test="assistWay != null">
+            AND a.assist_way = #{assistWay}
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collection_status = #{collectionStatus}
+        </if>
+        <if test="realPayMaxAmt != null">
+            AND <![CDATA[a.real_pay_amount <= #{realPayMaxAmt}]]>
+        </if>
+        <if test="realPayMinAmt != null">
+            AND <![CDATA[a.real_pay_amount >= #{realPayMinAmt}]]>
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="productName != null and productName != ''">
+            AND l.product_name LIKE concat('%',#{productName},'%')
+        </if>
+        <if test="seriesName != null and seriesName != ''">
+            AND m.series_name = trim(#{seriesName})
+        </if>
+        <if test="startFollowDate != null and startFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') >= DATE_FORMAT(#{startFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endFollowDate != null and endFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') <= DATE_FORMAT(#{endFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseFollowInTime != null and caseFollowInTime != ''">
+            AND <![CDATA[DATE_FORMAT(a.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalType != null and personalType != ''">
+            AND b.type = trim(#{personalType})
+        </if>
+
+        group by caseNumber
+        ORDER BY a.id
+        <if test="sort != null and sort == 'followupBack,asc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back asc
+        </if>
+        <if test="sort != null and sort == 'followupBack,desc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back desc
+        </if>
+        <if test="sort != null and sort == 'followupTime,asc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time asc
+        </if>
+        <if test="sort != null and sort == 'followupTime,desc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdue_amount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdue_amount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdue_days asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdue_days desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batch_number asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batch_number desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,desc'">
+            ,a.case_follow_in_time desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,asc'">
+            ,a.case_follow_in_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,asc'">
+            ,a.operator_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,a.operator_time desc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,asc'">
+            ,a.real_pay_amount asc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,desc'">
+            ,a.real_pay_amount desc
+        </if>
+        ,b.`name` asc
+    </select>
+
+
+    <!-- 多条件查询不同案件池待分配案件 -->
+    <select id="getWaitCaseByPoolType" parameterType="cn.fintecher.pangolin.report.model.CaseInfoConditionParams"
+            resultType="cn.fintecher.pangolin.report.model.CaseInfoModel">
+        SELECT
+        a.id AS caseId,
+        a.case_number As caseNumber,
+        a.batch_number AS batchNumber,
+        a.collection_type AS collectionType,
+        sum(a.overdue_amount) AS overdueAmount,
+        max(a.pay_status) AS payStatus,
+        max(a.overdue_days) AS overdueDays,
+        max(a.overdue_periods) AS overduePeriods,
+        a.collection_status AS collectionStatus,
+        a.followup_time AS followupTime,
+        a.case_follow_in_time AS caseFollowInTime,
+        a.followup_back AS followupBack,
+        a.assist_way AS assistWay,
+        a.operator_time AS operatorTime,
+        a.real_pay_amount AS realPayAmount,
+        a.promise_amt AS promiseAmt,
+        a.promise_time AS promiseTime,
+        a.repay_date AS repayDate,
+        sum(a.account_balance) AS accountBalance,
+        a.stop_time AS stopTime,
+        a.source_channel AS sourceChannel,
+        a.collection_method AS collectionMethod,
+        max(a.overdue_count) AS overdueCount,
+        a.queue_name AS queueName,
+        b.`name` AS personalName,
+        b.type AS personalType,
+        b.mobile_no AS mobileNo,
+        b.certificates_number AS idCard,
+        b.id AS personalId,
+        c.`name` AS principalName,
+        c.id AS principalId,
+        d.real_name AS collectorName,
+        e.`code` AS deptCode,
+        e.`name` AS deptName,
+        i.real_name AS lastCollectorName,
+        l.product_name AS productName,
+        m.series_name AS seriesName
+        FROM
+        (
+        SELECT
+        id, case_number, batch_number, overdue_amount, pay_status, overdue_days, overdue_periods, collection_status, followup_time, case_follow_in_time,
+        followup_back, assist_way, hold_days, left_days, leave_case_flag, product_id, personal_id, principal_id, current_collector, lately_collector,
+        depart_id, collection_type, case_pool_type, promise_amt, promise_time, area_id, operator_time, real_pay_amount, account_balance, stop_time,
+        repay_date,source_channel,collection_method,queue_name,overdue_count
+        FROM
+        case_info
+        WHERE
+        case_pool_type = #{casePoolType}
+        AND recover_remark = 0
+        AND current_collector IS NULL
+        AND depart_id IS NULL
+        AND collection_type IS NULL
+        AND company_code = #{companyCode}) a
+        LEFT JOIN personal b ON a.personal_id = b.id
+        LEFT JOIN principal c ON a.principal_id = c.id
+        LEFT JOIN `user` d ON a.current_collector = d.id
+        LEFT JOIN `user` i ON a.lately_collector = i.id
+        LEFT JOIN department e ON a.depart_id = e.id
+        LEFT JOIN product l ON a.product_id = l.id
+        LEFT JOIN product_series m ON m.id = l.series_id
+        where a.collection_status in(${collectionStatusList})
+
+        <if test="personalName != null">
+            AND b.`name` LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="followupBack != null">
+            AND a.followup_back = #{followupBack}
+        </if>
+        <if test="queueName != null">
+            AND a.queue_name LIKE concat('%',#{queueName},'%')
+        </if>
+        <if test="sourceChannel != null">
+            AND a.source_channel = #{sourceChannel}
+        </if>
+        <if test="collectionMethod != null">
+            AND a.collection_method LIKE concat('%',#{collectionMethod},'%')
+        </if>
+        <if test="overdueCount != null">
+            AND a.overdue_count = #{overdueCount}
+        </if>
+        <if test="collectorName != null">
+            AND d.real_name LIKE concat('%',#{collectorName},'%')
+        </if>
+        <if test="lastCollectorName != null">
+            AND i.real_name LIKE concat('%',#{lastCollectorName},'%')
+        </if>
+        <if test="overdueMaxAmt != null">
+            AND <![CDATA[a.overdue_amount <= #{overdueMaxAmt}]]>
+        </if>
+        <if test="overdueMinAmt != null">
+            AND <![CDATA[a.overdue_amount >= #{overdueMinAmt}]]>
+        </if>
+        <if test="payStatus != null and payStatus == 'M6'">
+            AND a.pay_status not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6'">
+            AND a.pay_status = #{payStatus}
+        </if>
+        <if test="overMaxDay != null">
+            AND <![CDATA[a.overdue_days <= #{overMaxDay}]]>
+        </if>
+        <if test="overMinDay != null">
+            AND <![CDATA[a.overdue_days >= #{overMinDay}]]>
+        </if>
+        <if test="batchNumber != null">
+            AND a.batch_number = #{batchNumber}
+        </if>
+        <if test="caseNumber != null">
+            AND a.case_number = #{caseNumber}
+        </if>
+        <if test="principalId != null">
+            AND c.id = #{principalId}
+        </if>
+        <if test="idCard != null">
+            AND b.certificates_number = #{idCard}
+        </if>
+        <if test="principalName != null">
+            AND c.name = #{principalName}
+        </if>
+        <if test="assistWay != null">
+            AND a.assist_way = #{assistWay}
+        </if>
+        <if test="caseMark != null">
+            AND a.case_mark = #{caseMark}
+        </if>
+        <if test="collectionStatus != null">
+            AND a.collection_status = #{collectionStatus}
+        </if>
+        <if test="parentAreaId != null">
+            AND (pa.living_province_code = #{parentAreaId} or f.id = #{parentAreaId})
+        </if>
+        <if test="areaId != null">
+            AND (pa.living_city_code = #{areaId} OR f.parent_id = #{areaId})
+        </if>
+        <if test="realPayMaxAmt != null">
+            AND <![CDATA[a.real_pay_amount <= #{realPayMaxAmt}]]>
+        </if>
+        <if test="realPayMinAmt != null">
+            AND <![CDATA[a.real_pay_amount >= #{realPayMinAmt}]]>
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND b.mobile_no = trim(#{mobileNo})
+        </if>
+        <if test="productName != null and productName != ''">
+            AND l.product_name LIKE concat('%',#{productName},'%')
+        </if>
+        <if test="seriesName != null and seriesName != ''">
+            AND m.series_name = trim(#{seriesName})
+        </if>
+        <if test="startFollowDate != null and startFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') >= DATE_FORMAT(#{startFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endFollowDate != null and endFollowDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.followup_time,'%Y-%m-%d') <= DATE_FORMAT(#{endFollowDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="caseFollowInTime != null and caseFollowInTime != ''">
+            AND <![CDATA[DATE_FORMAT(a.case_follow_in_time,'%Y-%m-%d') = DATE_FORMAT(#{caseFollowInTime},'%Y-%m-%d')]]>
+        </if>
+        <if test="startOverDueDate != null and startOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') >= DATE_FORMAT(#{startOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="endOverDueDate != null and endOverDueDate != ''">
+            AND <![CDATA[DATE_FORMAT(a.repay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endOverDueDate},'%Y-%m-%d')]]>
+        </if>
+        <if test="personalType != null and personalType != ''">
+            AND b.type = trim(#{personalType})
+        </if>
+        group by caseNumber
+        ORDER BY a.id
+        <if test="sort != null and sort == 'followupBack,asc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back asc
+        </if>
+        <if test="sort != null and sort == 'followupBack,desc'">
+            ,if(isnull(a.followup_back),1,0),a.followup_back desc
+        </if>
+        <if test="sort != null and sort == 'followupTime,asc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time asc
+        </if>
+        <if test="sort != null and sort == 'followupTime,desc'">
+            ,if(isnull(a.followup_time),1,0),a.followup_time desc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,asc'">
+            ,a.case_number asc
+        </if>
+        <if test="sort != null and sort == 'caseNumber,desc'">
+            ,a.case_number desc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,asc'">
+            ,a.overdue_amount asc
+        </if>
+        <if test="sort != null and sort == 'overdueAmount,desc'">
+            ,a.overdue_amount desc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,asc'">
+            ,a.overdue_days asc
+        </if>
+        <if test="sort != null and sort == 'overdueDays,desc'">
+            ,a.overdue_days desc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,asc'">
+            ,a.batch_number asc
+        </if>
+        <if test="sort != null and sort == 'batchNumber,desc'">
+            ,a.batch_number desc
+        </if>
+        <if test="sort != null and sort == 'idCard,asc'">
+            ,b.id_card asc
+        </if>
+        <if test="sort != null and sort == 'idCard,desc'">
+            ,b.id_card desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,desc'">
+            ,a.case_follow_in_time desc
+        </if>
+        <if test="sort != null and sort == 'caseFollowInTime,asc'">
+            ,a.case_follow_in_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,asc'">
+            ,a.operator_time asc
+        </if>
+        <if test="sort != null and sort == 'operatorTime,desc'">
+            ,a.operator_time desc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,asc'">
+            ,a.real_pay_amount asc
+        </if>
+        <if test="sort != null and sort == 'realPayAmount,desc'">
+            ,a.real_pay_amount desc
+        </if>
+        ,b.`name` asc
+    </select>
+
+    <select id="getPersonalVModel" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.report.model.PersonalVModel">
+            SELECT
+                per.id,
+                per.name as personalName,
+                per.sex,
+                d1.name as sexName,
+                per.marital,
+                d2.name as maritalName,
+                per.age,
+                per.mobile_no as mobileNo,
+                per.mobile_status as mobileStatus,
+                d3.name as mobileStatusName,
+                per.certificates_number as idCard
+            FROM
+                personal per
+            LEFT JOIN data_dict d1 ON d1.id = per.sex
+            LEFT JOIN data_dict d2 ON d2.id = per.marital
+            LEFT JOIN data_dict d3 ON d3.id = per.mobile_status
+            WHERE
+                1 = 1
+            AND per.id = #{personId}
+    </select>
+
+    <select id="getPersonalAddress" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.report.model.PersonalAddressVModel">
+        SELECT
+            per.id,
+            per.personal_id AS personalId,
+            per.relation,
+            d1.`name` AS relationName,
+            per. NAME,
+            per.type,
+            d4.`name` AS typeName,
+            per. STATUS,
+            d2.`name` AS statusName,
+            source,
+            d3.`name` AS sourceName,
+            per.longitude,
+            per.latitude,
+            per.detail,
+            per.operator,
+            per.operator_time AS operatorTime
+        FROM
+            personal_address per
+        LEFT JOIN data_dict d1 ON d1.id = per.relation
+        LEFT JOIN data_dict d2 ON d2.id = per.`status`
+        LEFT JOIN data_dict d3 ON d3.id = per.source
+        LEFT JOIN data_dict d4 ON d4.id = per.type
+        WHERE
+            1 = 1
+        AND personal_id = #{personId}
+        ORDER BY
+            operatorTime DESC
+    </select>
+
+
+    <select id="getContactInfo" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.report.model.ContactVModel">
+        SELECT
+        a.relation,
+        getDictNameById(a.relation)  relationName,
+        a.name,
+        a.phone mobileNo,
+        a.phone_status mobileStatus,
+        getDictNameById(a.phone_status)  mobileStatusName,
+        a.operator_time operatorTime
+        FROM personal_contact a LEFT JOIN personal p ON a.personal_id = p.id
+        where 1=1 and a.personal_id=#{personId}
+        order by a.operator_time desc
+    </select>
+
+    <select id="getCaseInfo4Mobile" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.report.model.mobile.CaseInfo4MobileVModel">
+        SELECT
+        a.id,
+        a.case_number caseNumber,
+        a.account_balance AS ApprovedLoanAmt,
+        a.overdue_amount AS overdueAmount,
+        a.loan_period AS loanTenure,
+        a.left_periods AS hasPayPeriods,
+        a.overdue_periods AS overduePeriods,
+        a.overdue_days AS overdueDays,
+        a.overdue_capital AS overdueCapital,
+        a.overdue_interest AS unpaidInterest,
+        a.overdue_capital_interest AS overdueCapitalInterest,
+        a.overdue_delay_fine AS overdueDelayFine,
+        a.overdue_manage_fee AS overdueManageFee,
+        a.overdue_fine AS overdueFine,
+        a.account_balance AS accountBalance,
+        a.pnlt_fine AS pnltFine,
+        a.pnlt_interest AS pnltInterest,
+        a.loan_invoice_number AS loanInvoiceNumber
+        FROM
+        case_info a
+        LEFT JOIN order_info c ON c.case_number = a.case_number
+        LEFT JOIN personal d ON d.id = a.personal_id
+        WHERE  a.case_number = #{caseNumber}
+    </select>
+
+    <update id="updateUserPhoto4Mobile" parameterType="java.lang.String">
+        UPDATE USER  SET photo = #{photoUrl} WHERE id = #{userId}
+    </update>
+
+    <select id="getFollowupRecord4Mobile" parameterType="java.lang.String"
+            resultType="cn.fintecher.pangolin.report.model.mobile.CaseFollowupRecordModel">
+        SELECT id,
+        personal_id personalId,
+        getPersonNameById(personal_id) personalName,
+        case_id caseId,
+        case_number caseNumber,
+        target targetRelation,
+        getDictNameById(target) targetRelationName,
+        target_name targetName,
+        detail,
+        follow_time followTime,
+        contact_phone contactPhone,
+        contact_state contactState,
+        getDictNameById(contact_state) contactStateName,
+        content,
+        follnext_date follnextDate,
+        collection_feedback collectionFeedback,
+        getDictNameById(collection_feedback) collectionFeedbackName,
+        result_type resultType,
+        getDictNameById(result_type) resultTypeName,
+        addr_status addrStatus,
+        getDictNameById(addr_status) addrStatusName,
+        addr_type addrType,
+        getDictNameById(addr_type) addrTypeName,
+        detail,
+        operator_time operatorTime,
+        fellow_workers fellowWorkers,
+        type,
+        getDictNameById(type) typeName,
+        operator,
+        operator_name operatorName
+        FROM case_followup_record WHERE 1=1
+        <if test="null != caseId and '' != caseId">
+            and case_id= #{caseId}
+        </if>
+        <if test="null != recordId and '' != recordId">
+            and id= #{recordId}
+        </if>
+        order by operator_time desc
+    </select>
+
+    <select id="getCaseFollowupAttachment4Mobile"
+            resultType="cn.fintecher.pangolin.report.entity.CaseFollowupAttachment" parameterType="java.lang.String">
+        SELECT 	id,
+        attachment_name attachmentName,
+        attachment_url attachmentUrl,
+        operator,
+        operator_time operatorTime,
+        editor,
+        editor_time editorTime,
+        case_followup_record_id caseFollowupRecordId,
+        type
+        FROM  case_followup_attachment WHERE type=#{type} and case_followup_record_id=#{caseFollowupRecordId}
+        order by editor_time desc
+    </select>
+    <select id="queryChargeOffList" resultType="cn.fintecher.pangolin.report.model.QueryChargeOffResponse">
+        SELECT case_number,loan_invoice_number,product_name,pay_status,overdue_days,account_balance,overdue_amount,
+        personalName,mobile_no,certificates_number,verfication_status,
+        series_name from
+        (
+            SELECT ci.case_number,ci.loan_invoice_number,ci.product_name,ci.pay_status,ci.overdue_days,ci.account_balance,ci.overdue_amount,
+            p.`name` personalName,p.mobile_no,p.certificates_number,ci.verfication_status,
+            ps.series_name
+            from case_info ci
+            LEFT JOIN personal p on ci.personal_id = p.id
+            LEFT JOIN product_series ps on ci.product_type = ps.id
+            UNION
+            SELECT ci.case_number,ci.loan_invoice_number,ci.product_name,ci.pay_status,ci.overdue_days,ci.account_balance,ci.overdue_amount,
+            p.`name` personalName,p.mobile_no,p.certificates_number,ci.verfication_status,
+            ps.series_name
+            from case_info_distributed ci
+            LEFT JOIN personal p on ci.personal_id = p.id
+            LEFT JOIN product_series ps on ci.product_type = ps.id
+        ) t
+        where t.verfication_status = '核销'
+        <if test="caseNumber != null and caseNumber.trim()!=''">
+            AND t.case_number = #{caseNumber}
+        </if>
+        <if test="loanInvoiceNumber != null and loanInvoiceNumber.trim()!=''">
+            AND t.loan_invoice_number = #{loanInvoiceNumber}
+        </if>
+        <if test="personalName != null and personalName.trim()!=''">
+            AND t.personalName LIKE concat('%',#{personalName},'%')
+        </if>
+        <if test="mobileNo != null and mobileNo.trim()!=''">
+            AND t.mobile_no LIKE concat('%',#{mobileNo},'%')
+        </if>
+        <if test="payStatus != null and payStatus == 'M6+'">
+            AND t.pay_status not in ('M0','M1','M2','M3','M4','M5','M999')
+        </if>
+        <if test="payStatus != null and payStatus != 'M6+'">
+            AND t.pay_status = #{payStatus}
+        </if>
+        <if test="certificatesNumber != null and certificatesNumber != ''">
+            AND t.certificates_number = #{certificatesNumber}
+        </if>
+        <if test="overdueDaysStart != null ">
+            AND t.overdue_days &gt;= #{overdueDaysStart}
+        </if>
+        <if test="overdueDaysEnd != null ">
+            AND t.overdue_days &lt;= #{overdueDaysEnd}
+        </if>
+    </select>
+</mapper>

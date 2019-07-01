@@ -1,0 +1,50 @@
+spring:
+    profiles:
+        active: prod
+    devtools:
+        restart:
+            enabled: false
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    data:
+        mongodb:
+            uri: mongodb://admin:HYxf_Risk%402019!@10.20.5.139:27017,10.20.6.16:27017,10.20.5.140:27017
+            database: pangolin
+    rabbitmq:
+        username: 51xf
+        password: 51xf@0219
+        host: 10.20.5.138
+        virtual-host: urge
+        port: 5672
+    jmx:
+        enabled: false
+
+eureka:
+  instance:
+    hostname: file-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://10.0.5.44:8761/eureka/,http://10.0.6.199:8761/eureka/
+
+fdfs:
+  path: 10.0.5.46
+  localPath: 10.0.5.46
+  soTimeout: 1500
+  connectTimeout: 600
+  thumbImage:             #缩略图生成参数
+    width: 150
+    height: 150
+  trackerList:            #TrackerList参数,支持多个
+    - 10.0.5.46:22122
+
+gridfs:
+  path: 10.0.5.46/file-service
+  localPath: 10.0.5.46/file-service
+
+server:
+    port: 9004

@@ -1,0 +1,78 @@
+spring:
+    profiles:
+        active: demo
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://116.236.220.215:16389/pangolin_hy_sit?useUnicode=true&characterEncoding=utf8&useSSL=false
+        name:
+        username: zwuser
+        password: zwusermysql!
+        hikari:
+          data-source-properties:
+            rewriteBatchedStatements: true
+            cachePrepStmts: true
+            prepStmtCacheSize: 180
+            prepStmtCacheSqlLimit: 2048
+            idleTimeout: 300000
+            useServerPrepStmts: true
+          maximumPoolSize: 500
+          leak-detection-threshold: 300000
+    rabbitmq:
+        username: zwuser
+        password: Zhiwang.123
+        host: 116.236.220.215
+        virtual-host: admin
+        port: 18888
+
+    cache:
+        jcache:
+            config: ehcache.xml
+    redis:
+        database: 0
+        host: 116.236.220.215
+        port: 12180
+        password: Zhiwang.123
+        expireTime: 3600
+
+eureka:
+  instance:
+    hostname: business-service
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+            defaultZone: http://127.0.0.1:8761/eureka/
+
+server:
+    port: 9001
+
+pangolin:
+    companyCode: 1001
+    tempFileDir: /usr/local/src/pangolin/temp
+    UDesk:
+        callerEmail: ceshi1007@51xf.cn
+        secret: f2eef2a0f660cdd1a3841af2b58f0dd5
+        callUrl: https://51xf.udesk.cn/
+
+cuibei:
+  baiduMap:
+    webUrl: http://api.map.baidu.com/cloudgc/v1?city=全国&ak=
+    webAk: lHaYCXlRADlhW0fnv8tpIhCfqD85pTSr
+
+threadPool:
+  corePoolSize: 400
+  maxPoolSize: 500
+  keepAliveSeconds : 60
+  queueCapacity: 500
+  allowCoreThreadTimeout : false
+  threadNamePrefix: pangolin-
+
+
